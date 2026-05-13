@@ -133,6 +133,50 @@ function downloadJson(items: HeritageItem[]) {
   URL.revokeObjectURL(a.href);
 }
 
+// ─── GitHub API ──────────────────────────────────────────────────────────────
+
+const GITHUB_OWNER = 'gbaldo-create';
+const GITHUB_REPO = 'Barbe2026';
+const GITHUB_BRANCH = 'main';
+const GITHUB_PATH = 'data/items.json';
+
+async function getGitHubToken(): Promise<string | null> {
+  return localStorage.getItem('b2026_github_token');
+}
+
+async function saveItemsToGitHub(items: HeritageItem[]): Promise<boolean> {
+  const token = await getGitHubToken();
+  if (!token) return false;
+
+  const clean = items.map(({ isFavorite, ...rest }) => rest);
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(clean, null, 2))));
+
+  // Get current SHA
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}?ref=${GITHUB_BRANCH}`, {
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
+  });
+
+  if (!res.ok) return false;
+  const data = await res.json();
+  const sha = data.sha;
+
+  // Update file
+  const updateRes = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: 'update catalog', content, sha, branch: GITHUB_BRANCH })
+  });
+
+  return updateRes.ok;
+}
+
+async function validateGitHubToken(token: string): Promise<boolean> {
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`, {
+    headers: { Authorization: `token ${token}` }
+  });
+  return res.ok;
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
@@ -182,11 +226,22 @@ export default function App() {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  // ── GitHub token state ──
+  const [githubToken, setGithubToken] = useState<string | null>(() => localStorage.getItem('b2026_github_token'));
+  const [isGithubTokenModalOpen, setIsGithubTokenModalOpen] = useState(false);
+
   // ── persist ──
-  const persist = (updated: HeritageItem[]) => {
+  const persist = async (updated: HeritageItem[]) => {
     const clean = updated.map(({ isFavorite, ...rest }) => rest);
     localStorage.setItem('b2026_items', JSON.stringify(clean));
     setItems(updated);
+    // Save to GitHub if token available
+    const token = localStorage.getItem('b2026_github_token');
+    if (token) {
+      const ok = await saveItemsToGitHub(updated);
+      if (ok) showNotif('Salvato su GitHub ✓');
+      else showNotif('Salvato in locale (GitHub non raggiungibile)', 'error');
+    }
   };
 
   // ── merged ──
@@ -270,10 +325,14 @@ export default function App() {
     showNotif('Oggetto eliminato');
   };
 
-  const handleLogin = (username: string, pwd: string) => {
+  const handleLogin = (username: string, pwd: string, token?: string) => {
     if (USERS[username] && USERS[username] === pwd) {
       sessionStorage.setItem('b2026_user', username);
       setCurrentUser(username);
+      if (token) {
+        localStorage.setItem('b2026_github_token', token);
+        setGithubToken(token);
+      }
       setIsLoginModalOpen(false);
       showNotif(`Benvenuto, ${username}! ✓`);
     } else {
@@ -283,7 +342,9 @@ export default function App() {
 
   const handleLogout = () => {
     sessionStorage.removeItem('b2026_user');
+    localStorage.removeItem('b2026_github_token');
     setCurrentUser(null);
+    setGithubToken(null);
     showNotif('Logout effettuato');
   };
 
@@ -769,11 +830,13 @@ function ImageGallery({ images, name, status, catawikiUrl }: { images: string[];
   );
 }
 
-function LoginForm({ onLogin }: { onLogin: (username: string, pwd: string) => void }) {
+function LoginForm({ onLogin }: { onLogin: (username: string, pwd: string, token?: string) => void }) {
   const [username, setUsername] = useState('');
   const [pwd, setPwd] = useState('');
+  const [token, setToken] = useState('');
+  const [showToken, setShowToken] = useState(false);
   return (
-    <form onSubmit={e => { e.preventDefault(); onLogin(username, pwd); }} className="p-8 space-y-6">
+    <form onSubmit={e => { e.preventDefault(); onLogin(username, pwd, token || undefined); }} className="p-8 space-y-6">
       <div className="p-4 bg-heritage-cream/30 rounded-2xl text-sm text-heritage-ink/60 leading-relaxed">
         <p className="font-bold text-xs uppercase tracking-widest text-heritage-ink/40 mb-2">Accesso riservato</p>
         <p>Familiari autorizzati: <strong>Olivia</strong>, <strong>Aleria</strong>, <strong>Emanuela</strong>, <strong>Gianmaria</strong></p>
@@ -785,6 +848,14 @@ function LoginForm({ onLogin }: { onLogin: (username: string, pwd: string) => vo
       <div className="space-y-2">
         <label className="text-[10px] uppercase font-bold tracking-widest opacity-40 block">Password</label>
         <input type="password" value={pwd} onChange={e => setPwd(e.target.value)} placeholder="••••••••••" className="w-full border-b border-heritage-ink/10 py-2 bg-transparent focus:outline-none focus:border-heritage-gold text-sm transition-colors" required />
+      </div>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-[10px] uppercase font-bold tracking-widest opacity-40 block">GitHub Token <span className="text-heritage-gold">(per salvare online)</span></label>
+          <button type="button" onClick={() => setShowToken(!showToken)} className="text-[9px] text-heritage-gold uppercase tracking-widest">{showToken ? 'nascondi' : 'mostra'}</button>
+        </div>
+        <input type={showToken ? 'text' : 'password'} value={token} onChange={e => setToken(e.target.value)} placeholder="ghp_xxxx (opzionale)" className="w-full border-b border-heritage-ink/10 py-2 bg-transparent focus:outline-none focus:border-heritage-gold text-sm transition-colors font-mono" />
+        <p className="text-[9px] text-heritage-ink/30 italic">Senza token le modifiche restano solo nel browser</p>
       </div>
       <button type="submit" disabled={!username || !pwd} className="w-full heritage-button py-4 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50">Accedi</button>
     </form>
