@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-heritage: "Cormorant Garamond", serif;
+
+  --color-heritage-cream: #F5F2ED;
+  --color-heritage-ink: #1A1A1A;
+  --color-heritage-gold: #C5A059;
+  --color-heritage-olive: #5A5A40;
+}
+
+body {
+  @apply bg-heritage-cream text-heritage-ink font-sans antialiased;
+}
+
+h1, h2, h3, h4 {
+  @apply font-serif tracking-tight;
+}
+
+.heritage-card {
+  @apply bg-white border border-heritage-ink/10 rounded-lg overflow-hidden transition-all duration-300;
+}
+
+.heritage-button {
+  @apply px-6 py-2 bg-heritage-ink text-heritage-cream font-heritage font-medium rounded-full hover:bg-heritage-olive transition-colors duration-300 disabled:opacity-50;
+}
+
+.heritage-button-gold {
+  @apply px-6 py-2 bg-heritage-gold text-white font-heritage font-medium rounded-full hover:bg-heritage-gold/90 transition-colors duration-300 disabled:opacity-50 shadow-md transform hover:scale-105;
+}
+
+.scroll-fade {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+}
