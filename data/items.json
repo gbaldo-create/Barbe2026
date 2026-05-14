@@ -903,28 +903,5 @@
     "images": [],
     "id": "mp5p1neyb1td2",
     "stories": []
-  },
-  {
-    "name": "Tavolo da gioco con piano in ardesia",
-    "description": "Elegante tavolo in legno di mogano con piano in ardesia blu scuro, caratteristico della tradizione italiana dell'Ottocento. Presenta gambe sagomate e snelle tipiche dello stile Luigi XV, con un cassetto frontale e una struttura robusta.",
-    "room": "Salotto",
-    "category": "Mobili",
-    "year": "Metà XIX Secolo",
-    "dimensions": "80x80x75 cm",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "€ 600-900",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778790651326-IMG-1375--1-.jpg",
-    "technicalNotes": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 48,
-    "details": [],
-    "images": [],
-    "id": "mp5y1ez7oselj",
-    "stories": []
   }
 ]
