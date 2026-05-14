@@ -468,7 +468,7 @@
     "stories": []
   },
   {
-    "name": "Tavolino da gioco con piano in ardesia",
+    "name": "Tavolino da gioco con piano in velluto",
     "description": "Elegante tavolino in legno di mogano con piano rettangolare rivestito in ardesia blu, dotato di cassetto frontale. Le gambe sagomate e curve conferiscono al mobile un carattere raffinato, tipico della tradizione italiana ottocentesca. Pezzo funzionale per giochi da tavolo, perfetto per salotti e studi di villaggi storici.",
     "room": "Salotto",
     "category": "Mobili",
@@ -478,7 +478,7 @@
     "acquisitionType": "Vendita",
     "price": "€ 600",
     "catawikiUrl": "",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778773419941-IMG-1375.jpg",
     "technicalNotes": "",
     "destination": "Barberino",
     "estimatedValue": "",
