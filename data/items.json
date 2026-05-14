@@ -836,7 +836,7 @@
     "stories": []
   },
   {
-    "name": "Lampada da tavolo con braccio orientabile",
+    "name": "Lampada da terra con braccio orientabile",
     "description": "Elegante lampada da lettura con struttura in ottone dorato e paralume in tessuto color avorio. Il braccio snodabile consente di orientare la luce secondo le necessità, tipica soluzione funzionale per ambienti classici del primo Novecento.",
     "room": "Salotto",
     "category": "Illuminazione",
@@ -846,7 +846,7 @@
     "acquisitionType": "Vendita",
     "price": "€ 180-280",
     "catawikiUrl": "",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778775465430-IMG-1466--1-.jpg",
     "technicalNotes": "",
     "destination": "Barberino",
     "estimatedValue": "",
