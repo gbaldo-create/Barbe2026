@@ -869,7 +869,7 @@
     "acquisitionType": "Vendita",
     "price": "€ 300-500",
     "catawikiUrl": "",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778775513702-IMG-1421-2--1-.jpg",
     "technicalNotes": "",
     "destination": "Barberino",
     "estimatedValue": "",
@@ -879,6 +879,29 @@
     "details": [],
     "images": [],
     "id": "mp5gimtka6y3q",
+    "stories": []
+  },
+  {
+    "name": "Poltrona in legno con braccioli",
+    "description": "Elegante poltrona in legno massello di tonalità nocciola, caratterizzata da un design razionalista con schienale decorato da geometrici elementi verticali. La seduta mostra un'incisione circolare al centro, testimone di un utilizzo consapevole nel corso dei decenni.",
+    "room": "Salotto",
+    "category": "Sedute",
+    "year": "Anni 1930-1940",
+    "dimensions": "70x70x90 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 280-350",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778775535807-IMG-1473-2--1---1-.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 47,
+    "details": [],
+    "images": [],
+    "id": "mp5p1neyb1td2",
     "stories": []
   }
 ]
