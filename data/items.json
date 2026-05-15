@@ -951,5 +951,30 @@
     "images": [],
     "id": "mp6wm6gc0lnk8",
     "stories": []
+  },
+  {
+    "name": "Tastiera wireless moderna",
+    "description": "Tastiera informatica contemporanea di colore grigio-blu, dotata di tasti funzione e caratteri alfanumerici. Oggetto di uso quotidiano rappresentativo della tecnologia domestica del XXI secolo.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "2010-2020 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778849148059-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 51,
+    "details": [],
+    "images": [],
+    "id": "mp6wuybso7cad",
+    "stories": []
   }
 ]
