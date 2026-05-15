@@ -1074,5 +1074,28 @@
     "images": [],
     "id": "mp745a3xjkdzs",
     "stories": []
+  },
+  {
+    "name": "Sedia in ferro battuto anni '50",
+    "description": "Sedia da giardino con struttura in ferro battuto nero, seduta e schienale in tela o rete, tipica dell'arredamento esterno italiano del secondo dopoguerra. Esemplare caratteristico del design funzionale e resistente delle sedute da terrazza.",
+    "room": "Giardino",
+    "category": "Sedute",
+    "year": "1950 circa",
+    "dimensions": "80x45x55 cm",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 120",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778875800255-liaaleria.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 58,
+    "details": [],
+    "images": [],
+    "id": "mp7cqamw9ig1s",
+    "stories": []
   }
 ]
