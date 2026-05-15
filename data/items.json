@@ -1051,5 +1051,28 @@
     ],
     "id": "mp71d9clnjz42",
     "stories": []
+  },
+  {
+    "name": "Cassa acustica vintage in legno",
+    "description": "Piccolo diffusore acustico rivestito in tessuto naturale di lino o cotone, tipico degli impianti audio domestici degli anni Settanta e Ottanta. Realizzato in legno compensato con finiture sobrie, conserva ancora il cavo di alimentazione originale.",
+    "room": "Salotto",
+    "category": "Oggetti",
+    "year": "1970-1980 circa",
+    "dimensions": "25x15x20 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 30-60",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778861385790-image.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 57,
+    "details": [],
+    "images": [],
+    "id": "mp745a3xjkdzs",
+    "stories": []
   }
 ]
