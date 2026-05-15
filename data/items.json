@@ -976,5 +976,30 @@
     "images": [],
     "id": "mp6wuybso7cad",
     "stories": []
+  },
+  {
+    "name": "Coppia di Figure Decorative Kokeshi e Maneki-neko",
+    "description": "Affascinante accostamento di due oggetti decorativi di ispirazione orientale: una bambola kokeshi giapponese in stile tradizionale con abito rosso e bianco dai toni delicati, affiancata da un gatto della fortuna (maneki-neko) rosso con zampa alzata, simbolo di prosperità. Entrambi gli oggetti conferiscono un tocco esotico e bon ton all'ambiente.",
+    "room": "Salotto",
+    "category": "Oggetti",
+    "year": "2000 circa",
+    "dimensions": "Kokeshi: circa 15 cm",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 35",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778849242135-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 52,
+    "details": [],
+    "images": [],
+    "id": "mp6wx5gji044b",
+    "stories": []
   }
 ]
