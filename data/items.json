@@ -903,5 +903,28 @@
     "images": [],
     "id": "mp6qku13asvbv",
     "stories": []
+  },
+  {
+    "name": "Tazza in ceramica con motivi felini",
+    "description": "Mug contemporaneo in ceramica nera con decorazioni bianche raffiguranti un volto stilizzato di gatto, caratterizzato da occhi socchiusi e baffi. Pezzo di design moderno con marchio Langelica, perfetto per le bevande quotidiane con un tocco di simpatia felina.",
+    "room": "Cucina",
+    "category": "Porcellane",
+    "year": "2010 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 12-18",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778839351574-image.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": true,
+    "order": 49,
+    "details": [],
+    "images": [],
+    "id": "mp6r1fpjeg232",
+    "stories": []
   }
 ]
