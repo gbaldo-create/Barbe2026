@@ -1001,5 +1001,28 @@
     "images": [],
     "id": "mp6xqoadx2d5f",
     "stories": []
+  },
+  {
+    "name": "Calcolatrice da tavolo Sigma TR-2008",
+    "description": "Calcolatrice elettronica da tavolo degli anni Ottanta, di marca Sigma, con tastiera in plastica e display digitale. Un oggetto caratteristico del periodo dell'informatica nascente, quando questi strumenti erano indispensabili negli studi e negli uffici.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "1980 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 25",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778850985610-image.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 53,
+    "details": [],
+    "images": [],
+    "id": "mp6xyhuvxf1li",
+    "stories": []
   }
 ]
