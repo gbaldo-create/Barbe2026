@@ -880,5 +880,28 @@
     "images": [],
     "id": "mp5p1neyb1td2",
     "stories": []
+  },
+  {
+    "name": "Cassapanca in legno scuro",
+    "description": "Elegante cassapanca in noce o mogano, caratterizzata da una costruzione solida con coperchio ribassato e decorazioni a modanature. I piedi torniti in stile barocco conferiscono dignità al mobile, segno distintivo dell'arredamento italiano di qualità.",
+    "room": "Camera da letto",
+    "category": "Mobili",
+    "year": "Fine XIX Secolo",
+    "dimensions": "200x60x80 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 800",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778838591027-IMG-1501-2--1-.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 48,
+    "details": [],
+    "images": [],
+    "id": "mp6qku13asvbv",
+    "stories": []
   }
 ]
