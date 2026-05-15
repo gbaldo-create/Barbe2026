@@ -903,28 +903,5 @@
     "images": [],
     "id": "mp5p1neyb1td2",
     "stories": []
-  },
-  {
-    "name": "Tazza da caffè con decoro minimalista",
-    "description": "Elegante tazza in ceramica nera con decorazione geometrica bianca raffigurante un volto stilizzato. Accompagnata da etichetta originale, rappresenta un esempio di design contemporaneo dal gusto nordico, perfetto per la tavola moderna.",
-    "room": "Cucina",
-    "category": "Oggetti",
-    "year": "2010 circa",
-    "dimensions": "",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "€ 12-18",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778831686060-image.jpg",
-    "technicalNotes": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 48,
-    "details": [],
-    "images": [],
-    "id": "mp6mgp7oualfu",
-    "stories": []
   }
 ]
