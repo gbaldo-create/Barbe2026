@@ -976,5 +976,30 @@
     "images": [],
     "id": "mp6wuybso7cad",
     "stories": []
+  },
+  {
+    "name": "Tavolino barocco con piano in marmo",
+    "description": "Elegante tavolino da salotto con struttura in legno scuro, probabilmente noce o mogano, caratterizzato da gambe sagomate e ricurve tipiche dello stile barocco. Il piano presenta una lastra di marmo chiaro con bordo sagomato, conferendogli un'aria raffinata e preziosa.",
+    "room": "Salotto",
+    "category": "Mobili",
+    "year": "XVIII-XIX Secolo",
+    "dimensions": "70x70x60 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 600-900",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778850616960-IMG-1400-2--1-.jpg",
+    "technicalNotes": "",
+    "wearCondition": "Da restaurare",
+    "shipping": "Solo ritiro diretto",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 52,
+    "details": [],
+    "images": [],
+    "id": "mp6xqoadx2d5f",
+    "stories": []
   }
 ]
