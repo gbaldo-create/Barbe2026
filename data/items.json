@@ -1024,5 +1024,30 @@
     "images": [],
     "id": "mp6xyhuvxf1li",
     "stories": []
+  },
+  {
+    "name": "Tazza da tè con decorazione gatto stilizzato",
+    "description": "Affascinante tazza in ceramica nera con simpatico volto di gatto reso in bianco, caratterizzato da grandi occhi tondi e baffi minimalistici. Presenta manico ergonomico e tag originale L'Angelica, perfetta per gli amanti del design contemporaneo con tocco vintage.",
+    "room": "Cucina",
+    "category": "Oggetti",
+    "year": "2010 circa",
+    "dimensions": "h 12 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 15",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778852789184-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "Ottimo",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 54,
+    "details": [],
+    "images": [],
+    "id": "mp6z1ct9mj9hs",
+    "stories": []
   }
 ]
