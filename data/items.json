@@ -1074,5 +1074,32 @@
     "images": [],
     "id": "mp7129a6enpkq",
     "stories": []
+  },
+  {
+    "name": "Tastiera Informatica Moderna",
+    "description": "Tastiera nera in plastica con layout QWERTY, tipica della tecnologia informatica contemporanea. Riporta i caratteri luminosi e rappresenta gli strumenti di lavoro del nostro tempo.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "2010-2020 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 15-40",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856708863-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 56,
+    "details": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856724462-image.jpg"
+    ],
+    "id": "mp71d9clnjz42",
+    "stories": []
   }
 ]
