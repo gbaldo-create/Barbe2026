@@ -1101,5 +1101,32 @@
     ],
     "id": "mp71d9clnjz42",
     "stories": []
+  },
+  {
+    "name": "Tazza da tè con decoro felino",
+    "description": "Tazza in ceramica nera con decorazioni bianche raffiguranti un gatto stilizzato dal volto espressivo. Presenta manico a loop e marchio L'Angelica, tipico della produzione italiana contemporanea di articoli da tavola.",
+    "room": "Cucina",
+    "category": "Porcellane",
+    "year": "2010 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 12-18",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856879551-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 57,
+    "details": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856895681-image.jpg"
+    ],
+    "id": "mp71gznkqqyns",
+    "stories": []
   }
 ]
