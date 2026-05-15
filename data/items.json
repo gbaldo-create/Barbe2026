@@ -903,5 +903,28 @@
     "images": [],
     "id": "mp6qku13asvbv",
     "stories": []
+  },
+  {
+    "name": "Tastiera Wireless Moderna",
+    "description": "Tastiera per computer di recente manifattura, con layout QWERTY e tasti funzione. Oggetto contemporaneo di utilizzo quotidiano in ambito lavorativo e domestico.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "2010-2020 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 25-45",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778846200646-image.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 49,
+    "details": [],
+    "images": [],
+    "id": "mp6v478ydmc6b",
+    "stories": []
   }
 ]
