@@ -953,31 +953,6 @@
     "stories": []
   },
   {
-    "name": "Tastiera wireless moderna",
-    "description": "Tastiera informatica contemporanea di colore grigio-blu, dotata di tasti funzione e caratteri alfanumerici. Oggetto di uso quotidiano rappresentativo della tecnologia domestica del XXI secolo.",
-    "room": "Studio",
-    "category": "Oggetti",
-    "year": "2010-2020 circa",
-    "dimensions": "",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778849148059-image.jpg",
-    "technicalNotes": "",
-    "wearCondition": "",
-    "shipping": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 51,
-    "details": [],
-    "images": [],
-    "id": "mp6wuybso7cad",
-    "stories": []
-  },
-  {
     "name": "Tavolino barocco con piano in marmo",
     "description": "Elegante tavolino da salotto con struttura in legno scuro, probabilmente noce o mogano, caratterizzato da gambe sagomate e ricurve tipiche dello stile barocco. Il piano presenta una lastra di marmo chiaro con bordo sagomato, conferendogli un'aria raffinata e preziosa.",
     "room": "Salotto",
@@ -1023,31 +998,6 @@
     "details": [],
     "images": [],
     "id": "mp6xyhuvxf1li",
-    "stories": []
-  },
-  {
-    "name": "Tazza da tè con decorazione gatto stilizzato",
-    "description": "Affascinante tazza in ceramica nera con simpatico volto di gatto reso in bianco, caratterizzato da grandi occhi tondi e baffi minimalistici. Presenta manico ergonomico e tag originale L'Angelica, perfetta per gli amanti del design contemporaneo con tocco vintage.",
-    "room": "Cucina",
-    "category": "Oggetti",
-    "year": "2010 circa",
-    "dimensions": "h 12 cm circa",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "€ 15",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778852789184-image.jpg",
-    "technicalNotes": "",
-    "wearCondition": "Ottimo",
-    "shipping": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 54,
-    "details": [],
-    "images": [],
-    "id": "mp6z1ct9mj9hs",
     "stories": []
   },
   {
@@ -1100,33 +1050,6 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856724462-image.jpg"
     ],
     "id": "mp71d9clnjz42",
-    "stories": []
-  },
-  {
-    "name": "Tazza da tè con decoro felino",
-    "description": "Tazza in ceramica nera con decorazioni bianche raffiguranti un gatto stilizzato dal volto espressivo. Presenta manico a loop e marchio L'Angelica, tipico della produzione italiana contemporanea di articoli da tavola.",
-    "room": "Cucina",
-    "category": "Porcellane",
-    "year": "2010 circa",
-    "dimensions": "",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "€ 12-18",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856879551-image.jpg",
-    "technicalNotes": "",
-    "wearCondition": "",
-    "shipping": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 57,
-    "details": [],
-    "images": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778856895681-image.jpg"
-    ],
-    "id": "mp71gznkqqyns",
     "stories": []
   }
 ]
