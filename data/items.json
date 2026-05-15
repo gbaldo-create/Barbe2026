@@ -926,5 +926,30 @@
     "images": [],
     "id": "mp6v478ydmc6b",
     "stories": []
+  },
+  {
+    "name": "Tastiera meccanica gaming moderna",
+    "description": "Tastiera contemporanea con tasti meccanici in colore antracite, dotata di illuminazione RGB bianca. Si tratta di un accessorio informatico moderno, tutt'altro che antiquariato, collocato su una scrivania in legno color miele.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "2020-2024",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 80-150",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778848736662-image.jpg",
+    "technicalNotes": "",
+    "wearCondition": "",
+    "shipping": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 50,
+    "details": [],
+    "images": [],
+    "id": "mp6wm6gc0lnk8",
+    "stories": []
   }
 ]
