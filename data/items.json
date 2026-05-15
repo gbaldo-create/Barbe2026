@@ -20,7 +20,15 @@
     "details": [],
     "images": [],
     "id": "mp4892tpaya24",
-    "stories": []
+    "stories": [
+      {
+        "id": "mp7dlx5wvyvff",
+        "author": "Famiglia",
+        "text": "Questa era la sedia di papà",
+        "date": "2026-05-15",
+        "itemId": "mp4892tpaya24"
+      }
+    ]
   },
   {
     "name": "Poltrona rococò in noce con seduta in velluto",
@@ -996,29 +1004,6 @@
     "details": [],
     "images": [],
     "id": "mp745a3xjkdzs",
-    "stories": []
-  },
-  {
-    "name": "Piano cottura a gas professionale",
-    "description": "Moderno piano cottura a gas in acciaio inox con sei bruciatori e comandi a manopola. Elemento funzionale della cucina contemporanea, rappresentativo dell'evoluzione degli ambienti domestici verso equipaggiamenti professionali.",
-    "room": "Cucina",
-    "category": "Mobili",
-    "year": "2010-2020 circa",
-    "dimensions": "90x60x10 cm circa",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
-    "price": "€ 800-1200",
-    "catawikiUrl": "",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778877034945-image.jpg",
-    "technicalNotes": "",
-    "destination": "Barberino",
-    "estimatedValue": "",
-    "productCode": "",
-    "isFeatured": false,
-    "order": 58,
-    "details": [],
-    "images": [],
-    "id": "mp7dihulxce5q",
     "stories": []
   }
 ]
