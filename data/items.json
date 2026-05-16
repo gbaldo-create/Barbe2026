@@ -89,7 +89,7 @@
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772275404-IMG-1248.jpg",
     "technicalNotes": "",
-    "destination": "Barberino",
+    "destination": "Cinisello Balsamo",
     "estimatedValue": "",
     "productCode": "",
     "isFeatured": false,
@@ -1188,6 +1188,29 @@
     "details": [],
     "images": [],
     "id": "mp8vlki8fwtp5",
+    "stories": []
+  },
+  {
+    "name": "Specchio in stile Barocco con cornice dorata",
+    "description": "Elegante specchio da parete con cornice in legno dorato finemente intagliato. La forma arcuata presenta decorazioni floreali al vertice e volute agli angoli inferiori, tipiche dell'estetica barocca. Un raffinato elemento di arredamento che cattura la luce e illumina gli ambienti.",
+    "room": "Salotto",
+    "category": "Mobili",
+    "year": "XVIII Secolo",
+    "dimensions": "80x50 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 600-900",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778968227791-IMG-2011.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 69,
+    "details": [],
+    "images": [],
+    "id": "mp8vrhtirq8po",
     "stories": []
   }
 ]
