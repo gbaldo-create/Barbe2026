@@ -1143,5 +1143,28 @@
     "images": [],
     "id": "mp8va6qjitzn4",
     "stories": []
+  },
+  {
+    "name": "Incisione con gallo notturno e luna",
+    "description": "Raffinata incisione a colori con tecnica mista che rappresenta un gallo dal piumaggio nero e rosso cromaticamente vivace, illuminato dalla luna crescente in un cielo notturno stellato. L'opera combina dettagli decorativi e ornamentali tipici dell'arte europea del XX secolo, con una composizione fantastica e simbolica.",
+    "room": "Salotto",
+    "category": "Quadri",
+    "year": "Metà XX secolo (1940-1950 circa)",
+    "dimensions": "58x42 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 180-280",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778967631324-IMG-2009.png",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 67,
+    "details": [],
+    "images": [],
+    "id": "mp8vey72sv0xe",
+    "stories": []
   }
 ]
