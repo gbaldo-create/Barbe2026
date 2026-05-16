@@ -1028,5 +1028,28 @@
     "images": [],
     "id": "mp8mscjqtps45",
     "stories": []
+  },
+  {
+    "name": "Scatola cucitrice in legno con gambe",
+    "description": "Elegante scatola da cucito in legno di noce con piano superiore in velluto rosso, dotata di maniglia centrale e gambe sagomate con ruote. Presenta due cassetti laterali ornati da maniglie metalliche e fili decorativi in ottone, tipica delle collezioni casalinghe della famiglia benestante del dopoguerra.",
+    "room": "Cucina",
+    "category": "Mobili",
+    "year": "1950-1960 circa",
+    "dimensions": "55x35x65 cm",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 200",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966207247-IMG-1938.png",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 60,
+    "details": [],
+    "images": [],
+    "id": "mp8ul6tchvnvp",
+    "stories": []
   }
 ]
