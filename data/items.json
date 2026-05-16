@@ -1030,7 +1030,7 @@
     "stories": []
   },
   {
-    "name": "Raccolta di volumi enciclopedici in pelle",
+    "name": "Raccolta di volumi Annali d’Italia",
     "description": "Serie completa di libri rilegati in pelle marrone con dorso decorato in oro, appartenenti a un'opera enciclopedica o letteraria di prestigio del XIX secolo. Sono visibili i numeri dei volumi su dorso e i fregi floreali caratteristici della rilegatura di lusso italiana.",
     "room": "Biblioteca",
     "category": "Libri",
@@ -1050,6 +1050,29 @@
     "details": [],
     "images": [],
     "id": "mp8uvca23qb9f",
+    "stories": []
+  },
+  {
+    "name": "Donini - Comedie di Plauto - Set di 4 volumi",
+    "description": "Pregevole edizione delle Comedie di Plauto nella traduzione di Donini, elegantemente rilegata in pelle marrone con decorazioni dorate e motivi greci. Completo di quattro volumi numerati, rappresenta una raffinata testimonianza della cultura classica nel patrimonio librario italiano.",
+    "room": "Biblioteca",
+    "category": "Libri",
+    "year": "XIX Secolo",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 600",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966895144-IMG-9940.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 63,
+    "details": [],
+    "images": [],
+    "id": "mp8uyxfkzcpb0",
     "stories": []
   }
 ]
