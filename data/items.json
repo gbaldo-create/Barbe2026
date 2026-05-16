@@ -1074,5 +1074,28 @@
     "images": [],
     "id": "mp8uyxfkzcpb0",
     "stories": []
+  },
+  {
+    "name": "Lucia di Lammermoor - Partitura per pianoforte",
+    "description": "Edizione storica dell'opera di Donizetti pubblicata da Ricordi, nella celebre \"Edizione del Popolo\". Si tratta della riduzione per canto e pianoforte di uno dei capolavori lirici italiani del XIX secolo.",
+    "room": "Salotto",
+    "category": "Libri",
+    "year": "Fine XIX Secolo - Inizio XX Secolo",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 80",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966975510-IMG-9932.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 64,
+    "details": [],
+    "images": [],
+    "id": "mp8v0s3tq35y4",
+    "stories": []
   }
 ]
