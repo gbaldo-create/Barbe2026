@@ -1097,5 +1097,28 @@
     "images": [],
     "id": "mp8v0s3tq35y4",
     "stories": []
+  },
+  {
+    "name": "Marmocchi Geografia Universale - Tavole",
+    "description": "Antico volume di tavole geografiche dell'opera enciclopedica di Marmocchi, con rilegatura in cartone decorato a motivi floreali in grigio e rosa. Un prezioso riferimento didattico del XIX secolo che testimonia la diffusione della conoscenza geografica nelle dimore colte italiane.",
+    "room": "Studio, Biblioteca",
+    "category": "Libri",
+    "year": "XIX Secolo",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 900",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778967295944-IMG-1910.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 65,
+    "details": [],
+    "images": [],
+    "id": "mp8v8gdgssgkl",
+    "stories": []
   }
 ]
