@@ -1028,5 +1028,28 @@
     "images": [],
     "id": "mp8mr8thk1f0q",
     "stories": []
+  },
+  {
+    "name": "Dipinto a olio su tela - Scena di genere orientalista",
+    "description": "Raffinato dipinto che ritrae una giovane donna in abiti tradizionali intenta a cucinare presso un focolare rustico. L'opera, eseguita con tecnica accademica ottocentesca, cattura con maestria gli effetti di luce e le texture materiche, testimonianza della sensibilità orientalista dell'artista.",
+    "room": "Salotto",
+    "category": "Quadri",
+    "year": "Fine XIX Secolo",
+    "dimensions": "120x60 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 500",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778953134916-IMG-1941.png",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 59,
+    "details": [],
+    "images": [],
+    "id": "mp8mscjqtps45",
+    "stories": []
   }
 ]
