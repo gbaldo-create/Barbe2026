@@ -1051,5 +1051,28 @@
     "images": [],
     "id": "mp8ul6tchvnvp",
     "stories": []
+  },
+  {
+    "name": "Coppia di lampade da tavolo moderniste",
+    "description": "Elegante coppia di lampade da tavolo con base cilindrica in metallo nero lucido e diffusore in vetro opalino bianco. Dal design geometrico e minimalista, rappresenta perfettamente l'estetica del design italiano del secondo dopoguerra con i loro cavi neri in vista e le teste orientabili.",
+    "room": "Studio, Salotto, Camera da letto",
+    "category": "Illuminazione",
+    "year": "1950-1960 circa",
+    "dimensions": "H 40-50 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 350-500",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966594268-IMG-1945.png",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 61,
+    "details": [],
+    "images": [],
+    "id": "mp8ushaobkeju",
+    "stories": []
   }
 ]
