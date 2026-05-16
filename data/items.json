@@ -1166,5 +1166,28 @@
     "images": [],
     "id": "mp8vey72sv0xe",
     "stories": []
+  },
+  {
+    "name": "Stampa cinese con pavoni e fiori",
+    "description": "Pregevole stampa orientale raffigurante due pavoni in elegante composizione con fiori di peonia, rami nodosi e albero sinuoso. L'opera, eseguita con la tradizionale tecnica della seta dipinta, reca caratteri calligrafici cinesi nell'angolo superiore sinistro e conserva la sua cromia originale con tonalità di blu, verde e rosso carminio.",
+    "room": "Salotto",
+    "category": "Quadri",
+    "year": "Fine XIX - Inizio XX Secolo",
+    "dimensions": "65x95 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 200",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778967939602-IMG-2010.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 68,
+    "details": [],
+    "images": [],
+    "id": "mp8vlki8fwtp5",
+    "stories": []
   }
 ]
