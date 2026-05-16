@@ -1120,5 +1120,28 @@
     "images": [],
     "id": "mp8v8gdgssgkl",
     "stories": []
+  },
+  {
+    "name": "Paravento a tre ante con motivi floreali",
+    "description": "Elegante paravento pieghevole in legno scuro con tre ante decorate da carte da parati raffiguranti uccelli esotici e fiori in tonalità gialle, viola e naturali. Un pezzo d'arredamento che incarna il gusto decorativo dell'epoca vittoriana, ideale per creare suggestive divisioni negli ambienti di una dimora signorile.",
+    "room": "Salotto",
+    "category": "Mobili",
+    "year": "Fine XIX Secolo",
+    "dimensions": "160x180 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 100",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778967400172-IMG-1940.png",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 66,
+    "details": [],
+    "images": [],
+    "id": "mp8va6qjitzn4",
+    "stories": []
   }
 ]
