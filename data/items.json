@@ -1005,5 +1005,28 @@
     "images": [],
     "id": "mp745a3xjkdzs",
     "stories": []
+  },
+  {
+    "name": "Macchina da scrivere Olivetti M40",
+    "description": "Elegante macchina da scrivere portatile di manifattura italiana, caratterizzata dalla struttura in metallo verniciato nero e dalla tastiera QWERTY. Un oggetto di design funzionale che rappresenta il patrimonio industriale italiano del Novecento, ideale per chi apprezza gli strumenti di scrittura vintage.",
+    "room": "Studio",
+    "category": "Oggetti",
+    "year": "1950 circa",
+    "dimensions": "70x35x30 cm",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 300",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778953101142-IMG-1939.png",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 58,
+    "details": [],
+    "images": [],
+    "id": "mp8mr8thk1f0q",
+    "stories": []
   }
 ]
