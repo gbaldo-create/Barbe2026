@@ -1264,5 +1264,28 @@
     ],
     "id": "mp9eb5f0eu0al",
     "stories": []
+  },
+  {
+    "name": "Tazza FRIENDS edizione McDonald's",
+    "description": "Tazza in ceramica bianca con interno color arancio, recante il logo della serie televisiva FRIENDS e l'iconico motivo della fontana del Central Perk. Prodotto promozionale McDonald's, rappresentativo della cultura pop contemporanea.",
+    "room": "Cucina",
+    "category": "Porcellane",
+    "year": "2000 circa",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 8-15",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779003711237-image.jpg",
+    "technicalNotes": "",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": true,
+    "order": 72,
+    "details": [],
+    "images": [],
+    "id": "mp9gx9k0d3v3h",
+    "stories": []
   }
 ]
