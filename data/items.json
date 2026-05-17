@@ -1212,5 +1212,30 @@
     "images": [],
     "id": "mp8vrhtirq8po",
     "stories": []
+  },
+  {
+    "name": "Il Mondo di Schopenhauer - Volume II",
+    "description": "Rara edizione italiana della celebre opera filosofica di Arturo Schopenhauer, tradotta da Paolo Sant-Lopez per la collana 'Classici della Filosofia Moderna'. Volume rilegato con pregevole decorazione geometrica in stile liberty sulla coperta, timbro della prestigiosa Libreria Enrico Castoldi di Brescia.",
+    "room": "Studio",
+    "category": "Libri",
+    "year": "Inizio XX Secolo",
+    "dimensions": "",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 180",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778999178027-IMG-9962.jpeg",
+    "technicalNotes": "",
+    "destination": "Cinisello Balsamo",
+    "estimatedValue": "",
+    "productCode": "",
+    "isFeatured": false,
+    "order": 70,
+    "details": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778999231765-IMG-9963.jpeg"
+    ],
+    "id": "mp9e7o34isjvp",
+    "stories": []
   }
 ]
