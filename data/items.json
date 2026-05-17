@@ -1256,11 +1256,13 @@
     "destination": "Barberino",
     "estimatedValue": "",
     "productCode": "",
+    "wearCondition": "",
+    "shipping": "",
     "isFeatured": false,
     "order": 71,
     "details": [],
     "images": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778999394659-IMG-1758.jpeg"
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779020214537-IMG-1757.jpeg"
     ],
     "id": "mp9eb5f0eu0al",
     "stories": []
