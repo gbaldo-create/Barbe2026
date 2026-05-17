@@ -790,10 +790,14 @@
     "destination": "Barberino",
     "estimatedValue": "",
     "productCode": "",
+    "wearCondition": "",
+    "shipping": "",
     "isFeatured": true,
     "order": 1,
     "details": [],
-    "images": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg"
+    ],
     "id": "mp5fh4tbdrsjr",
     "stories": []
   },
