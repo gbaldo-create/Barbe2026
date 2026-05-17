@@ -1271,5 +1271,32 @@
     ],
     "id": "mp9eb5f0eu0al",
     "stories": []
+  },
+  {
+    "name": "Radio Radiomarelli in legno massello",
+    "description": "Affascinante radio d'epoca in legno nodoso marrone, modello Radiomarelli con cassa in burl walnut e dettagli in ottone. Caratterizzata da quattro manopole in madreperla, sintonizzatore illuminato e doppio altoparlante. Un pezzo di design industriale italiano che racchiude l'eleganza delle comunicazioni domestiche del dopoguerra.",
+    "room": "Salotto",
+    "category": "Oggetti",
+    "year": "1940-1950 circa",
+    "dimensions": "65x35x25 cm circa",
+    "status": "Disponibile",
+    "acquisitionType": "Vendita",
+    "price": "€ 380-520",
+    "catawikiUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043321609-IMG-2013.png",
+    "technicalNotes": "Cassa in legno massello con venatura nodosa, telaio in legno duro, manopole in madreperla naturale, quadrante in bachelite con stampa dei nomi delle stazioni, doppi altoparlanti con griglia in tela originale, trasformatore e componenti elettronici originali. Stato di conservazione buono con naturale patina d'epoca e lievi graffi superficiali. Marchio Radiomarelli visibile sulla fascia. Presenza di cavo di alimentazione originale.",
+    "destination": "Barberino",
+    "estimatedValue": "",
+    "productCode": "",
+    "wearCondition": "Buono",
+    "shipping": "",
+    "isFeatured": true,
+    "order": 72,
+    "details": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043336254-IMG-2014.png"
+    ],
+    "id": "mpa4i1pwtdvdk",
+    "stories": []
   }
 ]
