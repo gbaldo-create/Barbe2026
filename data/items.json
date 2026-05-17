@@ -1145,7 +1145,7 @@
     "stories": []
   },
   {
-    "name": "Incisione con gallo notturno e luna",
+    "name": "Stampa con gallo notturno e luna",
     "description": "Raffinata incisione a colori con tecnica mista che rappresenta un gallo dal piumaggio nero e rosso cromaticamente vivace, illuminato dalla luna crescente in un cielo notturno stellato. L'opera combina dettagli decorativi e ornamentali tipici dell'arte europea del XX secolo, con una composizione fantastica e simbolica.",
     "room": "Salotto",
     "category": "Quadri",
@@ -1163,7 +1163,9 @@
     "isFeatured": false,
     "order": 67,
     "details": [],
-    "images": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778999505832-IMG-1849.jpeg"
+    ],
     "id": "mp8vey72sv0xe",
     "stories": []
   },
