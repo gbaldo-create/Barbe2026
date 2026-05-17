@@ -775,28 +775,29 @@
     "stories": []
   },
   {
-    "name": "Camino decorativo in marmo con ornamenti in stucco",
-    "description": "Elegante camino in stile neoclassico, rivestito in marmo rosa con decorazioni floreali e vegetali in stucco bianco sui lati. La struttura presenta un ampio arco ribassato e una cornice superiore finemente cesellata, tipica dell'arredamento di prestigiose dimore storiche italiane.",
-    "room": "Salotto",
+    "name": "Camino in marmo con ornamenti neoclassici",
+    "description": "Elegante camino in marmo rosa con ricca decorazione a rilievo raffigurante festoni e motivi vegetali di ispirazione neoclassica. La struttura presenta un'arcata a tutto sesto e un coronamento superiore lavorato, tipico delle dimore signorili del XIX secolo. Lo stato di conservazione evidenzia l'uso storico e una patina di tempo che ne sottolinea l'autenticità.",
+    "room": "Salotto, Studio o Sala da ricevimento",
     "category": "Mobili",
-    "year": "Fine XVIII - Inizio XIX Secolo",
-    "dimensions": "150x50x180 cm circa",
+    "year": "Metà XIX Secolo",
+    "dimensions": "Circa 150x130x60 cm",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 2500 - € 4000",
+    "price": "€ 2.800 - € 4.500",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771315866-IMG-1513--1-.jpg",
-    "technicalNotes": "",
+    "technicalNotes": "Marmo rosa con decorazioni a bassorilievo intagliato. Struttura in marmo massiccio con capitello decorativo e festoni floreali simmetrici. Presentarudimenti di fuliggine all'interno della canna fumaria. Ornamenti in stile neoclassico con motivi di acanto e uva. Basamento in marmo levigato. Stato di conservazione: struttura integra, decorazioni ben conservate nonostante l'uso prolungato.",
     "destination": "Barberino",
     "estimatedValue": "",
     "productCode": "",
-    "wearCondition": "",
+    "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": true,
     "order": 1,
     "details": [],
     "images": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg"
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021722660-IMG-2010.jpeg"
     ],
     "id": "mp5fh4tbdrsjr",
     "stories": []
