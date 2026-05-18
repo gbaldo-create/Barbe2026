@@ -134,7 +134,32 @@
     "details": [],
     "images": [],
     "id": "mp4i8i88i0gg0",
-    "stories": []
+    "stories": [],
+    "catawikiTitle": "Lampadario tre bracci vetro rosso rubino metà XX secolo",
+    "catawikiCategory": "Illuminazione",
+    "catawikiSubcategory": "Lampadario",
+    "catawikiStyle": "Classico",
+    "catawikiMaterial": "Vetro rosso rubino, ferro, ceramica",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiDescription": "Elegante lampadario in stile classico della metà del XX secolo, caratterizzato da un raffinato corpo centrale in vetro rosso rubino con decorazioni dorate. Tre bracci sinuosi in ferro nero finemente lavorati a volute sostengono altrettante fiamme in ceramica bianca e nera. Un pezzo di buona qualità che rappresenta il gusto del design dell'epoca, capace di illuminare gli ambienti con calore e personalità. Condizione coerente con l'epoca di provenienza.",
+    "catawikiShippingAvailable": false,
+    "catawikiPickupAvailable": true,
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772240289-IMG-1260.jpg"
+    ],
+    "catawikiWeight": "",
+    "catawikiSpecific": {
+      "tipoLampada": "Lampadario",
+      "materialeCorpo": "Ceramica",
+      "materialeDiffusore": "Altro",
+      "numeroPuntiLuce": "3",
+      "attacco": "Altro",
+      "funzionante": true,
+      "cablaggioAggiornato": false,
+      "colore": "Multicolore",
+      "stile": "Liberty"
+    }
   },
   {
     "name": "Lampadario a tre luci in stile Modernista",
