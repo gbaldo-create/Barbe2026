@@ -1430,21 +1430,34 @@
     "dimensions": "65x35x25 cm circa",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 380-520",
+    "price": "€ 200",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043321609-IMG-2013.png",
     "technicalNotes": "Cassa in legno massello con venatura nodosa, telaio in legno duro, manopole in madreperla naturale, quadrante in bachelite con stampa dei nomi delle stazioni, doppi altoparlanti con griglia in tela originale, trasformatore e componenti elettronici originali. Stato di conservazione buono con naturale patina d'epoca e lievi graffi superficiali. Marchio Radiomarelli visibile sulla fascia. Presenza di cavo di alimentazione originale.",
-    "destination": "Barberino",
+    "destination": "Cinisello Balsamo",
     "estimatedValue": "",
     "productCode": "",
     "wearCondition": "Buono",
-    "shipping": "",
+    "shipping": "Spedizione possibile",
     "isFeatured": true,
     "order": 72,
     "details": [],
     "images": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043336254-IMG-2014.png"
     ],
+    "catawikiTitle": "",
+    "catawikiCategory": "",
+    "catawikiSubcategory": "",
+    "catawikiStyle": "",
+    "catawikiMaterial": "",
+    "catawikiCountry": "",
+    "catawikiRestored": false,
+    "catawikiWeight": "",
+    "catawikiShippingAvailable": true,
+    "catawikiPickupAvailable": true,
+    "catawikiDescription": "",
+    "catawikiImages": [],
+    "catawikiSpecific": {},
     "id": "mpa4i1pwtdvdk",
     "stories": []
   },
@@ -1457,11 +1470,11 @@
     "dimensions": "Circa 45x35 cm (dipinto), 65x55 cm (con cornice)",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 800 - € 1.200",
+    "price": "€ 100",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098379330-IMG-1588.jpeg",
     "technicalNotes": "Olio su tela. Cornice in legno multilayer con interno dorato e esterno in legno naturale patinato. Vaso in ceramica blu dipinto. Firma identificabile nell'angolo inferiore. Stato di conservazione buono con leggere sbiaditure naturali. Vernice originale intatta.",
-    "destination": "Barberino",
+    "destination": "Cinisello Balsamo",
     "estimatedValue": "",
     "productCode": "",
     "wearCondition": "Buono",
@@ -1489,8 +1502,6 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098412354-IMG-1588.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098414625-IMG-1588.jpeg"
     ],
-    "id": "mpb1ag2v4t5s1",
-    "stories": [],
     "catawikiSpecific": {
       "titoloOpera": "Natura Morta",
       "atelierScuola": "Scuola toscana",
@@ -1503,6 +1514,8 @@
       "larghezzaConCornice": "60",
       "restauriTela": "Nessuno",
       "statoCornice": "Originale con usura"
-    }
+    },
+    "id": "mpb1ag2v4t5s1",
+    "stories": []
   }
 ]
