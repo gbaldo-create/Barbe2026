@@ -134,32 +134,7 @@
     "details": [],
     "images": [],
     "id": "mp4i8i88i0gg0",
-    "stories": [],
-    "catawikiTitle": "Lampadario tre bracci vetro rosso rubino metà XX secolo",
-    "catawikiCategory": "Illuminazione",
-    "catawikiSubcategory": "Lampadario",
-    "catawikiStyle": "Classico",
-    "catawikiMaterial": "Vetro rosso rubino, ferro, ceramica",
-    "catawikiCountry": "Italia",
-    "catawikiRestored": false,
-    "catawikiDescription": "Elegante lampadario in stile classico della metà del XX secolo, caratterizzato da un raffinato corpo centrale in vetro rosso rubino con decorazioni dorate. Tre bracci sinuosi in ferro nero finemente lavorati a volute sostengono altrettante fiamme in ceramica bianca e nera. Un pezzo di buona qualità che rappresenta il gusto del design dell'epoca, capace di illuminare gli ambienti con calore e personalità. Condizione coerente con l'epoca di provenienza.",
-    "catawikiShippingAvailable": false,
-    "catawikiPickupAvailable": true,
-    "catawikiImages": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772240289-IMG-1260.jpg"
-    ],
-    "catawikiWeight": "",
-    "catawikiSpecific": {
-      "tipoLampada": "Lampadario",
-      "materialeCorpo": "Ceramica",
-      "materialeDiffusore": "Altro",
-      "numeroPuntiLuce": "3",
-      "attacco": "Altro",
-      "funzionante": true,
-      "cablaggioAggiornato": false,
-      "colore": "Multicolore",
-      "stile": "Liberty"
-    }
+    "stories": []
   },
   {
     "name": "Lampadario a tre luci in stile Modernista",
@@ -231,22 +206,7 @@
     "details": [],
     "images": [],
     "id": "mp4ic2yu9iy4a",
-    "stories": [],
-    "catawikiTitle": "Lampadario cascata cristallo ottone dorato XIX sec.",
-    "catawikiCategory": "Illuminazione",
-    "catawikiSubcategory": "Lampadario",
-    "catawikiStyle": "Neoclassico",
-    "catawikiMaterial": "Ottone dorato e cristallo",
-    "catawikiCountry": "Italia",
-    "catawikiRestored": false,
-    "catawikiDescription": "Elegante lampadario a cascata in stile neoclassico della metà del XIX secolo, caratterizzato da una struttura in ottone dorato finemente decorato e cristalli pendenti lavorati. Dotato di più bracci portacandela e sospensione mediante catena con candelabro centrale, rappresenta un pezzo di pregio tipico dell'arredamento delle dimore storiche italiane. L'opera testimonia l'eccellenza della manifattura italiana del periodo e conserva intatta la sua maestosità decorativa.",
-    "catawikiShippingAvailable": false,
-    "catawikiPickupAvailable": true,
-    "catawikiImages": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg"
-    ],
-    "catawikiWeight": "",
-    "catawikiSpecific": {}
+    "stories": []
   },
   {
     "name": "Lampadario a candele in ottone e nero",
@@ -1175,7 +1135,22 @@
     "details": [],
     "images": [],
     "id": "mp8uvca23qb9f",
-    "stories": []
+    "stories": [],
+    "catawikiTitle": "Annali d'Italia - Serie completa rilegata in pelle XIX sec.",
+    "catawikiCategory": "Libri",
+    "catawikiSubcategory": "Opere enciclopediche e letterarie",
+    "catawikiStyle": "Vittoriano",
+    "catawikiMaterial": "Pelle marrone con dorso decorato in oro",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiDescription": "Raccolta completa di volumi degli Annali d'Italia, prestigiosa opera enciclopedica del XIX secolo. Elegante rilegatura in pelle marrone di pregio con dorsi decorati in oro e fregi floreali caratteristici della lussuosa tradizione italiana. Serie numerata sui dorsi, perfettamente conservata. Un'importante testimonianza della cultura editoriale italiana dell'epoca, adatta a collezionisti di libri antichi e appassionati di storia.",
+    "catawikiShippingAvailable": true,
+    "catawikiPickupAvailable": true,
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966714599-IMG-9957.jpeg"
+    ],
+    "catawikiWeight": "10",
+    "catawikiSpecific": {}
   },
   {
     "name": "Donini - Comedie di Plauto - Set di 4 volumi",
