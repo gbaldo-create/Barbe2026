@@ -1161,7 +1161,7 @@
     "dimensions": "circa 25x15x8 cm per singolo volume",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 1200",
+    "price": "€ 120",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966895144-IMG-9940.jpeg",
     "technicalNotes": "Legatura in pelle marrone con doratura. Decorazioni in oro: medaglioni geometrici, fregi a meandro (stile greco), linee dorate ai dorsi e piatti. Numerazione romana in oro sui piatti inferiori (I, II, III, IV). Testo in italiano. Carta di qualità simile a carta vergellata. Segni di utilizzo e leggera usura agli angoli. Rilegatura coeva di pregio con tecnica artigianale fiorentina.",
@@ -1188,6 +1188,7 @@
     "catawikiImages": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966895144-IMG-9940.jpeg"
     ],
+    "catawikiSpecific": {},
     "id": "mp8uyxfkzcpb0",
     "stories": []
   },
