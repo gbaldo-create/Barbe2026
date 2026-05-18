@@ -258,19 +258,36 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116036928-IMG-1296.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116038556-IMG-1294.jpeg"
     ],
-    "catawikiTitle": "Lampadario Liberty cristallo molato Toscana 1900",
+    "catawikiTitle": "Lampadario sferico Liberty cristallo molato e ottone",
     "catawikiCategory": "Illuminazione",
     "catawikiSubcategory": "Lampadario",
-    "catawikiStyle": "Liberty fiorentino",
-    "catawikiMaterial": "Cristallo molato e cesellato, ottone patinato",
+    "catawikiStyle": "Liberty",
+    "catawikiMaterial": "Cristallo molato e ottone",
     "catawikiCountry": "Italia",
     "catawikiRestored": false,
     "catawikiWeight": "",
     "catawikiShippingAvailable": false,
     "catawikiPickupAvailable": true,
-    "catawikiDescription": "Raffinato lampadario di manifattura toscana del primo Novecento, periodo Liberty. La sfera in cristallo trasparente presenta un sofisticato decoro a motivi radiali e floreali ottenuto con molatura e sfaccettatura. Decorato con numerosi pendenti a goccia in cristallo limpido. Montatura in ottone cesellato con rosone superiore ornato a ventaglio. Proviene da villa storica del Mugello, Firenze. Testimonianza della ricerca di luminosità elegante negli interni della belle époque toscana.",
-    "catawikiImages": [],
-    "catawikiSpecific": {},
+    "catawikiDescription": "Elegante lampadario sferico in cristallo trasparente molato, realizzato in stile Liberty nel primo Novecento. La sfera presenta raffinati decori geometrici e floreali radiali, arricchita da almeno 20 pendenti a goccia in cristallo limpido sfaccettato. La montatura in ottone cesellato reca motivi a ventaglio nel rosone superiore e conserva la sospensione a catena originale. Proveniente da villa padronale del Mugello, testimonia la raffinatezza luminotecnica degli interni toscani d'epoca. Conservazione molto buona, nessun cristallo mancante, ottone con naturale ossidazione.",
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772908475-IMG-1290.jpg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116032813-IMG-1293.jpeg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116034869-IMG-1288.jpeg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116036928-IMG-1296.jpeg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779116038556-IMG-1294.jpeg"
+    ],
+    "catawikiSpecific": {
+      "tipoLampada": "Lampadario",
+      "materialeCorpo": "Vetro",
+      "materialeDiffusore": "Vetro molato",
+      "numeroPuntiLuce": "1",
+      "attacco": "Da sostituire",
+      "funzionante": true,
+      "colore": "Trasparente",
+      "stile": "Liberty",
+      "altezzaTotale": "150",
+      "diametro": "50"
+    },
     "id": "mp4ie7z7mkkgj",
     "stories": [
       {
