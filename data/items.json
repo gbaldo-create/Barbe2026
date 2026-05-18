@@ -1058,7 +1058,7 @@
     "dimensions": "Circa 150x130x60 cm",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 2.800 - € 4.500",
+    "price": "€ 2.800 ",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771315866-IMG-1513--1-.jpg",
     "technicalNotes": "Marmo rosa con decorazioni a bassorilievo intagliato. Struttura in marmo massiccio con capitello decorativo e festoni floreali simmetrici. Presentarudimenti di fuliggine all'interno della canna fumaria. Ornamenti in stile neoclassico con motivi di acanto e uva. Basamento in marmo levigato. Stato di conservazione: struttura integra, decorazioni ben conservate nonostante l'uso prolungato.",
@@ -1066,16 +1066,13 @@
     "estimatedValue": "",
     "productCode": "",
     "wearCondition": "Discreto",
-    "shipping": "",
+    "shipping": "Solo ritiro",
     "isFeatured": true,
     "order": 1,
     "details": [],
     "images": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg",
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021722660-IMG-2010.jpeg"
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg"
     ],
-    "id": "mp5fh4tbdrsjr",
-    "stories": [],
     "catawikiTitle": "Camino in marmo rosa con ornamenti neoclassici, XIX sec.",
     "catawikiCategory": "Mobili",
     "catawikiSubcategory": "Camini",
@@ -1083,22 +1080,24 @@
     "catawikiMaterial": "Marmo rosa",
     "catawikiCountry": "Italia",
     "catawikiRestored": false,
-    "catawikiDescription": "Elegante camino in marmo rosa risalente alla metà del XIX secolo, caratterizzato da una ricca decorazione a bassorilievo con festoni floreali e motivi vegetali di ispirazione neoclassica. La struttura presenta un'arcata a tutto sesto e un coronamento superiore finemente lavorato, tipico delle dimore signorili dell'epoca. La composizione simmetrica vede motivi di acanto e uva magistralmente intagliati. Lo stato di conservazione è discreto, con decorazioni ben preservate nonostante l'uso prolungato, e la patina del tempo ne sottolinea l'autenticità. Opera di notevole pregio per estimatori di antiquariato neoclassico.",
+    "catawikiWeight": "",
     "catawikiShippingAvailable": false,
     "catawikiPickupAvailable": true,
+    "catawikiDescription": "Elegante camino in marmo rosa risalente alla metà del XIX secolo, caratterizzato da una ricca decorazione a bassorilievo con festoni floreali e motivi vegetali di ispirazione neoclassica. La struttura presenta un'arcata a tutto sesto e un coronamento superiore finemente lavorato, tipico delle dimore signorili dell'epoca. La composizione simmetrica vede motivi di acanto e uva magistralmente intagliati. Lo stato di conservazione è discreto, con decorazioni ben preservate nonostante l'uso prolungato, e la patina del tempo ne sottolinea l'autenticità. Opera di notevole pregio per estimatori di antiquariato neoclassico.",
     "catawikiImages": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771315866-IMG-1513--1-.jpg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021722660-IMG-2010.jpeg"
     ],
-    "catawikiWeight": "",
     "catawikiSpecific": {
       "tipoMobile": "",
       "essenzaLegno": "",
       "materialeRivestimento": "Nessuno",
       "ferramenta": "Assente",
       "finitura": ""
-    }
+    },
+    "id": "mp5fh4tbdrsjr",
+    "stories": []
   },
   {
     "name": "Cassettone in legno massello stile Impero",
