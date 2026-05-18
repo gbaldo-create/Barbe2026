@@ -1473,23 +1473,36 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098412354-IMG-1588.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098414625-IMG-1588.jpeg"
     ],
-    "catawikiTitle": "Natura morta con fiori - Olio su tela XVIII-XIX sec.",
-    "catawikiCategory": "Quadri e stampe",
-    "catawikiSubcategory": "Dipinti - Natura morta",
+    "catawikiTitle": "Natura morta con fiori - Olio su tela XVIII-XIX secolo",
+    "catawikiCategory": "Quadri",
+    "catawikiSubcategory": "Dipinti antichi",
     "catawikiStyle": "Neoclassico",
     "catawikiMaterial": "Olio su tela",
     "catawikiCountry": "Italia",
     "catawikiRestored": false,
-    "catawikiWeight": "",
-    "catawikiShippingAvailable": false,
+    "catawikiWeight": "5",
+    "catawikiShippingAvailable": true,
     "catawikiPickupAvailable": true,
-    "catawikiDescription": "Raffinata natura morta raffigurante composizione floreale con fiori arancioni e gialli in vaso blu scuro, dipinta su tela con maestria pittorica. L'opera, databile tra la fine del XVIII e l'inizio del XIX secolo, è caratterizzata da uno sfondo verde scuro che esalta magistralmente la luminosità della composizione. Firma identificabile nell'angolo inferiore. Vernice originale intatta, stato di conservazione buono con naturali patine d'epoca. Incorniciato in legno massello a più livelli con interno dorato e patina esterna originale.",
+    "catawikiDescription": "Delicata composizione di natura morta raffigurante fiori arancioni e gialli in vaso blu in ceramica, dipinta su tela con tecnica tradizionale tra la fine del XVIII e l'inizio del XIX secolo. Lo sfondo verde scuro esalta la luminosità della composizione floreale. Firmata nell'angolo inferiore, presenta vernice originale intatta e ottimo stato conservativo con sole naturali patine d'epoca. Incorniciata in legno massello multilayer con interno dorato e esterno patinato. Opera caratterizzata da notevole qualità esecutiva e raffinatezza compositiva.",
     "catawikiImages": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098379330-IMG-1588.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098412354-IMG-1588.jpeg",
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779098414625-IMG-1588.jpeg"
     ],
     "id": "mpb1ag2v4t5s1",
-    "stories": []
+    "stories": [],
+    "catawikiSpecific": {
+      "titoloOpera": "Natura Morta",
+      "atelierScuola": "Scuola toscana",
+      "firmato": true,
+      "tecnica": "Olio su tela",
+      "supporto": "Tavola",
+      "soggetto": "Natura morta",
+      "movimentoArtistico": "Altro",
+      "altezzaConCornice": "10",
+      "larghezzaConCornice": "60",
+      "restauriTela": "Nessuno",
+      "statoCornice": "Originale con usura"
+    }
   }
 ]
