@@ -233,7 +233,27 @@ async function analyzeImageWithClaude(
 
   content.push({
     type: 'text',
-    text: `Sei un esperto di antiquariato e arredamento storico italiano. Analizza queste immagini e restituisci SOLO un oggetto JSON valido (nessun testo prima o dopo):\n{\n  "name": "nome breve e descrittivo in italiano",\n  "description": "descrizione evocativa di 2-3 frasi in italiano, stile archivio familiare",\n  "category": "una tra: Mobili, Illuminazione, Sedute, Quadri, Porcellane, Tappeti, Giardino, Libri, Oggetti",\n  "room": "stanza più probabile in una villa storica italiana",\n  "year": "epoca o anno stimato (es: Metà XVIII Secolo, 1950 circa)",\n  "dimensions": "dimensioni stimate se visibili (es: 80x40x90 cm), altrimenti stringa vuota",\n  "price": "prezzo di mercato stimato tra privati in euro (es: € 450), altrimenti stringa vuota",\n  "technicalNotes": "materiali, tecnica costruttiva, stato conservazione, elementi distintivi rilevati",\n  "wearCondition": "una tra: Ottimo, Buono, Discreto, Da restaurare"\n}` + detailPromptPart
+    text: `Sei un esperto antiquario e bibliofilo con profonda conoscenza del mercato dell'arte e dei libri antichi in Toscana, specializzato nel periodo tra Ottocento e primo Novecento. Hai esperienza diretta nelle case d'asta italiane ed europee (Pandolfini, Gonnelli, Christie's, Sotheby's, Catawiki). L'oggetto proviene da una villa padronale del Mugello (Firenze) — considera possibile provenienza da artigiani o stampatori fiorentini.
+
+Analizza le immagini e restituisci SOLO un oggetto JSON valido (nessun testo prima o dopo):
+{
+  "name": "nome breve e descrittivo in italiano",
+  "description": "descrizione evocativa 2-3 frasi, stile archivio familiare",
+  "category": "una tra: Mobili, Illuminazione, Sedute, Quadri, Porcellane, Tappeti, Giardino, Libri, Oggetti",
+  "room": "stanza più probabile in villa storica italiana",
+  "year": "epoca stimata (es: Metà XVIII Secolo, 1920 circa)",
+  "dimensions": "dimensioni stimate se visibili (es: 80x40x90 cm), altrimenti stringa vuota",
+  "price": "prezzo mercato tra privati in euro (es: € 450), altrimenti stringa vuota",
+  "technicalNotes": "materiali, tecnica, stato conservazione, elementi distintivi",
+  "wearCondition": "una tra: Ottimo, Buono, Discreto, Da restaurare",
+  "catawikiTitle": "titolo ottimizzato Catawiki MAX 60 caratteri",
+  "catawikiSubcategory": "sottocategoria specifica (es: Comò, Lampadario, Olio su tela)",
+  "catawikiStyle": "stile storico preciso (es: Luigi XVI, Liberty fiorentino, Barocco toscano)",
+  "catawikiMaterial": "materiale principale con specificità (es: Noce massello, Mogano impiallacciato)",
+  "catawikiCountry": "paese di origine",
+  "catawikiDescription": "descrizione formale stile asta, 3-5 frasi, enfatizza qualità epoca provenienza toscana. MAX 500 caratteri.",
+  "catawikiRestored": false
+}` + detailPromptPart
   });
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -244,7 +264,7 @@ async function analyzeImageWithClaude(
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true',
     },
-    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 800, messages: [{ role: 'user', content }] })
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1200, messages: [{ role: 'user', content }] })
   });
 
   if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'Errore API'); }
@@ -262,8 +282,72 @@ const emptyForm = {
   price: '', catawikiUrl: '', imageUrl: '', technicalNotes: '',
   destination: 'Barberino' as any, estimatedValue: '', productCode: '',
   wearCondition: '' as any, shipping: '' as any,
-  isFeatured: false, order: 0, details: [] as { label: string; value: string }[], images: [] as string[]
+  isFeatured: false, order: 0, details: [] as { label: string; value: string }[], images: [] as string[],
+  // Campi Catawiki
+  catawikiTitle: '', catawikiCategory: '', catawikiSubcategory: '',
+  catawikiStyle: '', catawikiMaterial: '', catawikiCountry: '',
+  catawikiRestored: false, catawikiWeight: '',
+  catawikiShippingAvailable: false, catawikiPickupAvailable: true,
+  catawikiDescription: '', catawikiImages: [] as string[],
+  catawikiSpecific: {} as Record<string, string | boolean>,
 };
+
+// ─── Prepara scheda Catawiki con AI ──────────────────────────────────────────
+
+const CATAWIKI_STYLES = ['Art Déco', 'Art Nouveau', 'Barocco', 'Biedermeier', 'Classico', 'Eclettico', 'Impero', 'Liberty', 'Luigi XV', 'Luigi XVI', 'Modernista', 'Neoclassico', 'Rinascimentale', 'Rococò', 'Rustico', 'Vintage', 'Vittoriano', 'Altro'];
+const CATAWIKI_COUNTRIES = ['Italia', 'Francia', 'Inghilterra', 'Germania', 'Spagna', 'Austria', 'Olanda', 'Belgio', 'Svizzera', 'Cina', 'Giappone', 'Altro'];
+const CATAWIKI_CATEGORIES = ['Mobili antichi', 'Illuminazione antica', 'Sedute antiche', 'Quadri e stampe', 'Porcellane e ceramiche', 'Tappeti e tessuti', 'Orologi antichi', 'Argenteria', 'Oggetti decorativi', 'Libri antichi', 'Gioielli antichi', 'Sculture'];
+
+async function prepareCatawikiWithAI(item: HeritageItem): Promise<Partial<typeof emptyForm> | null> {
+  const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY;
+  if (!apiKey) { alert('Aggiungi VITE_ANTHROPIC_API_KEY nel file .env.local'); return null; }
+
+  const prompt = `Sei un esperto di aste Catawiki e antiquariato italiano. 
+Dati dell'oggetto:
+- Nome: ${item.name}
+- Descrizione: ${item.description}
+- Categoria: ${item.category}
+- Anno/Epoca: ${item.year || 'non specificato'}
+- Dimensioni: ${item.dimensions || 'non specificate'}
+- Condizione: ${item.wearCondition || 'non specificata'}
+- Note tecniche: ${item.technicalNotes || 'nessuna'}
+- Prezzo stimato: ${item.estimatedValue || item.price || 'non specificato'}
+
+Genera SOLO un JSON valido con questi campi per Catawiki (nessun testo prima o dopo):
+{
+  "catawikiTitle": "titolo ottimizzato per Catawiki MAX 60 caratteri, descrittivo e attraente",
+  "catawikiCategory": "una tra: ${CATAWIKI_CATEGORIES.join(', ')}",
+  "catawikiSubcategory": "sottocategoria specifica (es. Comò, Scrivania, Lampadario...)",
+  "catawikiStyle": "uno tra: ${CATAWIKI_STYLES.join(', ')}",
+  "catawikiMaterial": "materiale principale (es. Noce massello, Mogano, Bronzo dorato...)",
+  "catawikiCountry": "uno tra: ${CATAWIKI_COUNTRIES.join(', ')}",
+  "catawikiRestored": false,
+  "catawikiDescription": "descrizione in italiano formale stile asta, 3-5 frasi, enfatizza qualità, epoca, stato conservazione e unicità. MAX 500 caratteri."
+}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 600,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'Errore API'); }
+  const data = await res.json();
+  const text = data.content?.[0]?.text || '';
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    return jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+  } catch { return null; }
+}
 
 // ─── helpers per esportare JSON ───────────────────────────────────────────────
 
@@ -273,6 +357,111 @@ function downloadJson(items: HeritageItem[]) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'items.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportCatawikiTxt(items: HeritageItem[]) {
+  const compiled = items.filter(i =>
+    i.catawikiTitle || i.catawikiDescription || i.catawikiCategory
+  );
+  if (compiled.length === 0) { alert('Nessuna scheda Catawiki compilata.'); return; }
+
+  const sections = compiled.map((item, idx) => {
+    const allPhotos = [item.imageUrl, ...(item.images || [])].filter(Boolean);
+    const selectedPhotos = item.catawikiImages?.length ? item.catawikiImages : allPhotos.slice(0, 5);
+    return [
+      `════════════════════════════════════════`,
+      `OGGETTO ${idx + 1} di ${compiled.length}: ${item.name}`,
+      `════════════════════════════════════════`,
+      `TITOLO:       ${item.catawikiTitle || ''}`,
+      `CATEGORIA:    ${item.catawikiCategory || ''}${item.catawikiSubcategory ? ` > ${item.catawikiSubcategory}` : ''}`,
+      `STILE:        ${item.catawikiStyle || ''}`,
+      `MATERIALE:    ${item.catawikiMaterial || ''}`,
+      `PAESE:        ${item.catawikiCountry || ''}`,
+      `ANNO/PERIODO: ${item.year || ''}`,
+      `DIMENSIONI:   ${item.dimensions || ''}`,
+      `CONDIZIONE:   ${item.wearCondition || ''}`,
+      `RESTAURATO:   ${item.catawikiRestored ? 'Si' : 'No'}`,
+      `PESO:         ${item.catawikiWeight || 'n/d'}`,
+      `SPEDIZIONE:   ${item.catawikiShippingAvailable ? 'Si' : 'No'}`,
+      `RITIRO:       ${item.catawikiPickupAvailable ? 'Si' : 'No'}`,
+      ``,
+      `DESCRIZIONE:`,
+      item.catawikiDescription || '',
+      ``,
+      `FOTO (${selectedPhotos.length}):`,
+      ...selectedPhotos.map((url, i) => `  ${i + 1}. ${url}`),
+    ].join('\n');
+  });
+
+  const txt = sections.join('\n\n');
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `catawiki-${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function exportSingleCatawiki(item: HeritageItem) {
+  const allPhotos = [item.imageUrl, ...(item.images || [])].filter(Boolean);
+  const selectedPhotos = item.catawikiImages?.length ? item.catawikiImages : allPhotos.slice(0, 5) as string[];
+  const specific = Object.entries((item as any).catawikiSpecific || {})
+    .filter(([, v]) => v !== '' && v !== false && v !== undefined)
+    .map(([k, v]) => {
+      const label = k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim();
+      return `${(label + ':').padEnd(20)} ${v === true ? 'Sì' : String(v)}`;
+    });
+
+  const lines = [
+    `════════════════════════════════════════`,
+    `${item.name.toUpperCase()}`,
+    `Categoria Catawiki: ${item.catawikiCategory || '—'}`,
+    `════════════════════════════════════════`,
+    ``,
+    `── IDENTIFICAZIONE ─────────────────────`,
+    `Titolo lotto:      ${item.catawikiTitle || '—'}`,
+    `Sottocategoria:    ${item.catawikiSubcategory || '—'}`,
+    `Stile:             ${item.catawikiStyle || '—'}`,
+    `Materiale:         ${item.catawikiMaterial || '—'}`,
+    `Paese origine:     ${item.catawikiCountry || '—'}`,
+    ``,
+    `── CRONOLOGIA ──────────────────────────`,
+    `Anno/Epoca:        ${item.year || '—'}`,
+    ``,
+    `── STATO ───────────────────────────────`,
+    `Condizione:        ${item.wearCondition || '—'}`,
+    `Restaurato:        ${item.catawikiRestored ? 'Sì' : 'No'}`,
+    ``,
+    `── MISURE ──────────────────────────────`,
+    `Dimensioni:        ${item.dimensions || '—'}`,
+    `Peso spedizione:   ${item.catawikiWeight || '—'} kg`,
+    ``,
+    `── LOGISTICA ───────────────────────────`,
+    `Spedizione:        ${item.catawikiShippingAvailable ? 'Sì' : 'No'}`,
+    `Ritiro:            ${item.catawikiPickupAvailable ? 'Sì' : 'No'}`,
+  ];
+
+  if (specific.length > 0) {
+    lines.push('', `── DETTAGLI ${(item.catawikiCategory || 'CATEGORIA').toUpperCase()} ─────────────────────`);
+    lines.push(...specific);
+  }
+
+  lines.push(
+    ``,
+    `── DESCRIZIONE ─────────────────────────`,
+    item.catawikiDescription || '—',
+    ``,
+    `── FOTO (${selectedPhotos.length}) ──────────────────────────`,
+    ...selectedPhotos.map((url, i) => `  ${i + 1}. ${url}`),
+  );
+
+  const txt = lines.join('\n');
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `catawiki-${item.name.slice(0, 40).replace(/[^a-z0-9]/gi, '-').toLowerCase()}.txt`;
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -720,92 +909,104 @@ function ExplorePanel({
             onClick={onClose}
           />
 
-          {/* ── MOBILE: bottom sheet — tutta nella viewport ── */}
+          {/* ── MOBILE: bottom sheet ── */}
           <motion.div
             key="ep-sheet-mobile"
             initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="md:hidden fixed bottom-0 left-0 right-0 z-[210] bg-[#f5f0e8] rounded-t-[24px] shadow-2xl"
+            className="md:hidden fixed bottom-0 left-0 right-0 z-[210] bg-[#f5f0e8] rounded-t-[24px] shadow-2xl flex flex-col"
+            style={{ maxHeight: '92svh' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onClick={e => e.stopPropagation()}
           >
             {/* Handle */}
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-center pt-2 flex-shrink-0">
               <div className="w-8 h-1 bg-heritage-ink/15 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="px-5 pt-1.5 pb-1.5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-heritage-gold">Archivio di famiglia</p>
-              <h2 className="font-serif italic text-[22px] text-heritage-ink leading-tight">
-                Da dove vuoi <span className="not-italic font-bold text-emerald-950">iniziare?</span>
-              </h2>
+            <div className="px-5 pt-2 pb-2 flex-shrink-0 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-heritage-gold">Archivio di famiglia</p>
+                <h2 className="font-serif italic text-[20px] text-heritage-ink leading-tight">
+                  Da dove vuoi <span className="not-italic font-bold text-heritage-ink">iniziare?</span>
+                </h2>
+              </div>
+              <button onClick={onClose} className="p-2 rounded-full bg-heritage-ink/8">
+                <X size={16} className="text-heritage-ink/50" />
+              </button>
             </div>
 
-            <div className="h-px bg-heritage-ink/8 mx-5" />
+            <div className="h-px bg-heritage-ink/8 mx-5 flex-shrink-0" />
 
-            <div className="px-5 pt-2.5 pb-4 space-y-2.5">
+            {/* Scrollable content */}
+            <div className="overflow-y-auto flex-1 px-5 pt-3 pb-2 space-y-3">
 
-              {/* Tutto */}
-              <button onClick={selectAll} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${selType === 'all' ? 'bg-emerald-950 ring-2 ring-heritage-gold/30' : 'bg-emerald-950/90'}`}>
-                <LayoutGrid size={18} className="text-heritage-gold flex-shrink-0" />
-                <div className="text-left flex-1">
-                  <p className="font-bold text-[15px] text-[#f5f0e8] leading-tight">Voglio vedere tutto</p>
-                  <p className="font-serif italic text-[11px] text-heritage-gold/80">{totalItems} pezzi disponibili</p>
+              {/* CATEGORIE */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Categorie</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {/* Tutti */}
+                  <button onClick={selectAll}
+                    className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-2 font-bold text-[13px] uppercase tracking-wide transition-all col-span-2 ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    <span>Tutti</span>
+                    <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${selType === 'all' ? 'bg-white/20 text-white' : 'bg-heritage-ink/8 text-heritage-ink/50'}`}>{totalItems}</span>
+                  </button>
+                  {EXPLORE_CATEGORIES.map(cat => {
+                    const active = selType === 'category' && selCategory === cat.name;
+                    return (
+                      <button key={cat.name} onClick={() => selectCat(cat.name)}
+                        className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-2 font-bold text-[13px] uppercase tracking-wide transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                        <span>{cat.name}</span>
+                        <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-heritage-ink/8 text-heritage-ink/50'}`}>{countFor(cat.name)}</span>
+                      </button>
+                    );
+                  })}
                 </div>
-                {selType === 'all' && <div className="w-4 h-4 rounded-full bg-heritage-gold flex items-center justify-center flex-shrink-0"><Check size={9} className="text-white" strokeWidth={3} /></div>}
-              </button>
-
-              {/* Categorie — 3 colonne */}
-              <div className="grid grid-cols-3 gap-1.5">
-                {EXPLORE_CATEGORIES.map(cat => {
-                  const active = selType === 'category' && selCategory === cat.name;
-                  return (
-                    <button key={cat.name} onClick={() => selectCat(cat.name)}
-                      className={`flex flex-col items-center gap-0.5 py-2 px-1 rounded-xl border-[1.5px] text-center transition-all ${active ? 'border-emerald-950 bg-white shadow-sm' : 'border-heritage-ink/10 bg-white'}`}>
-                      <div className={active ? 'text-emerald-950' : 'text-heritage-gold'}>{React.cloneElement(cat.icon as React.ReactElement<any>, { size: 16 })}</div>
-                      <p className="font-bold text-[11px] text-heritage-ink leading-tight">{cat.name}</p>
-                      <p className="font-serif italic text-[9px] text-heritage-ink/40">{countFor(cat.name)}</p>
-                    </button>
-                  );
-                })}
               </div>
 
-              {/* Stanze — pill su due righe */}
-              <div className="flex flex-wrap gap-1.5">
-                {EXPLORE_ROOMS.map(room => {
-                  const active = selType === 'room' && selRoom === room.name;
-                  return (
-                    <button key={room.name} onClick={() => selectRoom(room.name)}
-                      className={`flex flex-col px-3 py-1.5 rounded-full border-[1.5px] transition-all ${active ? 'bg-emerald-950 border-emerald-950' : 'bg-white border-heritage-ink/10'}`}>
-                      <span className={`font-bold text-[12px] leading-tight ${active ? 'text-[#f5f0e8]' : 'text-heritage-ink'}`}>{room.name}</span>
-                      <span className={`font-serif italic text-[10px] leading-tight ${active ? 'text-heritage-gold' : 'text-heritage-ink/40'}`}>{room.subtitle}</span>
-                    </button>
-                  );
-                })}
+              {/* STATO */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Stato</p>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={selectAll}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    Tutti
+                  </button>
+                  <button onClick={selectCatawiki}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    Su Catawiki
+                  </button>
+                </div>
               </div>
 
-              {/* Catawiki */}
-              <button onClick={selectCatawiki}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl border-2 transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] shadow-lg' : 'bg-[#7B1818]/8 border-[#7B1818]/40'}`}>
-                <div className={`flex-shrink-0 px-2.5 py-1 rounded-full font-bold text-[11px] uppercase tracking-wider ${selType === 'catawiki' ? 'bg-white/20 text-white' : 'bg-[#7B1818] text-white'}`}>
-                  Catawiki
+              {/* STANZE */}
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Stanza</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {EXPLORE_ROOMS.map(room => {
+                    const active = selType === 'room' && selRoom === room.name;
+                    return (
+                      <button key={room.name} onClick={() => selectRoom(room.name)}
+                        className={`px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                        {room.name}
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="text-left flex-1">
-                  <p className={`font-bold text-[14px] leading-tight ${selType === 'catawiki' ? 'text-white' : 'text-[#7B1818]'}`}>Solo aste in corso</p>
-                  <p className={`font-serif italic text-[11px] ${selType === 'catawiki' ? 'text-white/70' : 'text-[#7B1818]/60'}`}>Pezzi battuti all'asta</p>
-                </div>
-                {selType === 'catawiki' && <div className="w-4 h-4 rounded-full bg-white/30 flex items-center justify-center flex-shrink-0"><Check size={9} className="text-white" strokeWidth={3} /></div>}
-              </button>
+              </div>
 
-              {/* CTA */}
+            </div>
+
+            {/* CTA fisso in fondo */}
+            <div className="px-5 pb-6 pt-3 flex-shrink-0 border-t border-heritage-ink/8">
               <button onClick={handleConfirm}
-                className="w-full flex items-center justify-center gap-2 py-3.5 bg-emerald-950 text-[#f5f0e8] rounded-xl font-bold text-[13px] uppercase tracking-[0.2em] active:bg-emerald-900 transition-colors shadow-lg">
-                Mostra la selezione <ArrowRight size={13} />
+                className="w-full flex items-center justify-center gap-2 py-4 bg-heritage-ink text-white rounded-2xl font-bold text-[13px] uppercase tracking-[0.2em] active:opacity-90 transition-opacity">
+                Mostra Risultati
               </button>
-
             </div>
+
           </motion.div>
           {/* ── DESKTOP: modale centrata ── */}
           <motion.div
@@ -939,6 +1140,9 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(12);
   const loaderRef = useRef<HTMLDivElement>(null);
+  const [isCatawikiModalOpen, setIsCatawikiModalOpen] = useState(false);
+  const [catawikiItem, setCatawikiItem] = useState<HeritageItem | null>(null);
+  const [isPreparingCatawiki, setIsPreparingCatawiki] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -1172,6 +1376,44 @@ export default function App() {
     window.history.pushState({ view: 'item-detail', itemId: item.id }, '', `?item=${item.id}`);
   };
 
+  const handlePrepareCatawiki = async (item: HeritageItem) => {
+    setIsPreparingCatawiki(true);
+    try {
+      const result = await prepareCatawikiWithAI(item);
+      if (result) {
+        // Merge risultato AI con dati esistenti dell'oggetto
+        const enriched: HeritageItem = {
+          ...item,
+          catawikiTitle: result.catawikiTitle || item.catawikiTitle || item.name.slice(0, 60),
+          catawikiCategory: result.catawikiCategory || item.catawikiCategory || '',
+          catawikiSubcategory: result.catawikiSubcategory || item.catawikiSubcategory || '',
+          catawikiStyle: result.catawikiStyle || item.catawikiStyle || '',
+          catawikiMaterial: result.catawikiMaterial || item.catawikiMaterial || '',
+          catawikiCountry: result.catawikiCountry || item.catawikiCountry || 'Italia',
+          catawikiRestored: (result as any).catawikiRestored ?? item.catawikiRestored ?? false,
+          catawikiDescription: result.catawikiDescription || item.catawikiDescription || '',
+          catawikiShippingAvailable: item.catawikiShippingAvailable ?? (item.shipping === 'Spedizione possibile'),
+          catawikiPickupAvailable: item.catawikiPickupAvailable ?? true,
+          catawikiImages: item.catawikiImages?.length ? item.catawikiImages :
+            [item.imageUrl, ...(item.images || [])].filter(Boolean).slice(0, 5) as string[],
+        };
+        setCatawikiItem(enriched);
+        setIsCatawikiModalOpen(true);
+      } else {
+        alert('Nessun risultato. Riprova.');
+      }
+    } catch (e: any) { alert('Errore: ' + e.message); }
+    finally { setIsPreparingCatawiki(false); }
+  };
+
+  const handleSaveCatawikiData = async (updated: HeritageItem) => {
+    await persist(items.map(i => i.id === updated.id ? updated : i));
+    setSelectedItem(updated);
+    setCatawikiItem(null);
+    setIsCatawikiModalOpen(false);
+    showNotif('Scheda Catawiki salvata ✓');
+  };
+
   const toggleFavorite = (itemId: string, e?: MouseEvent) => {
     e?.preventDefault(); e?.stopPropagation();
     setFavorites(prev => {
@@ -1365,6 +1607,9 @@ export default function App() {
                     <button onClick={() => downloadJson(items)} title="Scarica items.json aggiornato" className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-bold border border-white/20 hover:bg-white/20 transition-all shadow-md">
                       <span className="hidden lg:inline">↓ items.json</span><span className="lg:hidden">↓</span>
                     </button>
+                    <button onClick={() => exportCatawikiTxt(items)} title="Esporta schede Catawiki" className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-bold border border-white/20 hover:bg-white/20 transition-all shadow-md">
+                      <span className="hidden lg:inline">↓ Catawiki</span><span className="lg:hidden">C↓</span>
+                    </button>
                   </div>
                   <div className="hidden sm:flex flex-col items-end mr-1">
                     <p className="text-[11px] uppercase font-bold text-heritage-gold">{currentUser}</p>
@@ -1394,6 +1639,7 @@ export default function App() {
                     <div className="flex flex-col gap-2 mt-2">
                       <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 heritage-button-gold w-full"><Plus size={18} /><span className="font-heritage">Nuovo Oggetto</span></button>
                       <button onClick={() => { downloadJson(items); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-white/10 text-white p-3 rounded-xl border border-white/10"><span className="font-heritage">↓ Scarica items.json</span></button>
+                      <button onClick={() => { exportCatawikiTxt(items); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-white/10 text-white p-3 rounded-xl border border-white/10"><span className="font-heritage">↓ Esporta Catawiki</span></button>
                     </div>
                   )}
                 </div>
@@ -1875,47 +2121,72 @@ export default function App() {
                     </div>
                     <h2 className="text-4xl md:text-6xl font-serif italic text-heritage-ink leading-tight mb-6">{currentItem.name.split(' ')[0]} <span className="text-emerald-950 not-italic font-display font-medium tracking-tight">{currentItem.name.split(' ').slice(1).join(' ')}</span></h2>
                     {isAdmin && (
-                      <div className="flex gap-4 mb-4">
+                      <div className="flex gap-4 mb-4 flex-wrap">
                         <button onClick={() => { setEditingItem(currentItem); setIsItemModalOpen(true); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-heritage-ink/8 text-heritage-ink rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-heritage-ink/15 transition-colors border border-heritage-ink/10"><Edit size={12} />Modifica</button>
                         <button onClick={() => setItemToDelete(currentItem.id)} className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-400 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-red-100 border border-red-100"><Trash2 size={12} />Elimina</button>
+                        <button
+                          onClick={() => handlePrepareCatawiki(currentItem)}
+                          disabled={isPreparingCatawiki}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest border transition-all ${isPreparingCatawiki ? 'bg-[#7B1818]/10 text-[#7B1818]/50 border-[#7B1818]/20 cursor-wait' : currentItem.catawikiTitle ? 'bg-[#7B1818]/10 text-[#7B1818] border-[#7B1818]/30 hover:bg-[#7B1818]/20' : 'bg-[#7B1818] text-white border-[#7B1818] hover:bg-[#5a1212]'}`}
+                        >
+                          {isPreparingCatawiki ? <><div className="w-3 h-3 border-2 border-[#7B1818]/50 border-t-transparent rounded-full animate-spin" />Elaborazione...</> : <>{currentItem.catawikiTitle ? '✓ Scheda Catawiki' : 'Prepara per Catawiki'}</>}
+                        </button>
+                        {currentItem.catawikiTitle && (
+                          <button
+                            onClick={() => exportSingleCatawiki(currentItem)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-green-100 border border-green-200 transition-all">
+                            <Upload size={12} />Scarica scheda
+                          </button>
+                        )}
                       </div>
                     )}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 mb-4 py-6 border-t border-b border-heritage-ink/10 divide-x-0">
-                      <DetailBox label="Stanza" value={currentItem.room} />
-                      <DetailBox label="Epoca" value={currentItem.year || 'N/D'} />
-                      <DetailBox label="Dimensioni" value={currentItem.dimensions || 'N/D'} />
-                      <DetailBox label="Dove si trova" value={currentItem.destination || 'N/D'} />
-                      <DetailBox label="Acquisizione" value={currentItem.acquisitionType} />
-                      <DetailBox label="Prezzo / Valore" value={currentItem.price || currentItem.estimatedValue || 'Su richiesta'} />
-                      {currentItem.wearCondition && <DetailBox label="Condizione" value={currentItem.wearCondition} />}
-                      {currentItem.shipping && <DetailBox label="Spedizione" value={currentItem.shipping} />}
-                      {currentItem.productCode && <DetailBox label="Codice" value={currentItem.productCode} />}
+                    <div className="mb-6 border-t border-heritage-ink/10 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10">
+                        <div>
+                          <DetailBox label="Stanza" value={currentItem.room} />
+                          <DetailBox label="Epoca" value={currentItem.year || 'N/D'} />
+                          <DetailBox label="Dimensioni" value={currentItem.dimensions || 'N/D'} />
+                          {currentItem.wearCondition && <DetailBox label="Condizione" value={currentItem.wearCondition} />}
+                        </div>
+                        <div>
+                          <DetailBox label="Dove si trova" value={currentItem.destination || 'N/D'} />
+                          <DetailBox label="Acquisizione" value={currentItem.acquisitionType} />
+                          <DetailBox label="Prezzo / Valore" value={currentItem.price || currentItem.estimatedValue || 'Su richiesta'} />
+                          {currentItem.shipping && <DetailBox label="Spedizione" value={currentItem.shipping} />}
+                          {currentItem.productCode && <DetailBox label="Codice" value={currentItem.productCode} />}
+                        </div>
+                      </div>
                       {currentItem.catawikiUrl && (
-                        <div className="flex flex-col gap-1"><span className="text-[11px] uppercase tracking-widest font-bold opacity-60">Catawiki</span>
-                          <a href={currentItem.catawikiUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#7B1818]/10 text-[#7B1818] rounded-full text-[12px] font-bold uppercase tracking-wider hover:bg-[#7B1818]/20 w-fit">Vedi <ExternalLink size={10} /></a>
+                        <div className="flex items-center justify-between pt-3 mt-1 border-t border-heritage-ink/6">
+                          <span className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40">Catawiki</span>
+                          <a href={currentItem.catawikiUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-[#7B1818]/10 text-[#7B1818] rounded-full text-[12px] font-bold uppercase tracking-wider hover:bg-[#7B1818]/20">
+                            Vedi annuncio <ExternalLink size={10} />
+                          </a>
                         </div>
                       )}
                     </div>
                     <div className="prose prose-stone mb-12">
-                      <h4 className="font-serif text-xl mb-4 italic">Descrizione e Storia</h4>
-                      <p className="text-xl leading-relaxed text-heritage-ink/85 font-light mb-8">{currentItem.description}</p>
-                      {currentItem.technicalNotes && <div className="mt-8 p-6 bg-heritage-cream/20 rounded-2xl border border-heritage-ink/5"><h5 className="text-[12px] uppercase tracking-widest font-bold opacity-70 mb-3 text-heritage-gold">Dettagli Tecnici</h5><p className="text-base italic leading-relaxed text-heritage-ink/85">{currentItem.technicalNotes}</p></div>}
-
+                      {(() => {
+                        const hasCatawiki = !!(currentItem.catawikiTitle || currentItem.catawikiDescription);
+                        return hasCatawiki ? (
+                          // Con scheda antiquaria: mostra solo la scheda
+                          <AntiquarianSection item={currentItem} />
+                        ) : (
+                          // Senza scheda: mostra descrizione normale
+                          <>
+                            <h4 className="font-serif text-xl mb-4 italic">Descrizione e Storia</h4>
+                            <p className="text-xl leading-relaxed text-heritage-ink/85 font-light mb-8">{currentItem.description}</p>
+                            {currentItem.technicalNotes && (
+                              <div className="mt-8 p-6 bg-heritage-cream/20 rounded-2xl border border-heritage-ink/5">
+                                <h5 className="text-[12px] uppercase tracking-widest font-bold opacity-70 mb-3 text-heritage-gold">Dettagli Tecnici</h5>
+                                <p className="text-base italic leading-relaxed text-heritage-ink/85">{currentItem.technicalNotes}</p>
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
-                    {/* Stories */}
-                    <div className="bg-white p-8 rounded-2xl border border-heritage-ink/5 mb-12">
-                      <div className="flex items-center justify-between mb-6"><h3 className="text-2xl font-serif italic text-heritage-gold">Ricordi</h3><Sparkles size={18} className="text-heritage-gold opacity-50" /></div>
-                      <div className="space-y-6">
-                        {currentItem.stories.map(s => <div key={s.id} className="relative pl-6 border-l-2 border-heritage-gold/20"><p className="text-[12px] uppercase tracking-widest opacity-70 font-bold mb-2">{s.author} • {s.date}</p><p className="text-base italic leading-relaxed text-heritage-ink/90">"{s.text}"</p></div>)}
-                        {currentItem.stories.length === 0 && <p className="text-sm italic text-heritage-ink/60 text-center py-4">Nessun ricordo ancora.</p>}
-                      </div>
-                      {isAdmin && (
-                        <div className="mt-8 pt-8 border-t border-heritage-ink/5">
-                          <textarea className="w-full p-4 bg-heritage-cream/30 border border-heritage-ink/5 rounded-xl focus:outline-none focus:ring-1 focus:ring-heritage-gold resize-none h-24 mb-4 text-sm" placeholder="Aggiungi un ricordo..." value={newStoryText} onChange={e => setNewStoryText(e.target.value)} />
-                          <button onClick={handleAddStory} disabled={!newStoryText} className="w-full heritage-button py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50">Preserva il Racconto Familiare</button>
-                        </div>
-                      )}
-                    </div>
+{/* Ricordi rimossi temporaneamente */}
                   </div>
                   <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1961,6 +2232,18 @@ export default function App() {
       </footer>
 
       {/* ── Modals ── */}
+
+      {/* Catawiki Modal */}
+      <AnimatePresence>
+        {isCatawikiModalOpen && catawikiItem && (
+          <CatawikiModal
+            key={catawikiItem.id}
+            item={catawikiItem}
+            onClose={() => { setIsCatawikiModalOpen(false); setCatawikiItem(null); }}
+            onSave={handleSaveCatawikiData}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -2078,7 +2361,12 @@ function NavItem({ active, onClick, icon, label }: { active: boolean; onClick: (
 }
 
 function DetailBox({ label, value }: { label: string; value: string }) {
-  return <div className="flex flex-col gap-1 p-3 md:p-0 border-b border-heritage-ink/8 md:border-b-0 last:border-b-0"><span className="text-[10px] uppercase tracking-[0.2em] font-bold text-heritage-ink/50">{label}</span><span className="font-serif text-base md:text-lg italic text-heritage-ink/90">{value}</span></div>;
+  return (
+    <div className="py-3 border-b border-heritage-ink/6 last:border-b-0">
+      <span className="block text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-0.5">{label}</span>
+      <span className="block font-serif text-[15px] italic text-heritage-ink/85 leading-snug">{value}</span>
+    </div>
+  );
 }
 
 interface ItemCardProps { item: HeritageItem; onClick: () => void; onToggleFavorite?: (id: string, e: MouseEvent) => void; isAdmin?: boolean; aspectClassName?: string; imageHeightRatio?: string; isFeaturedCard?: boolean; showFeaturedBadge?: boolean; }
@@ -2244,27 +2532,1189 @@ function MobileDetailsSection({ form, setForm, handleDetailImages }: { form: any
   );
 }
 
-function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }: { isOpen: boolean; onClose: () => void; onSave: (item: HeritageItem) => Promise<void>; initialData?: HeritageItem | null; onDelete?: (id: string) => void; nextOrder: number; }) {
+// ─── AntiquarianSection ───────────────────────────────────────────────────────
+
+function AntiquarianSection({ item }: { item: HeritageItem }) {
+  const common = [
+    { label: 'Sottocategoria', value: item.catawikiSubcategory },
+    { label: 'Stile', value: item.catawikiStyle },
+    { label: 'Materiale', value: item.catawikiMaterial },
+    { label: 'Paese di origine', value: item.catawikiCountry },
+    { label: 'Condizione', value: item.wearCondition },
+    { label: 'Restaurato', value: item.catawikiRestored ? 'Sì' : undefined },
+    { label: 'Peso spedizione', value: item.catawikiWeight ? `${item.catawikiWeight} kg` : undefined },
+    { label: 'Spedizione', value: item.catawikiShippingAvailable ? 'Disponibile' : undefined },
+    { label: 'Ritiro', value: item.catawikiPickupAvailable ? 'Disponibile' : undefined },
+  ].filter(f => f.value);
+
+  const specific = Object.entries((item as any).catawikiSpecific || {})
+    .filter(([, v]) => v !== '' && v !== false && v !== undefined)
+    .map(([k, v]) => ({
+      label: k.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()).trim(),
+      value: v === true ? 'Sì' : String(v),
+    }));
+
+  const hasDescription = !!item.catawikiDescription;
+  const hasAny = common.length > 0 || specific.length > 0 || hasDescription;
+  if (!hasAny) return null;
+
+  return (
+    <div className="mt-2 rounded-2xl border border-heritage-ink/8 overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-4 bg-heritage-ink/3 border-b border-heritage-ink/8 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-2 h-2 rounded-full bg-heritage-gold" />
+          <h5 className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/60">Scheda Antiquaria</h5>
+        </div>
+        {item.catawikiCategory && (
+          <span className="text-[11px] font-bold uppercase tracking-widest px-3 py-1 bg-heritage-gold/10 text-heritage-gold rounded-full">
+            {item.catawikiCategory}
+          </span>
+        )}
+      </div>
+
+      <div className="px-6 py-6 space-y-6">
+
+        {/* Descrizione per prima — è la cosa più importante */}
+        {hasDescription && (
+          <div>
+            <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-3">Descrizione</p>
+            <p className="text-[17px] leading-relaxed text-heritage-ink/85 font-serif italic">{item.catawikiDescription}</p>
+          </div>
+        )}
+
+        {/* Campi comuni */}
+        {common.length > 0 && (
+          <>
+            {hasDescription && <div className="border-t border-heritage-ink/6" />}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
+              {common.map(({ label, value }) => (
+                <div key={label}>
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-1">{label}</p>
+                  <p className="text-[15px] font-heritage italic text-heritage-ink/85">{String(value)}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Campi specifici categoria */}
+        {specific.length > 0 && (
+          <>
+            <div className="border-t border-heritage-ink/6" />
+            <div>
+              <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-4">Dettagli {item.catawikiCategory || 'categoria'}</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-4">
+                {specific.map(({ label, value }) => (
+                  <div key={label}>
+                    <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-1">{label}</p>
+                    <p className="text-[15px] font-heritage italic text-heritage-ink/85">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── CatawikiModal helpers (top-level per evitare re-mount su iOS) ─────────────
+
+function CatawikiCopyBtn({ text, fk, copied, onCopy }: {
+  text: string; fk: string; copied: string | null;
+  onCopy: (text: string, key: string) => void;
+}) {
+  return (
+    <button type="button" onClick={() => onCopy(text, fk)}
+      className={`flex-shrink-0 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all ${copied === fk ? 'bg-green-100 text-green-600' : 'bg-heritage-ink/8 text-heritage-ink/40 hover:bg-heritage-ink/15'}`}>
+      {copied === fk ? '✓' : 'Copia'}
+    </button>
+  );
+}
+
+function CatawikiToggle({ val, onToggle }: { val: boolean; onToggle: () => void }) {
+  return (
+    <div className="flex items-center gap-2 cursor-pointer" onClick={onToggle}>
+      <div className={`w-9 h-5 rounded-full transition-colors relative ${val ? 'bg-[#7B1818]' : 'bg-heritage-ink/15'}`}>
+        <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${val ? 'translate-x-4' : ''}`} />
+      </div>
+      <span className="text-[12px] font-bold text-heritage-ink/60">{val ? 'Sì' : 'No'}</span>
+    </div>
+  );
+}
+
+function CatawikiField({ label, value, isAi, options, onChange, copied, onCopy, fieldKey }: {
+  label: string; value: string; isAi: boolean; options?: string[];
+  onChange: (v: string) => void; copied: string | null;
+  onCopy: (text: string, key: string) => void; fieldKey: string;
+}) {
+  const hasOptions = !!options;
+  // "Altro" mode: valore non vuoto e non presente nelle opzioni, OPPURE utente ha scelto Altro
+  const isCustomValue = hasOptions && value !== '' && !options!.includes(value);
+  const [showCustom, setShowCustom] = React.useState(isCustomValue);
+
+  // Sincronizza se il valore cambia dall'esterno (es. AI che compila)
+  React.useEffect(() => {
+    if (isCustomValue) setShowCustom(true);
+  }, [isCustomValue]);
+
+  const selectValue = hasOptions
+    ? (options!.includes(value) ? value : (showCustom ? '__altro__' : ''))
+    : value;
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">{label}</p>
+          {isAi && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+        </div>
+        <CatawikiCopyBtn text={value || '—'} fk={fieldKey} copied={copied} onCopy={onCopy} />
+      </div>
+      {hasOptions ? (
+        <>
+          <select
+            value={selectValue}
+            onChange={e => {
+              if (e.target.value === '__altro__') {
+                setShowCustom(true);
+                onChange('');
+              } else {
+                setShowCustom(false);
+                onChange(e.target.value);
+              }
+            }}
+            className="w-full border-b border-heritage-ink/20 py-2 bg-transparent focus:outline-none focus:border-heritage-gold font-heritage italic text-heritage-ink appearance-none"
+            style={{ fontSize: '16px' }}>
+            <option value="">— seleziona —</option>
+            {options!.map(o => <option key={o} value={o}>{o}</option>)}
+            <option value="__altro__">Altro (testo libero)</option>
+          </select>
+          {showCustom && (
+            <input
+              value={value}
+              onChange={e => onChange(e.target.value)}
+              className="w-full border-b border-heritage-gold/60 py-2 bg-heritage-gold/5 px-1 focus:outline-none focus:border-heritage-gold font-heritage italic text-heritage-ink rounded"
+              style={{ fontSize: '16px' }}
+              placeholder="Scrivi qui..."
+            />
+          )}
+        </>
+      ) : (
+        <input value={value} onChange={e => onChange(e.target.value)}
+          className="w-full border-b border-heritage-ink/20 py-2 bg-transparent focus:outline-none focus:border-heritage-gold font-heritage italic"
+          style={{ fontSize: '16px' }}
+          placeholder="—" />
+      )}
+    </div>
+  );
+}
+
+// ─── CatawikiModal ────────────────────────────────────────────────────────────
+
+// Mapping categoria app → categoria Catawiki
+const CAT_MAP: Record<string, string> = {
+  'Mobili': 'Mobili', 'Sedute': 'Mobili', 'Illuminazione': 'Illuminazione',
+  'Quadri': 'Quadri', 'Libri': 'Libri',
+  'Porcellane': 'Oggetti', 'Oggetti': 'Oggetti',
+  'Tappeti': 'Arredo', 'Giardino': 'Arredo',
+};
+
+const CATAWIKI_CATS = ['Mobili', 'Illuminazione', 'Quadri', 'Libri', 'Oggetti', 'Arredo'] as const;
+type CatawikiCat = typeof CATAWIKI_CATS[number];
+
+// Campi specifici per categoria
+const CAT_FIELDS: Record<CatawikiCat, { key: string; label: string; type?: string; options?: string[] }[]> = {
+  Mobili: [
+    { key: 'tipoMobile', label: 'Tipo mobile', options: ['Armadio', 'Cassettone', 'Comò', 'Credenza', 'Divano', 'Letto', 'Libreria', 'Poltrona', 'Scrivania', 'Sedia', 'Specchiera', 'Tavolo', 'Tavolino', 'Toilette', 'Altro'] },
+    { key: 'designer', label: 'Designer / Ebanista' },
+    { key: 'produttore', label: 'Produttore / Marchio' },
+    { key: 'essenzaLegno', label: 'Essenza legno', options: ['Ciliegio', 'Ebano', 'Faggio', 'Frassino', 'Lacca', 'Mogano', 'Noce', 'Olmo', 'Pino', 'Quercia', 'Radica', 'Rovere', 'Teak', 'Altro'] },
+    { key: 'materialeStruttura', label: 'Materiale struttura', options: ['Legno massello', 'Legno impiallacciato', 'Legno laccato', 'Metallo', 'Ferro battuto', 'Ottone', 'Misto legno-metallo', 'Altro'] },
+    { key: 'materialeRivestimento', label: 'Materiale rivestimento', options: ['Velluto', 'Seta', 'Lino', 'Cotone', 'Pelle', 'Pelle sintetica', 'Damasco', 'Gobelin', 'Nessuno', 'Altro'] },
+    { key: 'ferramenta', label: 'Ferramenta', options: ['Ottone', 'Bronzo', 'Ferro', 'Argento', 'Dorata', 'Originale', 'Sostituita', 'Assente'] },
+    { key: 'finitura', label: 'Finitura', options: ['Cera', 'Lacca', 'Laccato bianco', 'Laccato nero', 'Noce scuro', 'Patinato', 'Verniciato', 'Naturale', 'Doratura', 'Altro'] },
+    { key: 'colore', label: 'Colore', options: ['Beige', 'Bianco', 'Bordeaux', 'Bruno', 'Ciliegio', 'Crema', 'Dorato', 'Grigio', 'Mogano', 'Nero', 'Noce', 'Rosso', 'Verde', 'Altro'] },
+    { key: 'stile', label: 'Stile', options: ['Art Déco', 'Art Nouveau', 'Barocco', 'Biedermeier', 'Design italiano', 'Eclettico', 'Impero', 'Liberty', 'Luigi XIV', 'Luigi XV', 'Luigi XVI', 'Modernista', 'Neoclassico', 'Rinascimentale', 'Rococò', 'Rustico toscano', 'Vittoriano', 'Altro'] },
+    { key: 'numeroCassetti', label: 'N° cassetti', options: ['0', '1', '2', '3', '4', '5', '6+'] },
+    { key: 'numeroAnte', label: 'N° ante', options: ['0', '1', '2', '3', '4+'] },
+    { key: 'patinaOriginale', label: 'Patina originale', type: 'bool' },
+    { key: 'difettiStrutturali', label: 'Difetti strutturali', options: ['Nessuno', 'Lievi graffi', 'Giunture allentate', 'Parte mancante', 'Crepe nel legno', 'Tarli (trattati)', 'Altro'] },
+    { key: 'usuraSuperficie', label: 'Usura superficie', options: ['Nessuna', 'Minima', "Normale per l'età", 'Significativa', 'Da restaurare'] },
+  ],
+  Illuminazione: [
+    { key: 'tipoLampada', label: 'Tipo', options: ['Lampadario', 'Applique', 'Piantana', 'Lampada da tavolo', 'Lanterna', 'Lume', 'Coppia', 'Altro'] },
+    { key: 'materialeCorpo', label: 'Materiale corpo', options: ['Ottone', 'Bronzo', 'Ferro battuto', 'Ottone dorato', 'Acciaio', 'Alluminio', 'Legno', 'Ceramica', 'Vetro', 'Misto', 'Altro'] },
+    { key: 'materialeDiffusore', label: 'Materiale diffusore', options: ['Cristallo', 'Vetro soffiato', 'Vetro opalino', 'Vetro colorato', 'Vetro molato', 'Tessuto', 'Pergamena', 'Nessuno', 'Altro'] },
+    { key: 'numeroPuntiLuce', label: 'N° punti luce', options: ['1', '2', '3', '4', '5', '6', '8', '10', '12', '12+'] },
+    { key: 'attacco', label: 'Attacco', options: ['E27', 'E14', 'B22', 'G9', 'G4', 'Da sostituire', 'Altro'] },
+    { key: 'funzionante', label: 'Funzionante', type: 'bool' },
+    { key: 'cablaggioAggiornato', label: 'Cablaggio aggiornato', type: 'bool' },
+    { key: 'colore', label: 'Colore', options: ['Oro', 'Ottone antico', 'Bronzo', 'Nero', 'Bianco', 'Cromo', 'Multicolore', 'Trasparente', 'Altro'] },
+    { key: 'stile', label: 'Stile', options: ['Art Déco', 'Art Nouveau', 'Barocco', 'Classico', 'Impero', 'Liberty', 'Modernista', 'Neoclassico', 'Rococò', 'Rustico', 'Vintage', 'Altro'] },
+    { key: 'altezzaTotale', label: 'Altezza totale (cm)' },
+    { key: 'diametro', label: 'Diametro (cm)' },
+  ],
+  Quadri: [
+    { key: 'titoloOpera', label: 'Titolo opera' },
+    { key: 'artista', label: 'Artista / Autore' },
+    { key: 'atelierScuola', label: 'Atelier / Scuola', options: ['Scuola fiorentina', 'Scuola toscana', 'Scuola romana', 'Scuola veneziana', 'Scuola napoletana', 'Scuola fiamminga', 'Scuola francese', 'Ignoto', 'Altro'] },
+    { key: 'firmato', label: 'Firmato', type: 'bool' },
+    { key: 'datato', label: 'Datato', type: 'bool' },
+    { key: 'tecnica', label: 'Tecnica', options: ['Olio su tela', 'Olio su tavola', 'Olio su cartone', 'Acrilico', 'Acquerello', 'Tempera', 'Tecnica mista', 'Pastello', 'Matita / Carboncino', 'Stampa', 'Incisione', 'Acquaforte', 'Litografia', 'Serigrafia', 'Altro'] },
+    { key: 'supporto', label: 'Supporto', options: ['Tela', 'Tavola', 'Carta', 'Cartone', 'Metallo', 'Rame', 'Avorio', 'Altro'] },
+    { key: 'soggetto', label: 'Soggetto', options: ['Paesaggio', 'Ritratto', 'Natura morta', 'Scena di genere', 'Scena storica', 'Scena religiosa', 'Marina', 'Veduta urbana', 'Animali', 'Nudo', 'Astratto', 'Altro'] },
+    { key: 'movimentoArtistico', label: 'Movimento artistico', options: ['Barocco', 'Classicismo', 'Divisionismo', 'Espressionismo', 'Impressionismo', 'Liberty', 'Macchiaioli', 'Manierismo', 'Neoclassicismo', 'Realismo', 'Rinascimento', 'Romanticismo', 'Vedutismo', 'Altro'] },
+    { key: 'altezzaConCornice', label: 'Altezza con cornice (cm)' },
+    { key: 'larghezzaConCornice', label: 'Larghezza con cornice (cm)' },
+    { key: 'certificatoAutenticita', label: 'Certificato autenticità', type: 'bool' },
+    { key: 'provenienza', label: 'Provenienza / Galleria' },
+    { key: 'esposizioni', label: 'Esposizioni / Pubblicazioni' },
+    { key: 'restauriTela', label: 'Restauri / Craquelure', options: ['Nessuno', 'Lievi craquelure', 'Craquelure estesa', 'Restauri puntuali', 'Restauri visibili', 'Foderatura'] },
+    { key: 'statoCornice', label: 'Stato cornice', options: ['Originale ottimo', 'Originale con usura', 'Restaurata', 'Sostituita', 'Assente'] },
+  ],
+  Libri: [
+    { key: 'autore', label: 'Autore' },
+    { key: 'curatore', label: 'Curatore / Traduttore' },
+    { key: 'illustratore', label: 'Illustratore' },
+    { key: 'editore', label: 'Editore' },
+    { key: 'luogoPubblicazione', label: 'Luogo pubblicazione', options: ['Bologna', 'Firenze', 'Genova', 'Milano', 'Napoli', 'Palermo', 'Roma', 'Torino', 'Venezia', 'Parigi', 'Londra', 'Berlino', 'Altro'] },
+    { key: 'annoPubblicazione', label: 'Anno pubblicazione' },
+    { key: 'edizione', label: 'Edizione', options: ['Prima edizione', 'Seconda edizione', 'Terza edizione', 'Edizione riveduta', 'Edizione numerata', 'Ristampa anastatica', 'Altro'] },
+    { key: 'primaEdizione', label: 'Prima edizione', type: 'bool' },
+    { key: 'tiraturaLimitata', label: 'Tiratura limitata', type: 'bool' },
+    { key: 'numeroPagine', label: 'N° pagine' },
+    { key: 'lingua', label: 'Lingua', options: ['Italiano', 'Latino', 'Francese', 'Inglese', 'Tedesco', 'Spagnolo', 'Greco antico', 'Multilingue', 'Altro'] },
+    { key: 'rilegatura', label: 'Rilegatura', options: ['Cartonato', 'Brossura', 'Pergamena', 'Pelle', 'Tela', 'Mezza pelle', 'Piena pelle', 'Mezza tela', 'Altro'] },
+    { key: 'dedicaAutografa', label: 'Dedica autografa', type: 'bool' },
+    { key: 'firmaAutore', label: 'Firma autore', type: 'bool' },
+    { key: 'conservazioneCopertina', label: 'Stato copertina', options: ['Ottimo', 'Buono', 'Discreto — usura normale', 'Con difetti (specificare)', 'Da restaurare'] },
+    { key: 'pagineMancanti', label: 'Pagine mancanti', type: 'bool' },
+    { key: 'annotazioni', label: 'Annotazioni / Macchie', options: ['Nessuna', 'Lievi foxing', 'Foxing esteso', 'Annotazioni a matita', 'Annotazioni a penna', 'Timbri bibliotecari', "Macchie d'umidità", 'Altro'] },
+  ],
+  Oggetti: [
+    { key: 'tipoOggetto', label: 'Tipo oggetto', options: ['Barometro', 'Bronzetto', 'Candelabro', 'Ceramica', 'Ciotola', 'Cornice', 'Fermacarte', 'Giara', 'Orologio', 'Portachiavi', 'Radio', 'Scultura', 'Specchio', 'Statuetta', 'Strumento musicale', 'Vaso', 'Altro'] },
+    { key: 'artista', label: 'Artista / Creatore' },
+    { key: 'marchio', label: 'Marchio / Produttore' },
+    { key: 'serie', label: 'Serie / Collezione' },
+    { key: 'materialeSecondario', label: 'Materiale secondario', options: ['Avorio', 'Bronzo', 'Ceramica', 'Cristallo', 'Cuoio', 'Legno', 'Marmo', 'Metallo', 'Osso', 'Ottone', 'Pietra', 'Smalto', 'Tessuto', 'Vetro', 'Altro'] },
+    { key: 'tecnica', label: 'Tecnica esecutiva', options: ['Cesellatura', 'Doratura', 'Forgiatura', 'Fusione a cera persa', 'Incisione', 'Intarsio', 'Lavorazione a mano', 'Manifattura', 'Pressofusione', 'Smaltatura', 'Tornitura', 'Altro'] },
+    { key: 'colore', label: 'Colore', options: ['Bianco', 'Blu', 'Bruno', 'Dorato', 'Grigio', 'Multicolore', 'Nero', 'Rosso', 'Verde', 'Altro'] },
+    { key: 'soggetto', label: 'Soggetto / Tema', options: ['Animali', 'Figura umana', 'Fiori', 'Geometrico', 'Mitologico', 'Natura', 'Paesaggio', 'Religioso', 'Simbolico', 'Altro'] },
+    { key: 'motivoDecorativo', label: 'Motivo decorativo' },
+    { key: 'manifattura', label: 'Manifattura', options: ['Capodimonte', 'Deruta', 'Doccia / Richard Ginori', 'Faenza', 'Meissen', 'Sèvres', 'Nove di Bassano', 'Manifattura toscana', 'Ignota', 'Altro'] },
+    { key: 'altezza', label: 'Altezza (cm)' },
+    { key: 'diametro', label: 'Diametro (cm)' },
+    { key: 'crepeScheggiature', label: 'Crepe / Scheggiature', options: ['Nessuna', 'Microfessure (non visibili)', 'Scheggiatura minore', 'Crepa visibile', 'Restauro precedente', 'Più difetti'] },
+    { key: 'partiMancanti', label: 'Parti mancanti', type: 'bool' },
+    { key: 'testatoFunzionante', label: 'Testato e funzionante', type: 'bool' },
+  ],
+  Arredo: [
+    { key: 'tipoArredo', label: 'Tipo', options: ['Tappeto', 'Kilim', 'Tessile / Arazzo', 'Cuscino', 'Mobile da giardino', 'Fontana', 'Altro'] },
+    { key: 'materialeArredo', label: 'Materiale principale', options: ['Lana', 'Seta', 'Cotone', 'Lana e seta', 'Lana e cotone', 'Fibra vegetale', 'Ferro', 'Ghisa', 'Pietra', 'Altro'] },
+    { key: 'tecnicaArredo', label: 'Tecnica', options: ['Annodato a mano', 'Tessuto a mano', 'Tessuto a macchina', 'Intrecciato', 'Ricamato', 'Kilim piatto', 'Altro'] },
+    { key: 'origineManifattura', label: 'Origine / Manifattura', options: ['Afghanistan', 'Anatolia', 'Caucaso', 'Iran / Persia', 'Iraq', 'Italia', 'Marocco', 'Pakistan', 'Turchia', 'Altro'] },
+    { key: 'motivoDecorativo', label: 'Motivo decorativo', options: ['Floreale', 'Geometrico', 'Medaglione', 'Mihrab', 'Paisley', 'Tribale', 'Altro'] },
+    { key: 'colore', label: 'Colori predominanti', options: ['Beige / Avorio', 'Blu e rosso', 'Bordeaux', 'Marrone / Terracotta', 'Multicolore', 'Naturale', 'Nero e rosso', 'Verde', 'Altro'] },
+    { key: 'nodiDm2', label: 'Nodi per dm² (tappeti)' },
+    { key: 'altezzaTappeto', label: 'Altezza (cm)' },
+    { key: 'larghezzaTappeto', label: 'Larghezza (cm)' },
+    { key: 'usura', label: 'Usura / Strappi', options: ['Nessuna', "Minima — normale per l'età", 'Usura al centro', 'Usura ai bordi', 'Strappi riparati', 'Da restaurare'] },
+    { key: 'colorisbiaditi', label: 'Colori sbiaditi', type: 'bool' },
+  ],
+};
+
+
+// AI prompt per categoria
+function buildCatawikiPrompt(item: HeritageItem, catawikiCat: CatawikiCat): string {
+  const fields = CAT_FIELDS[catawikiCat];
+  const specificFieldsJson = fields.map(f => {
+    if (f.type === 'bool') return `  "${f.key}": false`;
+    if (f.options) return `  "${f.key}": "una tra: ${f.options.join(', ')}"`;
+    return `  "${f.key}": ""`;
+  }).join(',\n');
+
+  return `Sei un esperto antiquario e bibliofilo con profonda conoscenza del mercato dell'arte e dei libri antichi in Toscana, specializzato nel periodo tra Ottocento e primo Novecento. Hai esperienza diretta nelle case d'asta italiane ed europee (Pandolfini, Gonnelli, Christie's, Sotheby's, Catawiki) e conosci i prezzi di mercato aggiornati per mobili e arredi toscani, dipinti, stampe, libri antichi, oggetti decorativi, ceramiche, bronzi, tappeti.
+
+L'oggetto proviene da una villa/casa padronale del Mugello (Toscana) — questo aumenta la plausibilità di oggetti toscani di buona fattura, con possibile provenienza da artigiani o stampatori fiorentini dell'800/900.
+
+ISTRUZIONI:
+- Compila solo i campi deducibili con certezza — lascia "" per quelli incerti, non inventare
+- Descrizione: tono professionale stile casa d'aste, 3-5 frasi concise, MAX 500 caratteri
+- Usa attributi stilistici precisi (es. "Luigi XVI toscano", "Liberty fiorentino", "Neoclassico")
+- Se riconosci manifattura o ebanista, citalo con sicurezza graduata ("attribuibile a...", "stile di...")
+
+Dati dell'oggetto:
+- Nome: ${item.name}
+- Descrizione: ${item.description}
+- Categoria: ${item.category}
+- Anno/Epoca: ${item.year || 'non specificato'}
+- Dimensioni: ${item.dimensions || 'non specificate'}
+- Condizione: ${item.wearCondition || 'non specificata'}
+- Note tecniche: ${item.technicalNotes || 'nessuna'}
+- Valore stimato: ${(item as any).estimatedValue || item.price || 'non specificato'}
+
+Categoria Catawiki: ${catawikiCat}
+
+Genera SOLO un JSON valido (nessun testo prima o dopo):
+{
+  "catawikiTitle": "titolo ottimizzato MAX 60 caratteri, descrittivo e ricercabile",
+  "catawikiSubcategory": "sottocategoria specifica",
+  "catawikiStyle": "stile storico preciso (es. Luigi XVI, Biedermeier, Liberty, Barocco toscano)",
+  "catawikiMaterial": "materiale principale con specificità (es. Noce massello, Mogano impiallacciato)",
+  "catawikiCountry": "paese di origine",
+  "catawikiDescription": "descrizione formale stile asta 3-5 frasi, enfatizza qualità, epoca, provenienza toscana, stato conservazione e unicità. MAX 500 caratteri.",
+  "catawikiRestored": false,
+${specificFieldsJson}
+}`;
+}
+
+function CatawikiModal({ item, onClose, onSave }: {
+  item: HeritageItem;
+  onClose: () => void;
+  onSave: (updated: HeritageItem) => Promise<void>;
+}) {
+  // Detect category
+  const detectedCat = (CAT_MAP[item.category] || 'Oggetti') as CatawikiCat;
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(item.catawikiCategory ? 2 : 1);
+  const [catawikiCat, setCatawikiCat] = useState<CatawikiCat>(
+    (CATAWIKI_CATS.includes(item.catawikiCategory as CatawikiCat) ? item.catawikiCategory : detectedCat) as CatawikiCat
+  );
+  const [common, setCommon] = useState({
+    catawikiTitle: item.catawikiTitle || '',
+    catawikiSubcategory: item.catawikiSubcategory || '',
+    catawikiStyle: item.catawikiStyle || '',
+    catawikiMaterial: item.catawikiMaterial || '',
+    catawikiCountry: item.catawikiCountry || 'Italia',
+    catawikiRestored: item.catawikiRestored ?? false,
+    catawikiWeight: item.catawikiWeight || '',
+    catawikiShippingAvailable: item.catawikiShippingAvailable ?? false,
+    catawikiPickupAvailable: item.catawikiPickupAvailable ?? true,
+    catawikiDescription: item.catawikiDescription || '',
+    catawikiImages: (item.catawikiImages?.length ? item.catawikiImages : [item.imageUrl, ...(item.images || [])].filter(Boolean).slice(0, 5)) as string[],
+  });
+  const [specific, setSpecific] = useState<Record<string, string | boolean>>(
+    (item as any).catawikiSpecific || {}
+  );
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveOk, setSaveOk] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  const allImages = [item.imageUrl, ...(item.images || [])].filter(Boolean) as string[];
+  const photoCount = common.catawikiImages.filter(Boolean).length;
+  const copyToClipboard = (text: string, key: string) => {
+    const done = () => { setCopied(key); setTimeout(() => setCopied(null), 3000); };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else { fallbackCopy(text, done); }
+  };
+
+  const fallbackCopy = (text: string, done: () => void) => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); done(); } catch {}
+    document.body.removeChild(ta);
+  };
+
+  const runAI = async () => {
+    const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY;
+    if (!apiKey) { alert('Aggiungi VITE_ANTHROPIC_API_KEY nel file .env.local'); return; }
+    setIsAiLoading(true);
+    try {
+      const prompt = buildCatawikiPrompt(item, catawikiCat);
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      });
+      if (!res.ok) throw new Error((await res.json()).error?.message || 'Errore API');
+      const data = await res.json();
+      const text = data.content?.[0]?.text || '';
+      const match = text.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Nessun JSON');
+      const result = JSON.parse(match[0]);
+      const newAiFields = new Set<string>();
+      // Apply common fields
+      const commonKeys = ['catawikiTitle','catawikiSubcategory','catawikiStyle','catawikiMaterial','catawikiCountry','catawikiDescription','catawikiRestored'];
+      const newCommon = { ...common };
+      commonKeys.forEach(k => {
+        if (result[k] !== undefined && result[k] !== '' && result[k] !== false) {
+          (newCommon as any)[k] = result[k];
+          newAiFields.add(k);
+        }
+      });
+      setCommon(newCommon);
+      // Apply specific fields
+      const newSpecific = { ...specific };
+      CAT_FIELDS[catawikiCat].forEach(f => {
+        if (result[f.key] !== undefined && result[f.key] !== '' && result[f.key] !== false) {
+          newSpecific[f.key] = result[f.key];
+          newAiFields.add(f.key);
+        }
+      });
+      setSpecific(newSpecific);
+      setAiFields(newAiFields);
+      setStep(2);
+    } catch (e: any) { alert('Errore AI: ' + e.message); }
+    finally { setIsAiLoading(false); }
+  };
+
+  const buildExportLines = () => {
+    const fields = CAT_FIELDS[catawikiCat];
+    const selectedPhotos = common.catawikiImages.filter(Boolean);
+    return [
+      `════════════════════════════════════════`,
+      `${item.name.toUpperCase()}`,
+      `Categoria Catawiki: ${catawikiCat}`,
+      `════════════════════════════════════════`,
+      ``,
+      `── IDENTIFICAZIONE ─────────────────────`,
+      `Titolo lotto:      ${common.catawikiTitle || '—'}`,
+      `Sottocategoria:    ${common.catawikiSubcategory || '—'}`,
+      `Stile:             ${common.catawikiStyle || '—'}`,
+      `Materiale:         ${common.catawikiMaterial || '—'}`,
+      `Paese origine:     ${common.catawikiCountry || '—'}`,
+      ``,
+      `── CRONOLOGIA ──────────────────────────`,
+      `Anno/Epoca:        ${item.year || '—'}`,
+      ``,
+      `── STATO ───────────────────────────────`,
+      `Condizione:        ${item.wearCondition || '—'}`,
+      `Restaurato:        ${common.catawikiRestored ? 'Sì' : 'No'}`,
+      ``,
+      `── MISURE ──────────────────────────────`,
+      `Dimensioni:        ${item.dimensions || '—'}`,
+      `Peso spedizione:   ${common.catawikiWeight || '—'} kg`,
+      ``,
+      `── LOGISTICA ───────────────────────────`,
+      `Spedizione:        ${common.catawikiShippingAvailable ? 'Sì' : 'No'}`,
+      `Ritiro:            ${common.catawikiPickupAvailable ? 'Sì' : 'No'}`,
+      ``,
+      `── ${catawikiCat.toUpperCase()} ─────────────────────────`,
+      ...fields.map(f => {
+        const val = specific[f.key];
+        const display = val === true ? 'Sì' : val === false ? 'No' : (val || '—');
+        return `${(f.label + ':').padEnd(20)} ${display}`;
+      }),
+      ``,
+      `── DESCRIZIONE ─────────────────────────`,
+      common.catawikiDescription || '—',
+      ``,
+      `── FOTO (${selectedPhotos.length}/5) ──────────────────────`,
+      ...selectedPhotos.map((url, i) => `  ${i + 1}. ${url}`),
+    ].join('\n');
+  };
+
+  const exportTxt = () => {
+    const txt = buildExportLines();
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `catawiki-${item.name.slice(0, 40).replace(/[^a-z0-9]/gi, '-').toLowerCase()}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSave({ ...item, ...common, catawikiCategory: catawikiCat, catawikiSpecific: specific } as HeritageItem);
+      setSaveOk(true);
+    } catch (e: any) { alert('Errore: ' + (e?.message || 'Riprova')); }
+    finally { setIsSaving(false); }
+  };
+
+  const stepLabel = ['', 'Categoria', 'Campi comuni', 'Dettagli', 'Foto'][step];
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[400] bg-heritage-ink/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden"
+      onClick={onClose}>
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 60, opacity: 0 }}
+        transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+        className="bg-white w-full md:max-w-2xl rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+        style={{ maxHeight: '95svh', WebkitOverflowScrolling: 'touch' }}
+        onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className="px-6 pt-5 pb-4 border-b border-heritage-ink/8 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#7B1818] rounded-full flex items-center justify-center">
+              <ExternalLink size={14} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-[15px] text-heritage-ink">Scheda Catawiki</p>
+              <p className="text-[11px] text-heritage-ink/50 font-serif italic">{item.name.slice(0, 35)}{item.name.length > 35 ? '…' : ''}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Step indicator */}
+            <div className="hidden sm:flex items-center gap-1">
+              {[1,2,3,4].map(s => (
+                <button key={s} onClick={() => s < step || saveOk ? setStep(s as any) : null}
+                  className={`w-6 h-6 rounded-full text-[10px] font-bold transition-all ${step === s ? 'bg-[#7B1818] text-white' : s < step ? 'bg-heritage-gold/30 text-heritage-gold cursor-pointer' : 'bg-heritage-ink/8 text-heritage-ink/30'}`}>
+                  {s}
+                </button>
+              ))}
+            </div>
+            <button onClick={onClose} className="p-2 hover:bg-heritage-cream rounded-full"><X size={18} /></button>
+          </div>
+        </div>
+
+        {/* Step label mobile */}
+        <div className="px-6 py-2 bg-heritage-cream/30 border-b border-heritage-ink/5 flex items-center justify-between sm:hidden">
+          <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50">Step {step}/4 — {stepLabel}</p>
+          <div className="flex gap-1">{[1,2,3,4].map(s => <div key={s} className={`w-6 h-1 rounded-full ${s <= step ? 'bg-[#7B1818]' : 'bg-heritage-ink/10'}`} />)}</div>
+        </div>
+
+        {/* Body */}
+        <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+
+          {/* ── STEP 1: Categoria ── */}
+          {step === 1 && (
+            <div className="space-y-5">
+              <div>
+                <p className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/50 mb-1">Categoria rilevata</p>
+                <p className="text-[13px] text-heritage-ink/40 font-serif italic mb-4">Basata su "{item.category}" — puoi cambiarla</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {CATAWIKI_CATS.map(cat => (
+                    <button key={cat} onClick={() => setCatawikiCat(cat)}
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl border-2 text-left transition-all ${catawikiCat === cat ? 'border-[#7B1818] bg-[#7B1818]/5 text-[#7B1818]' : 'border-heritage-ink/10 text-heritage-ink/60 hover:border-heritage-ink/30'}`}>
+                      <span className="font-bold text-[13px]">{cat}</span>
+                      {catawikiCat === cat && <Check size={14} className="ml-auto flex-shrink-0" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="p-4 bg-heritage-gold/8 rounded-2xl border border-heritage-gold/20 flex items-start gap-3">
+                <Sparkles size={16} className="text-heritage-gold flex-shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-gold mb-1">Pre-compila con AI</p>
+                  <p className="text-[12px] text-heritage-ink/60 font-serif italic">Claude legge i dati dell'oggetto e compila i campi che riesce a dedurre. I campi incerti restano vuoti.</p>
+                </div>
+              </div>
+              <button onClick={runAI} disabled={isAiLoading}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-heritage-gold text-white rounded-2xl font-bold text-[12px] uppercase tracking-widest disabled:opacity-50">
+                {isAiLoading ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Analisi in corso...</> : <><Sparkles size={14} />Pre-compila con AI e continua</>}
+              </button>
+              <button onClick={() => setStep(2)}
+                className="w-full py-3 border border-heritage-ink/10 rounded-2xl text-[12px] font-bold uppercase tracking-widest text-heritage-ink/50 hover:bg-heritage-cream/40">
+                Compila manualmente →
+              </button>
+
+              {/* Se scheda già compilata: copia rapida */}
+              {item.catawikiTitle && (
+                <div className="border-t border-heritage-ink/8 pt-4">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40 mb-3 text-center">Scheda già compilata</p>
+                  <button
+                    onClick={() => copyToClipboard(buildExportLines(), 'quickcopy')}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl border text-[12px] font-bold uppercase tracking-widest transition-all ${copied === 'quickcopy' ? 'bg-green-50 border-green-200 text-green-600' : 'border-[#7B1818]/30 text-[#7B1818] bg-[#7B1818]/5 hover:bg-[#7B1818]/10'}`}>
+                    {copied === 'quickcopy' ? <><Check size={14} />Copiato!</> : <><Upload size={14} />Copia scheda negli appunti</>}
+                  </button>
+                  <button
+                    onClick={exportTxt}
+                    className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 rounded-2xl border border-heritage-ink/10 text-[12px] font-bold uppercase tracking-widest text-heritage-ink/50 hover:bg-heritage-cream/40 transition-all">
+                    <Upload size={12} />Esporta .txt
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── STEP 2: Campi comuni ── */}
+          {step === 2 && (
+            <div className="space-y-4">
+              <p className="text-[11px] uppercase tracking-widest font-bold text-[#7B1818]">Campi comuni</p>
+
+              {/* Titolo */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">Titolo lotto *</p>
+                    {aiFields.has('catawikiTitle') && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold ${common.catawikiTitle.length > 60 ? 'text-red-500' : 'text-heritage-ink/30'}`}>{common.catawikiTitle.length}/60</span>
+                    <CatawikiCopyBtn text={common.catawikiTitle} fk="title" copied={copied} onCopy={copyToClipboard} />
+                  </div>
+                </div>
+                <input value={common.catawikiTitle} onChange={e => setCommon(p => ({ ...p, catawikiTitle: e.target.value }))}
+                  className={`w-full border-b py-2 bg-transparent focus:outline-none font-heritage italic ${common.catawikiTitle.length > 60 ? 'border-red-300' : 'border-heritage-ink/20 focus:border-heritage-gold'}`}
+                  style={{ fontSize: '16px' }}
+                  placeholder="Titolo ottimizzato per Catawiki…" />
+              </div>
+
+              <CatawikiField label="Sottocategoria" fieldKey="catawikiSubcategory" value={common.catawikiSubcategory} isAi={aiFields.has('catawikiSubcategory')} onChange={v => setCommon(p => ({ ...p, catawikiSubcategory: v }))} copied={copied} onCopy={copyToClipboard} />
+              <CatawikiField label="Stile" fieldKey="catawikiStyle" value={common.catawikiStyle} isAi={aiFields.has('catawikiStyle')} onChange={v => setCommon(p => ({ ...p, catawikiStyle: v }))} copied={copied} onCopy={copyToClipboard} />
+              <CatawikiField label="Materiale principale" fieldKey="catawikiMaterial" value={common.catawikiMaterial} isAi={aiFields.has('catawikiMaterial')} onChange={v => setCommon(p => ({ ...p, catawikiMaterial: v }))} copied={copied} onCopy={copyToClipboard} />
+              <CatawikiField label="Paese di origine" fieldKey="catawikiCountry" value={common.catawikiCountry} isAi={aiFields.has('catawikiCountry')} onChange={v => setCommon(p => ({ ...p, catawikiCountry: v }))} copied={copied} onCopy={copyToClipboard} />
+
+              {/* Anno + Dimensioni read-only */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">Anno/Epoca</p>
+                    <CatawikiCopyBtn text={item.year || '—'} fk="year" copied={copied} onCopy={copyToClipboard} />
+                  </div>
+                  <p className="py-2 text-[13px] font-heritage italic text-heritage-ink/60 border-b border-heritage-ink/8">{item.year || '—'}</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">Dimensioni</p>
+                    <CatawikiCopyBtn text={item.dimensions || '—'} fk="dim" copied={copied} onCopy={copyToClipboard} />
+                  </div>
+                  <p className="py-2 text-[13px] font-heritage italic text-heritage-ink/60 border-b border-heritage-ink/8">{item.dimensions || '—'}</p>
+                </div>
+              </div>
+
+              {/* Condizione read-only */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">Condizione</p>
+                  <CatawikiCopyBtn text={item.wearCondition || '—'} fk="cond" copied={copied} onCopy={copyToClipboard} />
+                </div>
+                <p className="py-2 text-[13px] font-heritage italic text-heritage-ink/60 border-b border-heritage-ink/8">{item.wearCondition || '—'}</p>
+              </div>
+
+              {/* Toggle */}
+              <div className="grid grid-cols-3 gap-3 pt-1">
+                {([
+                  { key: 'catawikiRestored' as const, label: 'Restaurato' },
+                  { key: 'catawikiShippingAvailable' as const, label: 'Spedizione' },
+                  { key: 'catawikiPickupAvailable' as const, label: 'Ritiro' },
+                ] as { key: keyof typeof common; label: string }[]).map(({ key, label }) => (
+                  <div key={key} className="flex flex-col gap-1.5 items-center p-3 bg-heritage-cream/30 rounded-xl">
+                    <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">{label}</p>
+                    <CatawikiToggle val={!!common[key]} onToggle={() => setCommon(p => ({ ...p, [key]: !p[key] }))} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Peso */}
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">Peso spedizione (kg)</p>
+                <input value={common.catawikiWeight} onChange={e => setCommon(p => ({ ...p, catawikiWeight: e.target.value }))}
+                  className="w-full border-b border-heritage-ink/20 py-2 bg-transparent focus:outline-none focus:border-heritage-gold font-heritage italic"
+                  style={{ fontSize: '16px' }}
+                  placeholder="es. 12.5" type="number" step="0.1" />
+              </div>
+            </div>
+          )}
+
+          {/* ── STEP 3: Campi categoria ── */}
+          {step === 3 && (
+            <div className="space-y-4">
+              <p className="text-[11px] uppercase tracking-widest font-bold text-[#7B1818]">Dettagli {catawikiCat}</p>
+              {CAT_FIELDS[catawikiCat].map(f => (
+                f.type === 'bool' ? (
+                  <div key={f.key} className="flex items-center justify-between py-2 border-b border-heritage-ink/8">
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/50">{f.label}</p>
+                      {aiFields.has(f.key) && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+                    </div>
+                    <CatawikiToggle val={!!specific[f.key]} onToggle={() => setSpecific(p => ({ ...p, [f.key]: !p[f.key] }))} />
+                  </div>
+                ) : (
+                  <CatawikiField key={f.key} label={f.label} fieldKey={f.key}
+                    value={String(specific[f.key] ?? '')}
+                    isAi={aiFields.has(f.key)}
+                    options={f.options}
+                    onChange={v => setSpecific(p => ({ ...p, [f.key]: v }))}
+                    copied={copied} onCopy={copyToClipboard} />
+                )
+              ))}
+            </div>
+          )}
+
+          {/* ── STEP 4: Descrizione + Foto ── */}
+          {step === 4 && (
+            <div className="space-y-5">
+              {/* Descrizione */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-[11px] uppercase tracking-widest font-bold text-[#7B1818]">Descrizione</p>
+                    {aiFields.has('catawikiDescription') && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-bold ${common.catawikiDescription.length > 500 ? 'text-red-500' : 'text-heritage-ink/30'}`}>{common.catawikiDescription.length}/500</span>
+                    <CatawikiCopyBtn text={common.catawikiDescription} fk="desc" copied={copied} onCopy={copyToClipboard} />
+                  </div>
+                </div>
+                <textarea value={common.catawikiDescription} onChange={e => setCommon(p => ({ ...p, catawikiDescription: e.target.value }))}
+                  className="w-full border border-heritage-ink/12 rounded-2xl p-4 bg-heritage-cream/20 focus:outline-none focus:border-heritage-gold resize-none font-heritage italic leading-relaxed"
+                  style={{ fontSize: '16px' }}
+                  rows={6} placeholder="Descrizione in stile asta Catawiki…" />
+              </div>
+
+              {/* Foto */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[11px] uppercase tracking-widest font-bold text-[#7B1818]">Foto ({photoCount}/5)</p>
+                  {photoCount < 5 && <p className="text-[11px] text-orange-500 font-bold">Mancano {5 - photoCount}</p>}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {allImages.map((img, i) => {
+                    const sel = common.catawikiImages.includes(img);
+                    const idx = common.catawikiImages.indexOf(img);
+                    return (
+                      <div key={i} onClick={() => {
+                        setCommon(p => {
+                          const imgs = p.catawikiImages.includes(img)
+                            ? p.catawikiImages.filter(u => u !== img)
+                            : p.catawikiImages.length < 5 ? [...p.catawikiImages, img] : p.catawikiImages;
+                          return { ...p, catawikiImages: imgs };
+                        });
+                      }}
+                        className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${sel ? 'border-[#7B1818]' : 'border-transparent opacity-50 hover:opacity-80'}`}>
+                        <img src={img} className="w-full h-full object-cover" />
+                        {sel && <div className="absolute top-1 right-1 w-5 h-5 bg-[#7B1818] rounded-full flex items-center justify-center text-white text-[9px] font-bold">{idx + 1}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+                {allImages.length === 0 && <p className="text-[12px] italic text-heritage-ink/40 text-center py-6">Nessuna foto disponibile — aggiungile dal form oggetto</p>}
+              </div>
+
+              {/* Copia tutto */}
+              <button onClick={() => copyToClipboard(buildExportLines(), 'all')}
+                className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl border text-[12px] font-bold uppercase tracking-widest transition-all ${copied === 'all' ? 'bg-green-50 border-green-200 text-green-600' : 'border-heritage-ink/10 text-heritage-ink/50 hover:bg-heritage-cream/40'}`}>
+                {copied === 'all' ? '✓ Copiato!' : 'Copia tutto negli appunti'}
+              </button>
+            </div>
+          )}
+
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-heritage-ink/8 bg-white flex-shrink-0">
+          <div className="flex gap-3">
+            {step > 1 ? (
+              <button onClick={() => setStep(s => (s - 1) as any)}
+                className="px-4 py-3 rounded-xl border border-heritage-ink/10 text-[12px] font-bold uppercase tracking-widest text-heritage-ink/50 hover:bg-heritage-cream/40 flex-shrink-0">
+                ← Indietro
+              </button>
+            ) : (
+              <button onClick={onClose}
+                className="px-4 py-3 rounded-xl border border-heritage-ink/10 text-[12px] font-bold uppercase tracking-widest text-heritage-ink/50 hover:bg-heritage-cream/40 flex-shrink-0">
+                Annulla
+              </button>
+            )}
+            {step < 4 ? (
+              <button onClick={() => setStep(s => (s + 1) as any)}
+                className="flex-1 py-3 bg-[#7B1818] text-white rounded-xl text-[12px] font-bold uppercase tracking-widest hover:bg-[#5a1212] transition-colors">
+                Avanti →
+              </button>
+            ) : (
+              <div className="flex gap-2 flex-1">
+                <button onClick={saveOk ? exportTxt : handleSave} disabled={isSaving}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[12px] font-bold uppercase tracking-widest transition-colors disabled:opacity-50 ${saveOk ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#7B1818] hover:bg-[#5a1212] text-white'}`}>
+                  {isSaving
+                    ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Salvataggio...</>
+                    : saveOk
+                      ? <><Upload size={14} />Esporta .txt</>
+                      : 'Salva scheda'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─── ItemFormContent (top-level per evitare re-mount su iOS) ──────────────────
+
+function ItemFormContent({ form, setForm, isDragging, setIsDragging, isProcessingImage,
+  isAnalyzing, detailImages, setDetailImages, uploadProgress, aiApplied,
+  handleImageUpload, handleAddDetailImage, handleDetailImages, handleAnalyze,
+}: {
+  form: typeof emptyForm;
+  setForm: React.Dispatch<React.SetStateAction<typeof emptyForm>>;
+  isDragging: boolean;
+  setIsDragging: (v: boolean) => void;
+  isProcessingImage: boolean;
+  isAnalyzing: boolean;
+  detailImages: { base64: string; url: string; tipo: string }[];
+  setDetailImages: React.Dispatch<React.SetStateAction<{ base64: string; url: string; tipo: string }[]>>;
+  uploadProgress: { current: number; total: number } | null;
+  aiApplied: Set<string>;
+  handleImageUpload: (src: string | File) => void;
+  handleAddDetailImage: (file: File, tipo: string) => void;
+  handleDetailImages: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleAnalyze: () => void;
+}) {
+  const Label = ({ k, children }: { k: string; children: React.ReactNode }) => (
+    <div className="flex items-center gap-1.5 mb-1">
+      <span className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50">{children}</span>
+      {aiApplied.has(k) && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+    </div>
+  );
+  const inputCls = "w-full border-b border-heritage-ink/15 py-2.5 bg-transparent focus:outline-none focus:border-heritage-gold font-heritage italic text-heritage-ink";
+  const sectionTitle = (t: string) => (
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-1.5 h-1.5 rounded-full bg-heritage-gold flex-shrink-0" />
+      <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50">{t}</p>
+      <div className="flex-1 h-px bg-heritage-ink/8" />
+    </div>
+  );
+
+  return (
+    <div className="space-y-8">
+
+      {/* ── FOTO PRINCIPALE ─────────────────────────────────────────── */}
+      <div>
+        {sectionTitle('Foto')}
+        <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/20">
+          {form.imageUrl ? (
+            <div className="relative h-52">
+              <img src={form.imageUrl} className={`absolute inset-0 w-full h-full object-cover ${isProcessingImage ? 'opacity-50 blur-sm' : ''}`} />
+              {isProcessingImage && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
+              <button type="button" onClick={() => setForm(p => ({ ...p, imageUrl: '' }))} className="absolute top-3 right-3 bg-white/90 text-heritage-ink px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
+            </div>
+          ) : (
+            <div
+              onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={e => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if (f?.type.startsWith('image/')) handleImageUpload(f); }}
+              className={`h-36 flex flex-col items-center justify-center gap-2 transition-colors ${isDragging ? 'bg-heritage-gold/10' : ''}`}>
+              {isProcessingImage
+                ? <><div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/40">Elaborazione...</p></>
+                : <Camera size={36} className="text-heritage-ink/20" />}
+            </div>
+          )}
+          {!isProcessingImage && (
+            <div className="grid grid-cols-2 border-t border-heritage-ink/8">
+              <label className="flex flex-col items-center gap-1.5 py-3 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60">
+                <Camera size={18} className="text-heritage-gold" />
+                <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60">Scatta</span>
+                <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
+              </label>
+              <label className="flex flex-col items-center gap-1.5 py-3 cursor-pointer active:bg-heritage-cream/60">
+                <ImageIcon size={18} className="text-heritage-gold" />
+                <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60">Galleria</span>
+                <input type="file" className="hidden" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
+              </label>
+            </div>
+          )}
+        </div>
+
+        {/* Foto dettaglio */}
+        {detailImages.length > 0 && (
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+            {detailImages.map((d, i) => (
+              <div key={i} className="relative flex-shrink-0">
+                <div className="w-16 h-16 rounded-xl overflow-hidden border border-heritage-ink/10"><img src={d.url} className="w-full h-full object-cover" /></div>
+                <p className="text-[9px] uppercase tracking-wide font-bold text-heritage-ink/40 text-center mt-0.5 max-w-[64px] truncate">{d.tipo}</p>
+                <button type="button" onClick={() => { setDetailImages(prev => prev.filter((_, j) => j !== i)); setForm(p => ({ ...p, images: p.images.filter(img => img !== d.url) })); }} className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center"><X size={8} className="text-white" /></button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-1.5 mt-3">
+          {DETAIL_TYPES_IM.map(tipo => (
+            <label key={tipo} className="flex items-center gap-1 px-2.5 py-1.5 bg-heritage-cream/60 rounded-full cursor-pointer active:bg-heritage-gold/20 border border-heritage-ink/8">
+              <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60">{tipo}</span>
+              <input type="file" className="hidden" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleAddDetailImage(f, tipo); }} />
+            </label>
+          ))}
+          <label className="flex items-center gap-1 px-2.5 py-1.5 bg-heritage-gold/10 border border-heritage-gold/30 rounded-full cursor-pointer">
+            <Upload size={11} className="text-heritage-gold" />
+            <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-gold">Batch</span>
+            <input type="file" className="hidden" accept="image/*" multiple onChange={handleDetailImages} />
+          </label>
+        </div>
+        {uploadProgress && (
+          <div className="mt-2">
+            <div className="h-1 bg-heritage-ink/8 rounded-full overflow-hidden"><div className="h-full bg-heritage-gold rounded-full transition-all" style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }} /></div>
+            <p className="text-[10px] text-heritage-ink/40 mt-1 uppercase tracking-widest font-bold">{uploadProgress.current}/{uploadProgress.total} foto</p>
+          </div>
+        )}
+
+        {/* Analizza con AI */}
+        {form.imageUrl && (
+          <button type="button" onClick={handleAnalyze} disabled={isAnalyzing}
+            className={`mt-4 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[12px] uppercase tracking-widest transition-all ${isAnalyzing ? 'bg-heritage-gold/20 text-heritage-gold cursor-wait' : 'bg-heritage-gold text-white shadow-md'}`}>
+            {isAnalyzing
+              ? <><div className="w-4 h-4 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" />Analisi in corso...</>
+              : <><Sparkles size={14} />Analizza con Claude</>}
+          </button>
+        )}
+        {aiApplied.size > 0 && (
+          <p className="text-[10px] text-heritage-gold font-bold uppercase tracking-widest text-center mt-2">
+            ✦ {aiApplied.size} campi compilati dall'AI — i badge dorati indicano i campi aggiornati
+          </p>
+        )}
+      </div>
+
+      {/* ── DATI BASE ───────────────────────────────────────────────── */}
+      <div>
+        {sectionTitle('Dati oggetto')}
+        <div className="space-y-5">
+          <div>
+            <Label k="name">Nome *</Label>
+            <input required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Scrittoio in noce" />
+          </div>
+          <div>
+            <Label k="category">Categoria *</Label>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {ITEM_CATEGORIES.map(c => (
+                <button key={c} type="button" onClick={() => setForm(p => ({ ...p, category: c, catawikiCategory: CAT_MAP[c] || '' }))}
+                  className={`px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${form.category === c ? 'bg-heritage-ink text-white' : 'bg-heritage-ink/8 text-heritage-ink/60'}`}>
+                  {c}{aiApplied.has('category') && form.category === c && <span className="ml-1 text-heritage-gold">✦</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <Label k="room">Stanza *</Label>
+            <input required value={form.room} onChange={e => setForm(p => ({ ...p, room: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Salotto" />
+          </div>
+          <div>
+            <Label k="description">Descrizione *</Label>
+            <textarea required value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} className={`${inputCls} resize-none h-20`} style={{ fontSize: '16px' }} placeholder="Racconta la storia..." />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label k="year">Anno/Epoca</Label>
+              <input value={form.year} onChange={e => setForm(p => ({ ...p, year: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. 1850 circa" />
+            </div>
+            <div>
+              <Label k="dimensions">Dimensioni</Label>
+              <input value={form.dimensions} onChange={e => setForm(p => ({ ...p, dimensions: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. 80×40×90 cm" />
+            </div>
+          </div>
+          <div>
+            <Label k="technicalNotes">Note tecniche</Label>
+            <textarea value={form.technicalNotes} onChange={e => setForm(p => ({ ...p, technicalNotes: e.target.value }))} className={`${inputCls} resize-none h-16`} style={{ fontSize: '16px' }} placeholder="Materiali, tecnica, dettagli..." />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label k="wearCondition">Condizione</Label>
+              <select value={form.wearCondition} onChange={e => setForm(p => ({ ...p, wearCondition: e.target.value as any }))} className={inputCls} style={{ fontSize: '16px' }}>
+                <option value="">—</option>
+                <option value="Ottimo">Ottimo</option>
+                <option value="Buono">Buono</option>
+                <option value="Discreto">Discreto</option>
+                <option value="Da restaurare">Da restaurare</option>
+              </select>
+            </div>
+            <div>
+              <Label k="price">Prezzo</Label>
+              <input value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="€ 500" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SCHEDA CATAWIKI ─────────────────────────────────────────── */}
+      <div>
+        {sectionTitle('Scheda Catawiki')}
+        <div className="space-y-5">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <Label k="catawikiTitle">Titolo annuncio</Label>
+              <span className={`text-[10px] font-bold ${form.catawikiTitle.length > 60 ? 'text-red-500' : 'text-heritage-ink/30'}`}>{form.catawikiTitle.length}/60</span>
+            </div>
+            <input value={form.catawikiTitle} onChange={e => setForm(p => ({ ...p, catawikiTitle: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Titolo ottimizzato per Catawiki..." />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label k="catawikiSubcategory">Sottocategoria</Label>
+              <input value={form.catawikiSubcategory} onChange={e => setForm(p => ({ ...p, catawikiSubcategory: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Comò" />
+            </div>
+            <div>
+              <Label k="catawikiStyle">Stile</Label>
+              <input value={form.catawikiStyle} onChange={e => setForm(p => ({ ...p, catawikiStyle: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Luigi XVI" />
+            </div>
+            <div>
+              <Label k="catawikiMaterial">Materiale</Label>
+              <input value={form.catawikiMaterial} onChange={e => setForm(p => ({ ...p, catawikiMaterial: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Noce massello" />
+            </div>
+            <div>
+              <Label k="catawikiCountry">Paese origine</Label>
+              <input value={form.catawikiCountry} onChange={e => setForm(p => ({ ...p, catawikiCountry: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. Italia" />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <Label k="catawikiDescription">Descrizione catalogo</Label>
+              <span className={`text-[10px] font-bold ${form.catawikiDescription.length > 500 ? 'text-red-500' : 'text-heritage-ink/30'}`}>{form.catawikiDescription.length}/500</span>
+            </div>
+            <textarea value={form.catawikiDescription} onChange={e => setForm(p => ({ ...p, catawikiDescription: e.target.value }))} className={`${inputCls} resize-none h-28`} style={{ fontSize: '16px' }} placeholder="Descrizione formale stile asta..." />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { k: 'catawikiRestored', l: 'Restaurato' },
+              { k: 'catawikiShippingAvailable', l: 'Spedizione' },
+              { k: 'catawikiPickupAvailable', l: 'Ritiro' },
+            ].map(({ k, l }) => (
+              <div key={k} className="flex flex-col items-center gap-1.5 p-3 bg-heritage-cream/30 rounded-xl cursor-pointer"
+                onClick={() => setForm(p => ({ ...p, [k]: !(p as any)[k] }))}>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40">{l}</p>
+                <div className={`w-9 h-5 rounded-full transition-colors relative ${(form as any)[k] ? 'bg-[#7B1818]' : 'bg-heritage-ink/15'}`}>
+                  <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${(form as any)[k] ? 'translate-x-4' : ''}`} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <Label k="catawikiWeight">Peso spedizione (kg)</Label>
+            <input value={form.catawikiWeight} onChange={e => setForm(p => ({ ...p, catawikiWeight: e.target.value }))} type="number" step="0.1" className={inputCls} style={{ fontSize: '16px' }} placeholder="Es. 12.5" />
+          </div>
+        </div>
+      </div>
+
+      {/* ── DETTAGLI VENDITA ─────────────────────────────────────────── */}
+      <div>
+        {sectionTitle('Vendita e logistica')}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label k="status">Stato</Label>
+              <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as any }))} className={inputCls} style={{ fontSize: '16px' }}>
+                <option value="Disponibile">Disponibile</option>
+                <option value="Riservato">Riservato</option>
+                <option value="Affidato">Affidato</option>
+                <option value="Non in Vendita">Non in Vendita</option>
+              </select>
+            </div>
+            <div>
+              <Label k="acquisitionType">Acquisizione</Label>
+              <select value={form.acquisitionType} onChange={e => setForm(p => ({ ...p, acquisitionType: e.target.value as any }))} className={inputCls} style={{ fontSize: '16px' }}>
+                <option value="Vendita">Vendita</option>
+                <option value="Lascito Affettivo">Lascito Affettivo</option>
+                <option value="Famiglia">Famiglia</option>
+              </select>
+            </div>
+            <div>
+              <Label k="destination">Dove si trova</Label>
+              <select value={form.destination} onChange={e => setForm(p => ({ ...p, destination: e.target.value as any }))} className={inputCls} style={{ fontSize: '16px' }}>
+                <option value="Barberino">Barberino</option>
+                <option value="Torino">Torino</option>
+                <option value="Cinisello Balsamo">Cinisello Balsamo</option>
+                <option value="Sorella">Sorella</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </div>
+            <div>
+              <Label k="shipping">Spedizione</Label>
+              <select value={form.shipping} onChange={e => setForm(p => ({ ...p, shipping: e.target.value as any }))} className={inputCls} style={{ fontSize: '16px' }}>
+                <option value="">—</option>
+                <option value="Ritiro in sede">Ritiro in sede</option>
+                <option value="Spedizione possibile">Spedizione possibile</option>
+                <option value="Solo ritiro">Solo ritiro</option>
+                <option value="Concordare">Concordare</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label k="estimatedValue">Valore stimato</Label>
+              <input value={form.estimatedValue} onChange={e => setForm(p => ({ ...p, estimatedValue: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="€ 1.500" />
+            </div>
+            <div>
+              <Label k="productCode">Codice</Label>
+              <input value={form.productCode} onChange={e => setForm(p => ({ ...p, productCode: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="ART-001" />
+            </div>
+          </div>
+          <div>
+            <Label k="catawikiUrl">Link Catawiki</Label>
+            <input value={form.catawikiUrl} onChange={e => setForm(p => ({ ...p, catawikiUrl: e.target.value }))} className={inputCls} style={{ fontSize: '16px' }} placeholder="https://www.catawiki.com/..." />
+          </div>
+          <div className="flex items-center gap-3 cursor-pointer pt-1" onClick={() => setForm(p => ({ ...p, isFeatured: !p.isFeatured }))}>
+            <div className={`w-10 h-5 rounded-full transition-colors relative ${form.isFeatured ? 'bg-heritage-gold' : 'bg-heritage-ink/10'}`}>
+              <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${form.isFeatured ? 'translate-x-5' : 'translate-x-0'}`} />
+            </div>
+            <span className="text-[11px] uppercase font-bold tracking-widest text-heritage-ink/50">In evidenza (Home)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── GALLERY ──────────────────────────────────────────────────── */}
+      <div>
+        {sectionTitle('Gallery foto')}
+        <div className="flex flex-wrap gap-2">
+          {form.images.map((img, i) => (
+            <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden group border border-heritage-ink/10">
+              <img src={img} className="w-full h-full object-cover" />
+              <button type="button" onClick={() => setForm(p => ({ ...p, images: p.images.filter((_, j) => j !== i) }))}
+                className="absolute inset-0 bg-red-500/60 flex items-center justify-center opacity-0 group-hover:opacity-100 active:opacity-100">
+                <Trash2 size={16} className="text-white" />
+              </button>
+            </div>
+          ))}
+          {form.images.length === 0 && (
+            <p className="text-[12px] italic text-heritage-ink/40 w-full text-center py-6 border border-dashed border-heritage-ink/10 rounded-xl">Nessuna foto aggiuntiva</p>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+// ─── ItemModal ────────────────────────────────────────────────────────────────
+
+const ITEM_CATEGORIES = ['Mobili', 'Illuminazione', 'Sedute', 'Quadri', 'Porcellane', 'Tappeti', 'Giardino', 'Libri', 'Oggetti'];
+const DETAIL_TYPES_IM = ['Firma / timbro', 'Hardware / cerniere', 'Etichetta', 'Dettaglio decorativo', 'Materiale / legno', 'Stato conservazione', 'Altro'];
+
+function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }: {
+  isOpen: boolean; onClose: () => void; onSave: (item: HeritageItem) => Promise<void>;
+  initialData?: HeritageItem | null; onDelete?: (id: string) => void; nextOrder: number;
+}) {
   const [form, setForm] = useState({ ...emptyForm, order: nextOrder });
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [detailImages, setDetailImages] = useState<{ base64: string; url: string; tipo: string }[]>([]);
-  const [analyzeResult, setAnalyzeResult] = useState<Partial<typeof emptyForm> | null>(null);
-  const [showApplyModal, setShowApplyModal] = useState(false);
-  // Swipe to close
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
+  const [imageBase64ForAnalysis, setImageBase64ForAnalysis] = useState<string>('');
+  const [aiApplied, setAiApplied] = useState<Set<string>>(new Set());
   const touchStartY = useRef(0);
   const handleTouchStart = (e: React.TouchEvent) => { touchStartY.current = e.touches[0].clientY; };
   const handleTouchEnd = (e: React.TouchEvent) => { if (e.changedTouches[0].clientY - touchStartY.current > 150) onClose(); };
 
   useEffect(() => {
-    if (initialData) { setForm({ name: initialData.name || '', description: initialData.description || '', room: initialData.room || '', category: initialData.category || '', year: initialData.year || '', dimensions: initialData.dimensions || '', status: initialData.status || 'Disponibile', acquisitionType: initialData.acquisitionType || 'Vendita', price: initialData.price || '', catawikiUrl: initialData.catawikiUrl || '', imageUrl: initialData.imageUrl || '', technicalNotes: initialData.technicalNotes || '', destination: initialData.destination || 'Barberino', estimatedValue: initialData.estimatedValue || '', productCode: initialData.productCode || '', wearCondition: initialData.wearCondition || '', shipping: initialData.shipping || '', isFeatured: initialData.isFeatured || false, order: initialData.order, details: initialData.details || [], images: initialData.images || [] }); }
-    else setForm({ ...emptyForm, order: nextOrder });
+    if (!isOpen) return;
+    if (initialData) {
+      setForm({
+        name: initialData.name || '', description: initialData.description || '',
+        room: initialData.room || '', category: initialData.category || '',
+        year: initialData.year || '', dimensions: initialData.dimensions || '',
+        status: initialData.status || 'Disponibile', acquisitionType: initialData.acquisitionType || 'Vendita',
+        price: initialData.price || '', catawikiUrl: initialData.catawikiUrl || '',
+        imageUrl: initialData.imageUrl || '', technicalNotes: initialData.technicalNotes || '',
+        destination: initialData.destination || 'Barberino', estimatedValue: initialData.estimatedValue || '',
+        productCode: initialData.productCode || '', wearCondition: initialData.wearCondition || '',
+        shipping: initialData.shipping || '', isFeatured: initialData.isFeatured || false,
+        order: initialData.order ?? nextOrder, details: initialData.details || [], images: initialData.images || [],
+        catawikiTitle: initialData.catawikiTitle || '', catawikiCategory: initialData.catawikiCategory || '',
+        catawikiSubcategory: initialData.catawikiSubcategory || '', catawikiStyle: initialData.catawikiStyle || '',
+        catawikiMaterial: initialData.catawikiMaterial || '', catawikiCountry: initialData.catawikiCountry || '',
+        catawikiRestored: initialData.catawikiRestored || false, catawikiWeight: initialData.catawikiWeight || '',
+        catawikiShippingAvailable: initialData.catawikiShippingAvailable || false,
+        catawikiPickupAvailable: initialData.catawikiPickupAvailable ?? true,
+        catawikiDescription: initialData.catawikiDescription || '',
+        catawikiImages: initialData.catawikiImages || [],
+        catawikiSpecific: (initialData as any).catawikiSpecific || {},
+      });
+    } else {
+      setForm({ ...emptyForm, order: nextOrder });
+    }
+    setDetailImages([]);
+    setAiApplied(new Set());
+    setImageBase64ForAnalysis('');
   }, [initialData, isOpen, nextOrder]);
 
-  const [imageBase64ForAnalysis, setImageBase64ForAnalysis] = useState<string>('');
-
+  // ── Upload foto principale ──────────────────────────────────────────────────
   const handleImageUpload = async (src: string | File) => {
     setIsProcessingImage(true);
     try {
@@ -2272,74 +3722,16 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
       setImageBase64ForAnalysis(r);
       const token = localStorage.getItem('b2026_github_token');
       if (token && src instanceof File) {
-        const fileName = `${Date.now()}-${src.name.replace(/[^a-z0-9.]/gi, '-')}`;
+        const fileName = `${Date.now()}-${(src as File).name.replace(/[^a-z0-9.]/gi, '-')}`;
         const url = await uploadImageToGitHub(r, fileName);
         if (url) { setForm(p => ({ ...p, imageUrl: url })); return; }
       }
       setForm(p => ({ ...p, imageUrl: r }));
-    } catch { alert("Errore immagine."); }
+    } catch { alert('Errore immagine.'); }
     finally { setIsProcessingImage(false); }
   };
 
-  const handleAnalyze = async () => {
-    if (!imageBase64ForAnalysis && !form.imageUrl) return;
-    setIsAnalyzing(true);
-    setAnalyzeResult(null);
-    try {
-      // Se non ho il base64 in memoria (oggetto esistente), scarico l'immagine e la converto
-      let mainBase64 = imageBase64ForAnalysis;
-      if (!mainBase64 && form.imageUrl) {
-        try {
-          const res = await fetch(form.imageUrl);
-          const blob = await res.blob();
-          mainBase64 = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-        } catch {
-          alert('Impossibile caricare l\'immagine principale per l\'analisi.');
-          setIsAnalyzing(false);
-          return;
-        }
-      }
-      const result = await analyzeImageWithClaude(
-        mainBase64,
-        detailImages.length > 0 ? detailImages : undefined
-      );
-      if (result) {
-        setAnalyzeResult(result);
-        setShowApplyModal(true);
-      } else { alert('Nessun risultato. Riprova con una foto più nitida.'); }
-    } catch (e: any) { alert('Errore: ' + e.message); }
-    finally { setIsAnalyzing(false); }
-  };
-
-  const applyAll = () => {
-    if (!analyzeResult) return;
-    setForm(p => ({
-      ...p,
-      name: (analyzeResult as any).name || p.name,
-      description: (analyzeResult as any).description || p.description,
-      category: (analyzeResult as any).category || p.category,
-      room: (analyzeResult as any).room || p.room,
-      year: (analyzeResult as any).year || p.year,
-      dimensions: (analyzeResult as any).dimensions || p.dimensions,
-      price: (analyzeResult as any).price || p.price,
-      technicalNotes: (analyzeResult as any).technicalNotes || p.technicalNotes,
-      wearCondition: (analyzeResult as any).wearCondition || p.wearCondition,
-    }));
-    setShowApplyModal(false);
-    setAnalyzeResult(null);
-  };
-
-  const applyField = (field: string) => {
-    if (!analyzeResult) return;
-    setForm(p => ({ ...p, [field]: (analyzeResult as any)[field] || (p as any)[field] }));
-  };
-
-  // Aggiunge foto di dettaglio con tipo
+  // ── Upload foto dettaglio ───────────────────────────────────────────────────
   const handleAddDetailImage = async (file: File, tipo: string) => {
     setIsProcessingImage(true);
     try {
@@ -2351,30 +3743,75 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
         url = await uploadImageToGitHub(r, fileName) || r;
       }
       setDetailImages(prev => [...prev, { base64: r, url, tipo }]);
-      // Aggiungi anche alle images salvate
       setForm(p => ({ ...p, images: [...p.images, url] }));
     } catch {}
     finally { setIsProcessingImage(false); }
   };
 
   const handleDetailImages = async (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files; if (!files) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (imageFiles.length === 0) return;
     setIsProcessingImage(true);
+    setUploadProgress({ current: 0, total: imageFiles.length });
     const imgs = [...form.images];
+    const newDetailImgs: { base64: string; url: string; tipo: string }[] = [];
     const token = localStorage.getItem('b2026_github_token');
-    for (const file of Array.from(files)) {
-      if (file.type.startsWith('image/')) {
-        try {
-          const r = await resizeImage(file);
-          if (token) {
-            const fileName = `${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, '-')}`;
-            const url = await uploadImageToGitHub(r, fileName);
-            imgs.push(url || r);
-          } else { imgs.push(r); }
-        } catch {}
-      }
+    for (let i = 0; i < imageFiles.length; i++) {
+      setUploadProgress({ current: i + 1, total: imageFiles.length });
+      try {
+        const r = await resizeImage(imageFiles[i]);
+        let url = r;
+        if (token) {
+          const fileName = `${Date.now()}-${imageFiles[i].name.replace(/[^a-z0-9.]/gi, '-')}`;
+          url = await uploadImageToGitHub(r, fileName) || r;
+        }
+        imgs.push(url);
+        newDetailImgs.push({ base64: r, url, tipo: 'Galleria' });
+      } catch { console.error(`Errore su ${imageFiles[i].name}`); }
     }
-    setForm(p => ({ ...p, images: imgs })); setIsProcessingImage(false);
+    setForm(p => ({ ...p, images: imgs }));
+    setDetailImages(prev => [...prev, ...newDetailImgs]);
+    setIsProcessingImage(false);
+    setUploadProgress(null);
+    e.target.value = '';
+  };
+
+  // ── Analisi AI unificata ────────────────────────────────────────────────────
+  const handleAnalyze = async () => {
+    if (!imageBase64ForAnalysis && !form.imageUrl) return;
+    setIsAnalyzing(true);
+    try {
+      let mainBase64 = imageBase64ForAnalysis;
+      if (!mainBase64 && form.imageUrl) {
+        const res = await fetch(form.imageUrl);
+        const blob = await res.blob();
+        mainBase64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+      const result = await analyzeImageWithClaude(mainBase64, detailImages.length > 0 ? detailImages : undefined);
+      if (!result) { alert('Nessun risultato. Riprova con una foto più nitida.'); return; }
+      const r = result as any;
+      const applied = new Set<string>();
+      setForm(p => {
+        const updated = { ...p };
+        // Campi base
+        const baseFields = ['name','description','category','room','year','dimensions','price','technicalNotes','wearCondition'];
+        baseFields.forEach(k => { if (r[k]) { (updated as any)[k] = r[k]; applied.add(k); } });
+        // Campi Catawiki
+        const catFields = ['catawikiTitle','catawikiSubcategory','catawikiStyle','catawikiMaterial','catawikiCountry','catawikiDescription','catawikiRestored'];
+        catFields.forEach(k => { if (r[k] !== undefined && r[k] !== '') { (updated as any)[k] = r[k]; applied.add(k); } });
+        if (r.category) updated.catawikiCategory = CAT_MAP[r.category] || p.catawikiCategory;
+        return updated;
+      });
+      setAiApplied(applied);
+    } catch (e: any) { alert('Errore AI: ' + e.message); }
+    finally { setIsAnalyzing(false); }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -2385,327 +3822,96 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
 
   if (!isOpen) return null;
 
-  // Campi applicabili campo per campo
-  const APPLY_FIELDS = [
-    { key: 'name', label: 'Nome' },
-    { key: 'description', label: 'Descrizione' },
-    { key: 'category', label: 'Categoria' },
-    { key: 'room', label: 'Stanza' },
-    { key: 'year', label: 'Epoca' },
-    { key: 'dimensions', label: 'Dimensioni' },
-    { key: 'price', label: 'Prezzo' },
-    { key: 'technicalNotes', label: 'Dettagli tecnici' },
-    { key: 'wearCondition', label: 'Condizione' },
-  ];
+  // ── Helper field label con badge AI ────────────────────────────────────────
+  const Label = ({ k, children }: { k: string; children: React.ReactNode }) => (
+    <div className="flex items-center gap-1.5 mb-1">
+      <span className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50">{children}</span>
+      {aiApplied.has(k) && <span className="text-[9px] bg-heritage-gold/20 text-heritage-gold font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">AI</span>}
+    </div>
+  );
 
-  const DETAIL_TYPES = ['Firma / timbro', 'Hardware / cerniere', 'Etichetta', 'Dettaglio decorativo', 'Materiale / legno', 'Stato conservazione', 'Altro'];
+  const inputCls = "w-full border-b border-heritage-ink/15 py-2.5 bg-transparent focus:outline-none focus:border-heritage-gold font-heritage italic text-heritage-ink";
+  const sectionTitle = (t: string) => (
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-1.5 h-1.5 rounded-full bg-heritage-gold flex-shrink-0" />
+      <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50">{t}</p>
+      <div className="flex-1 h-px bg-heritage-ink/8" />
+    </div>
+  );
 
   return (
     <AnimatePresence>
       {/* Backdrop */}
-      <motion.div key="backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-heritage-ink/60 backdrop-blur-sm" onClick={onClose} />
+      <motion.div key="backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] bg-heritage-ink/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Desktop: centered modal */}
-      <motion.div
-        key="desktop-modal"
-        initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 20 }}
-        className="hidden md:flex fixed inset-0 z-[101] items-center justify-center p-4 pointer-events-none"
-      >
-        <div className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl pointer-events-auto" onClick={e => e.stopPropagation()}>
-          <div className="p-6 border-b border-heritage-ink/5 flex items-center justify-between">
-            <h3 className="text-2xl font-serif">{initialData ? `Modifica: ${initialData.name}` : 'Nuovo Oggetto'}</h3>
+      {/* ── DESKTOP ── */}
+      <motion.div key="desktop-modal"
+        initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="hidden md:flex fixed inset-0 z-[101] items-center justify-center p-6 pointer-events-none">
+        <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl pointer-events-auto flex flex-col" style={{ maxHeight: '92vh' }}
+          onClick={e => e.stopPropagation()}>
+          {/* Header */}
+          <div className="px-8 py-5 border-b border-heritage-ink/8 flex items-center justify-between flex-shrink-0">
+            <h3 className="text-2xl font-serif text-heritage-ink">{initialData ? `Modifica: ${initialData.name.split(' ').slice(0,4).join(' ')}` : 'Nuovo Oggetto'}</h3>
             <button onClick={onClose} className="p-2 hover:bg-heritage-cream rounded-full"><X size={20} /></button>
           </div>
-          <form onSubmit={handleSubmit} className="p-8 max-h-[80vh] overflow-y-auto space-y-6">
-            {/* Image upload */}
-            <div>
-              <label className="text-[12px] uppercase font-bold tracking-widest opacity-70 block mb-4">Immagine Principale</label>
-              <div onDragOver={e => { e.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} onDrop={e => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if (f?.type.startsWith('image/')) handleImageUpload(f); }} className={`relative h-48 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 overflow-hidden ${isDragging ? 'border-heritage-gold bg-heritage-gold/5' : 'border-heritage-ink/10 bg-heritage-cream/10'} ${form.imageUrl ? 'border-solid border-heritage-gold/30' : ''}`}>
-                {form.imageUrl ? (<><img src={form.imageUrl} className={`absolute inset-0 w-full h-full object-cover ${isProcessingImage ? 'opacity-60 blur-sm' : 'opacity-80'}`} />{isProcessingImage && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}<div className="absolute inset-0 bg-heritage-ink/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"><button type="button" onClick={() => setForm(p => ({ ...p, imageUrl: '' }))} className="bg-white text-heritage-ink px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wider">Rimuovi</button></div></>) : (<><div className="p-4 bg-white rounded-full shadow-sm text-heritage-ink/60">{isProcessingImage ? <div className="w-6 h-6 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /> : <Upload size={24} />}</div><p className="text-sm font-medium">{isProcessingImage ? 'Elaborazione...' : "Trascina o"}</p>{!isProcessingImage && <label className="text-sm text-heritage-gold cursor-pointer hover:underline">sfoglia<input type="file" className="hidden" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} /></label>}</>)}
-              </div>
-              <input value={form.imageUrl} onChange={e => setForm(p => ({ ...p, imageUrl: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none focus:border-heritage-gold text-sm mt-2" placeholder="oppure incolla un URL..." />
-              {form.imageUrl && (
-                <button type="button" onClick={handleAnalyze} disabled={isAnalyzing} className={`mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all border ${isAnalyzing ? 'bg-heritage-gold/20 text-heritage-gold border-heritage-gold/20 cursor-wait' : 'bg-heritage-gold text-white border-heritage-gold hover:bg-heritage-gold/90 shadow-md'}`}>
-                  {isAnalyzing ? (<><div className="w-4 h-4 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" />Analisi in corso...</>) : (<><Sparkles size={14} />Analizza con Claude — compila i campi automaticamente</>)}
-                </button>
-              )}
-            </div>
-            {/* Fields */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {[{ l: 'Nome *', k: 'name', p: 'Es. Scrittoio in Noce', span: 2, req: true }, { l: 'Stanza *', k: 'room', p: 'Es. Salotto', req: true }, { l: 'Anno/Epoca', k: 'year', p: 'Es. 1850 circa' }, { l: 'Dimensioni', k: 'dimensions', p: 'Es. 120x60x80 cm' }, { l: 'Prezzo', k: 'price', p: '€ 500' }, { l: 'Valore Stimato', k: 'estimatedValue', p: '€ 1.500' }, { l: 'Codice / SKU', k: 'productCode', p: 'ART-001' }].map(f => (
-                <div key={f.k} className={`space-y-2 ${(f as any).span === 2 ? 'md:col-span-2' : ''}`}>
-                  <label className="text-[12px] uppercase font-bold tracking-widest opacity-70">{f.l}</label>
-                  <input required={f.req} value={(form as any)[f.k]} onChange={e => setForm(p => ({ ...p, [f.k]: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none focus:border-heritage-gold" placeholder={f.p} />
-                </div>
-              ))}
-              <div className="md:col-span-2 space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Categoria *</label>
-                <input required list="cat-list" value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none focus:border-heritage-gold" placeholder="Es. Mobili" />
-                <datalist id="cat-list"><option value="Mobili" /><option value="Illuminazione" /><option value="Sedute" /><option value="Quadri" /><option value="Porcellane" /><option value="Tappeti" /><option value="Giardino" /><option value="Libri" /></datalist>
-                <div className="flex flex-wrap gap-2">{['Mobili', 'Illuminazione', 'Sedute', 'Quadri'].map(c => <button key={c} type="button" onClick={() => setForm(p => ({ ...p, category: c }))} className={`px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold ${form.category === c ? 'bg-heritage-olive text-white' : 'bg-heritage-ink/5 text-heritage-ink/65'}`}>{c}</button>)}</div>
-              </div>
-              <div className="md:col-span-2 space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Descrizione *</label><textarea required value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none focus:border-heritage-gold resize-none h-24" placeholder="Racconta la storia..." /></div>
-              <div className="md:col-span-2 space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Dettagli Tecnici</label><textarea value={form.technicalNotes} onChange={e => setForm(p => ({ ...p, technicalNotes: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none focus:border-heritage-gold resize-none h-20" placeholder="Materiali, stato..." /></div>
-
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Stato</label><select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as any }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none text-sm"><option value="Disponibile">Disponibile</option><option value="Riservato">Riservato</option><option value="Affidato">Affidato</option><option value="Non in Vendita">Non in Vendita</option></select></div>
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Condizione</label><select value={form.wearCondition} onChange={e => setForm(p => ({ ...p, wearCondition: e.target.value as any }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none text-sm"><option value="">Non specificata</option><option value="Ottimo">Ottimo</option><option value="Buono">Buono</option><option value="Discreto">Discreto</option><option value="Da restaurare">Da restaurare</option></select></div>
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Spedizione</label><select value={form.shipping} onChange={e => setForm(p => ({ ...p, shipping: e.target.value as any }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none text-sm"><option value="">Non specificata</option><option value="Ritiro in sede">Ritiro in sede</option><option value="Spedizione possibile">Spedizione possibile</option><option value="Solo ritiro">Solo ritiro</option><option value="Concordare">Concordare</option></select></div>
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Destinazione</label><select value={form.destination} onChange={e => setForm(p => ({ ...p, destination: e.target.value as any }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none"><option value="Barberino">Barberino</option><option value="Cinisello Balsamo">Cinisello Balsamo (MI)</option><option value="Torino">Torino</option><option value="Sorella">Sorella</option><option value="Altro">Altro</option></select></div>
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Tipo Acquisizione</label><select value={form.acquisitionType} onChange={e => setForm(p => ({ ...p, acquisitionType: e.target.value as any }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none"><option value="Vendita">Vendita</option><option value="Lascito Affettivo">Lascito Affettivo</option><option value="Famiglia">Famiglia</option></select></div>
-              <div className="md:col-span-2 space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Link Catawiki</label><input value={form.catawikiUrl} onChange={e => setForm(p => ({ ...p, catawikiUrl: e.target.value }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none text-sm" placeholder="https://www.catawiki.com/..." /></div>
-              <div className="space-y-2"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Ordine</label><input type="number" value={form.order === undefined ? '' : form.order} onChange={e => setForm(p => ({ ...p, order: e.target.value ? parseInt(e.target.value) : undefined }))} className="w-full bg-heritage-cream/20 border-b border-heritage-ink/10 py-2 focus:outline-none text-sm" placeholder="1 = primo" /></div>
-              <div className="flex items-center gap-3 cursor-pointer" onClick={() => setForm(p => ({ ...p, isFeatured: !p.isFeatured }))}>
-                <div className="relative"><div className={`w-10 h-5 rounded-full transition-colors ${form.isFeatured ? 'bg-heritage-gold' : 'bg-heritage-ink/10'}`} /><div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${form.isFeatured ? 'translate-x-5' : 'translate-x-0'}`} /></div>
-                <span className="text-[12px] uppercase font-bold tracking-widest opacity-60">In evidenza (Home)</span>
-              </div>
-            </div>
-            {/* Gallery */}
-            <div className="p-4 bg-heritage-cream/10 rounded-2xl border border-heritage-ink/5">
-              <div className="flex items-center justify-between mb-4"><label className="text-[12px] uppercase font-bold tracking-widest opacity-70">Gallery Foto</label><label className="text-[12px] uppercase font-bold text-heritage-gold cursor-pointer flex items-center gap-1"><Plus size={12} /> Aggiungi<input type="file" className="hidden" accept="image/*" multiple onChange={handleDetailImages} /></label></div>
-              <div className="flex flex-wrap gap-3">{form.images.map((img, i) => <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden group border border-heritage-ink/10"><img src={img} className="w-full h-full object-cover" /><button type="button" onClick={() => setForm(p => ({ ...p, images: p.images.filter((_, j) => j !== i) }))} className="absolute inset-0 bg-red-500/60 flex items-center justify-center opacity-0 group-hover:opacity-100"><Trash2 size={16} className="text-white" /></button></div>)}{form.images.length === 0 && <p className="text-[12px] italic text-heritage-ink/60 w-full text-center py-4 border border-dashed border-heritage-ink/10 rounded-xl">Nessuna foto aggiuntiva</p>}</div>
-            </div>
-            <div className="flex gap-4 pt-2">
-              {initialData && <button type="button" onClick={() => { onClose(); onDelete?.(initialData.id); }} className="px-6 py-4 rounded-xl border border-red-100 text-red-600 text-sm font-bold uppercase tracking-widest hover:bg-red-50 flex items-center gap-2"><Trash2 size={16} />Elimina</button>}
-              <button type="submit" disabled={isSaving} className="heritage-button flex-1 py-4 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50">{isSaving ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />Salvataggio...</> : (initialData ? 'Salva Modifiche' : 'Aggiungi al Catalogo')}</button>
+          {/* Scrollable */}
+          <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-8 py-6">
+            <ItemFormContent
+              form={form} setForm={setForm} isDragging={isDragging} setIsDragging={setIsDragging}
+              isProcessingImage={isProcessingImage} isAnalyzing={isAnalyzing}
+              detailImages={detailImages} setDetailImages={setDetailImages}
+              uploadProgress={uploadProgress} aiApplied={aiApplied}
+              handleImageUpload={handleImageUpload} handleAddDetailImage={handleAddDetailImage}
+              handleDetailImages={handleDetailImages} handleAnalyze={handleAnalyze}
+            />
+            <div className="flex gap-4 pt-6 pb-2">
+              {initialData && <button type="button" onClick={() => { onClose(); onDelete?.(initialData.id); }} className="px-5 py-3.5 rounded-xl border border-red-100 text-red-500 text-sm font-bold uppercase tracking-widest hover:bg-red-50 flex items-center gap-2"><Trash2 size={14} />Elimina</button>}
+              <button type="submit" disabled={isSaving} className="heritage-button flex-1 py-3.5 flex items-center justify-center gap-2 disabled:opacity-50">
+                {isSaving ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />Salvataggio...</> : (initialData ? 'Salva Modifiche' : 'Aggiungi al Catalogo')}
+              </button>
             </div>
           </form>
         </div>
       </motion.div>
 
-      {/* Mobile: bottom sheet */}
-      <motion.div
-        key="mobile-sheet"
+      {/* ── MOBILE ── */}
+      <motion.div key="mobile-sheet"
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 28, stiffness: 220 }}
         className="md:hidden fixed bottom-0 left-0 right-0 z-[101] bg-white rounded-t-[2rem] shadow-2xl flex flex-col pointer-events-auto"
-        style={{ maxHeight: '92dvh' }}
+        style={{ maxHeight: '95svh' }}
         onClick={e => e.stopPropagation()}
         onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+        onTouchEnd={handleTouchEnd}>
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
           <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
         </div>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-heritage-ink/5 flex items-center justify-between flex-shrink-0">
-          <h3 className="text-xl font-serif text-heritage-ink">{initialData ? `Modifica: ${initialData.name}` : 'Nuovo Oggetto'}</h3>
+        <div className="px-6 py-3 border-b border-heritage-ink/5 flex items-center justify-between flex-shrink-0">
+          <h3 className="text-xl font-serif text-heritage-ink">{initialData ? `Modifica` : 'Nuovo Oggetto'}</h3>
           <button onClick={onClose} className="p-2 hover:bg-heritage-cream rounded-full"><X size={20} /></button>
         </div>
         {/* Scrollable form */}
-        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 p-6 space-y-6 pb-10">
-
-          {/* ── FOTO PRINCIPALE ── */}
-          <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/30">
-            {form.imageUrl ? (
-              <div className="relative h-48">
-                <img src={form.imageUrl} className={`absolute inset-0 w-full h-full object-cover ${isProcessingImage ? 'opacity-60 blur-sm' : ''}`} />
-                {isProcessingImage && <div className="absolute inset-0 flex items-center justify-center"><div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
-                <button type="button" onClick={() => setForm(p => ({ ...p, imageUrl: '' }))} className="absolute top-3 right-3 bg-white/90 text-heritage-ink px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
-              </div>
-            ) : (
-              <div className="h-36 flex items-center justify-center bg-heritage-cream/40">
-                {isProcessingImage
-                  ? <div className="flex flex-col items-center gap-3"><div className="w-8 h-8 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/50">Elaborazione...</p></div>
-                  : <Camera size={40} className="text-heritage-ink/20" />}
-              </div>
-            )}
-            {!isProcessingImage && (
-              <div className="grid grid-cols-2 border-t border-heritage-ink/8">
-                <label className="flex flex-col items-center gap-2 py-4 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60 transition-colors">
-                  <Camera size={22} className="text-heritage-gold" />
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/80">Scatta foto</span>
-                  <input type="file" className="hidden" accept="image/*" capture="environment" onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
-                </label>
-                <label className="flex flex-col items-center gap-2 py-4 cursor-pointer active:bg-heritage-cream/60 transition-colors">
-                  <ImageIcon size={22} className="text-heritage-gold" />
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/80">Galleria</span>
-                  <input type="file" className="hidden" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }} />
-                </label>
-              </div>
-            )}
-          </div>
-
-          {/* ── FOTO DETTAGLIO ── */}
-          <div className="rounded-2xl border border-heritage-ink/8 bg-white overflow-hidden">
-            <div className="px-4 py-3 border-b border-heritage-ink/8 flex items-center justify-between">
-              <div>
-                <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/70">Foto di dettaglio</p>
-                <p className="text-[11px] font-serif italic text-heritage-ink/40 mt-0.5">firma, timbro, materiale, hardware...</p>
-              </div>
-            </div>
-            {/* Preview foto dettaglio */}
-            {detailImages.length > 0 && (
-              <div className="flex gap-2 p-3 overflow-x-auto">
-                {detailImages.map((d, i) => (
-                  <div key={i} className="relative flex-shrink-0">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden border border-heritage-ink/10">
-                      <img src={d.url} className="w-full h-full object-cover" />
-                    </div>
-                    <p className="text-[9px] uppercase tracking-wide font-bold text-heritage-ink/50 text-center mt-1 max-w-[80px] truncate">{d.tipo}</p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDetailImages(prev => prev.filter((_, j) => j !== i));
-                        setForm(p => ({ ...p, images: p.images.filter(img => img !== d.url) }));
-                      }}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center"
-                    >
-                      <X size={10} className="text-white" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            {/* Aggiungi con tipo */}
-            <div className="p-3 space-y-2">
-              <div className="flex flex-wrap gap-1.5">
-                {DETAIL_TYPES.map(tipo => (
-                  <label key={tipo} className="flex items-center gap-1 px-3 py-1.5 bg-heritage-cream/60 rounded-full cursor-pointer active:bg-heritage-gold/20 transition-colors border border-heritage-ink/8">
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/70">{tipo}</span>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={e => { const f = e.target.files?.[0]; if (f) handleAddDetailImage(f, tipo); }}
-                    />
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* ── Analizza con Claude ── */}
-          <div className="flex items-center gap-3 p-4 bg-heritage-gold/8 rounded-2xl border border-heritage-gold/20">
-            <Sparkles size={18} className="text-heritage-gold flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-gold">Analizza con Claude</p>
-              <p className="text-[12px] font-heritage italic text-heritage-ink/70 mt-0.5">
-                {detailImages.length > 0 ? `Foto principale + ${detailImages.length} dettagl${detailImages.length === 1 ? 'io' : 'i'}` : 'Dalla foto principale'}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleAnalyze}
-              disabled={isAnalyzing || !form.imageUrl}
-              className={`px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all flex items-center gap-1.5 ${
-                isAnalyzing ? 'bg-heritage-gold/20 text-heritage-gold cursor-wait' :
-                !form.imageUrl ? 'bg-heritage-ink/5 text-heritage-ink/30 cursor-not-allowed' :
-                'bg-heritage-gold text-white shadow-md'
-              }`}
-            >
-              {isAnalyzing ? <><div className="w-3 h-3 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" />...</> : 'Avvia'}
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-6 py-5 pb-8">
+          <ItemFormContent
+              form={form} setForm={setForm} isDragging={isDragging} setIsDragging={setIsDragging}
+              isProcessingImage={isProcessingImage} isAnalyzing={isAnalyzing}
+              detailImages={detailImages} setDetailImages={setDetailImages}
+              uploadProgress={uploadProgress} aiApplied={aiApplied}
+              handleImageUpload={handleImageUpload} handleAddDetailImage={handleAddDetailImage}
+              handleDetailImages={handleDetailImages} handleAnalyze={handleAnalyze}
+            />
+          <div className="flex gap-3 pt-6">
+            {initialData && <button type="button" onClick={() => { onClose(); onDelete?.(initialData.id); }} className="px-4 py-4 rounded-xl border border-red-100 text-red-500 text-sm font-bold uppercase tracking-widest hover:bg-red-50 flex items-center gap-2"><Trash2 size={14} /></button>}
+            <button type="submit" disabled={isSaving} className="heritage-button flex-1 py-4 flex items-center justify-center gap-2 disabled:opacity-50">
+              {isSaving ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />Salvataggio...</> : (initialData ? 'Salva Modifiche' : 'Aggiungi al Catalogo')}
             </button>
           </div>
-
-          {/* ── Essenziali ── */}
-          <div>
-            <p className="text-[13px] uppercase tracking-widest font-bold text-heritage-gold mb-4">Essenziali</p>
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/70">Nome *</label>
-                <input required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} className="w-full bg-transparent border-b border-heritage-ink/20 py-3 focus:outline-none focus:border-heritage-gold text-lg font-heritage italic" placeholder="Es. Scrittoio in noce" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/70">Categoria *</label>
-                <div className="flex flex-wrap gap-2 mb-2">{['Mobili', 'Illuminazione', 'Sedute', 'Quadri', 'Porcellane', 'Tappeti', 'Giardino', 'Libri'].map(c => <button key={c} type="button" onClick={() => setForm(p => ({ ...p, category: c }))} className={`px-4 py-2 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${form.category === c ? 'bg-heritage-olive text-white' : 'bg-heritage-ink/8 text-heritage-ink/70'}`}>{c}</button>)}</div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/70">Stanza *</label>
-                <input required value={form.room} onChange={e => setForm(p => ({ ...p, room: e.target.value }))} className="w-full bg-transparent border-b border-heritage-ink/20 py-3 focus:outline-none focus:border-heritage-gold text-lg font-heritage italic" placeholder="Es. Salotto" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[12px] uppercase tracking-widest font-bold text-heritage-ink/70">Descrizione *</label>
-                <textarea required value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} className="w-full bg-transparent border-b border-heritage-ink/20 py-3 focus:outline-none focus:border-heritage-gold resize-none h-24 text-lg font-heritage italic" placeholder="Racconta la storia..." />
-              </div>
-            </div>
-          </div>
-
-          {/* ── Dettagli collassabili ── */}
-          <MobileDetailsSection form={form} setForm={setForm} handleDetailImages={handleDetailImages} />
-
-          <div className="flex gap-4 pt-2 pb-4">
-            {initialData && <button type="button" onClick={() => { onClose(); onDelete?.(initialData.id); }} className="px-5 py-4 rounded-xl border border-red-100 text-red-600 text-sm font-bold uppercase tracking-widest hover:bg-red-50 flex items-center gap-2"><Trash2 size={16} />Elimina</button>}
-            <button type="submit" disabled={isSaving} className="heritage-button flex-1 py-4 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50">{isSaving ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />Salvataggio...</> : (initialData ? 'Salva Modifiche' : 'Aggiungi al Catalogo')}</button>
-          </div>
-
         </form>
       </motion.div>
-
-      {/* ── Modale Applica risultato AI ── */}
-      <AnimatePresence>
-        {showApplyModal && analyzeResult && (
-          <>
-            <motion.div
-              key="apply-backdrop"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[300] bg-heritage-ink/50 backdrop-blur-sm"
-              onClick={() => setShowApplyModal(false)}
-            />
-            <motion.div
-              key="apply-sheet"
-              initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed bottom-0 left-0 right-0 z-[310] bg-white rounded-t-[24px] shadow-2xl"
-              style={{ maxHeight: '85dvh' }}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex justify-center pt-3 pb-1">
-                <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
-              </div>
-              <div className="overflow-y-auto" style={{ maxHeight: 'calc(85dvh - 20px)' }}>
-                <div className="px-6 pt-4 pb-2 flex items-center gap-3 border-b border-heritage-ink/8">
-                  <Sparkles size={18} className="text-heritage-gold" />
-                  <div>
-                    <p className="font-bold text-[14px] text-heritage-ink">Claude ha analizzato le foto</p>
-                    <p className="text-[11px] text-heritage-ink/50 font-serif italic">Scegli cosa applicare</p>
-                  </div>
-                  <button onClick={() => setShowApplyModal(false)} className="ml-auto p-2 hover:bg-heritage-cream rounded-full"><X size={18} /></button>
-                </div>
-                <div className="px-6 py-4 space-y-3">
-                  {/* Applica tutto */}
-                  <button
-                    onClick={applyAll}
-                    className="w-full flex items-center gap-3 px-5 py-4 bg-heritage-gold text-white rounded-2xl font-bold text-[13px] uppercase tracking-widest hover:bg-heritage-gold/90 transition-colors shadow-md"
-                  >
-                    <Check size={16} /> Applica tutto
-                  </button>
-                  {/* Campo per campo */}
-                  <div className="space-y-2 pt-2">
-                    <p className="text-[11px] uppercase tracking-widest font-bold text-heritage-ink/50 mb-3">Oppure scegli campo per campo</p>
-                    {APPLY_FIELDS.map(({ key, label }) => {
-                      const val = (analyzeResult as any)[key];
-                      if (!val) return null;
-                      const current = (form as any)[key];
-                      return (
-                        <div key={key} className="flex items-start gap-3 p-3 bg-heritage-cream/40 rounded-xl border border-heritage-ink/8">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] uppercase tracking-widest font-bold text-heritage-gold mb-1">{label}</p>
-                            <p className="text-[13px] text-heritage-ink leading-snug font-heritage italic truncate">{val}</p>
-                            {current && current !== val && (
-                              <p className="text-[11px] text-heritage-ink/40 mt-0.5 truncate">Attuale: {current}</p>
-                            )}
-                          </div>
-                          <button
-                            onClick={() => applyField(key)}
-                            className="flex-shrink-0 px-3 py-1.5 bg-heritage-ink text-white rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-colors"
-                          >
-                            Usa
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                <div className="px-6 pb-8">
-                  <button onClick={() => setShowApplyModal(false)} className="w-full py-3 rounded-xl border border-heritage-ink/10 text-[12px] font-bold uppercase tracking-widest text-heritage-ink/60 hover:bg-heritage-cream/40">
-                    Ignora risultati
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </AnimatePresence>
   );
 }
