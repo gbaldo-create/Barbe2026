@@ -421,7 +421,32 @@
     "details": [],
     "images": [],
     "id": "mp4inaq1rruy6",
-    "stories": []
+    "stories": [],
+    "catawikiTitle": "Divano Impero mogano damasco avorio XIX sec.",
+    "catawikiCategory": "Mobili",
+    "catawikiSubcategory": "Divani e sofà",
+    "catawikiStyle": "Impero",
+    "catawikiMaterial": "Mogano massello",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiDescription": "Straordinario divano da salotto in stile Impero, realizzato nel primo quarto del XIX secolo. Struttura in pregiato mogano con spalliera sagomate ornate da elegante elemento decorativo centrale a forma di conchiglia. Rivestimento originale in damasco color avorio con raffinati motivi floreali e dettagli di bottoni capitonnés. Braccioli arrotolati e piedini a zampa di leone, caratteristici del gusto neoclassico italiano d'epoca. Testimonianza raffinata dell'artigianato dell'Ottocento. Dimensioni: 220x90x110 cm circa.",
+    "catawikiShippingAvailable": false,
+    "catawikiPickupAvailable": true,
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778773227932-IMG-1355.jpg"
+    ],
+    "catawikiWeight": "",
+    "catawikiSpecific": {
+      "tipoMobile": "Divano",
+      "essenzaLegno": "Mogano",
+      "materialeStruttura": "Legno massello",
+      "materialeRivestimento": "Damasco",
+      "ferramenta": "Assente",
+      "finitura": "Verniciato",
+      "colore": "Mogano",
+      "stile": "Impero",
+      "numeroCassetti": "0"
+    }
   },
   {
     "name": "Tappeto orientale Baluch",
