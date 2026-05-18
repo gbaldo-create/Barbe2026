@@ -605,35 +605,7 @@
     "details": [],
     "images": [],
     "id": "mp4j45r7mjx6p",
-    "stories": [],
-    "catawikiTitle": "Toilette ottocentesca in legno con specchio ovale e piano marmo",
-    "catawikiCategory": "Mobili",
-    "catawikiSubcategory": "Toilette",
-    "catawikiStyle": "Vittoriano",
-    "catawikiMaterial": "Legno massello con piano in marmo bianco",
-    "catawikiCountry": "Italia",
-    "catawikiRestored": false,
-    "catawikiDescription": "Elegante toilette della seconda metà del XIX secolo, realizzata in legno massello di pregevole fattura. Lo specchio ovale basculante è incorniciato da raffinate volute decorative, mentre il piano superiore in marmo bianco accoglie due cassetti funzionali finemente rifiniti. La struttura poggia su quattro gambe tornite caratterizzate da eleganti piedini a sfere. Complemento d'arredo di notevole qualità per la camera da letto signorile, espressione autentica dello stile vittoriano italiano. Dimensioni: 80x45x140 cm circa.",
-    "catawikiShippingAvailable": true,
-    "catawikiPickupAvailable": true,
-    "catawikiImages": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778773542581-IMG-1387.jpg"
-    ],
-    "catawikiWeight": "12.5",
-    "catawikiSpecific": {
-      "essenzaLegno": "Noce",
-      "materialeStruttura": "Legno massello",
-      "materialeRivestimento": "Nessuno",
-      "ferramenta": "Originale",
-      "finitura": "Noce scuro",
-      "colore": "Bruno",
-      "stile": "Art Déco",
-      "numeroCassetti": "2",
-      "numeroAnte": "0",
-      "patinaOriginale": true,
-      "difettiStrutturali": "Tarli (trattati)",
-      "usuraSuperficie": "Normale per l'età"
-    }
+    "stories": []
   },
   {
     "name": "Divano stile Impero in legno di mogano",
@@ -845,7 +817,30 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021722660-IMG-2010.jpeg"
     ],
     "id": "mp5fh4tbdrsjr",
-    "stories": []
+    "stories": [],
+    "catawikiTitle": "Camino in marmo rosa con ornamenti neoclassici, XIX sec.",
+    "catawikiCategory": "Mobili",
+    "catawikiSubcategory": "Camini",
+    "catawikiStyle": "Neoclassico",
+    "catawikiMaterial": "Marmo rosa",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiDescription": "Elegante camino in marmo rosa risalente alla metà del XIX secolo, caratterizzato da una ricca decorazione a bassorilievo con festoni floreali e motivi vegetali di ispirazione neoclassica. La struttura presenta un'arcata a tutto sesto e un coronamento superiore finemente lavorato, tipico delle dimore signorili dell'epoca. La composizione simmetrica vede motivi di acanto e uva magistralmente intagliati. Lo stato di conservazione è discreto, con decorazioni ben preservate nonostante l'uso prolungato, e la patina del tempo ne sottolinea l'autenticità. Opera di notevole pregio per estimatori di antiquariato neoclassico.",
+    "catawikiShippingAvailable": false,
+    "catawikiPickupAvailable": true,
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771315866-IMG-1513--1-.jpg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021128274-IMG-1514.jpeg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779021722660-IMG-2010.jpeg"
+    ],
+    "catawikiWeight": "",
+    "catawikiSpecific": {
+      "tipoMobile": "",
+      "essenzaLegno": "",
+      "materialeRivestimento": "Nessuno",
+      "ferramenta": "Assente",
+      "finitura": ""
+    }
   },
   {
     "name": "Cassettone in legno massello stile Impero",
