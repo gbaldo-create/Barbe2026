@@ -158,22 +158,31 @@
     "images": [],
     "id": "mp4iacqhpk5jo",
     "stories": [],
-    "catawikiTitle": "Lampadario Modernista a tre luci anni '40-'50",
+    "catawikiTitle": "Lampadario Modernista tre luci vetro opalino 1940-50",
     "catawikiCategory": "Illuminazione",
     "catawikiSubcategory": "Lampadario",
     "catawikiStyle": "Modernista",
     "catawikiMaterial": "Metallo cromato e vetro opalino",
     "catawikiCountry": "Italia",
     "catawikiRestored": false,
-    "catawikiDescription": "Elegante lampadario a sospensione rappresentativo del design razionalista italiano del dopoguerra. Struttura in metallo cromato con bracci sinuosi che sostengono tre diffusori in vetro opalino sagomate a forma di pera. L'altezza regolabile (70-100 cm) e il diametro di circa 60 cm lo rendono versatile per molteplici ambienti. Eccellente esempio di artigianalità e soluzioni costruttive raffinate tipiche della modernità italiana. Una pregevole testimonianza del gusto estetico del periodo.",
+    "catawikiDescription": "Raffinato lampadario a sospensione in stile Modernista razionalista italiano, databile agli anni Quaranta-Cinquanta. La struttura in metallo cromato presenta eleganti bracci sinuosi che sostengono tre diffusori in vetro opalino sapientemente sagomati a forma di pera. Rappresenta un bell'esempio di design italiano caratterizzato da soluzioni costruttive raffinate e impiego di materiali pregiati. L'altezza è regolabile tra 70 e 100 cm con diametro complessivo di circa 60 cm.",
     "catawikiShippingAvailable": true,
     "catawikiPickupAvailable": true,
     "catawikiImages": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771402794-IMG-1265--1-.jpg"
     ],
-    "catawikiWeight": "",
+    "catawikiWeight": "3.8",
     "catawikiSpecific": {
-      "numeroPuntiLuce": ""
+      "numeroPuntiLuce": "3",
+      "tipoLampada": "Lampadario",
+      "materialeCorpo": "Misto",
+      "materialeDiffusore": "Vetro opalino",
+      "attacco": "",
+      "funzionante": true,
+      "colore": "Ottone antico",
+      "stile": "Modernista",
+      "altezzaTotale": "150",
+      "diametro": "60"
     }
   },
   {
