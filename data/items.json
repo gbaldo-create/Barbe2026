@@ -605,7 +605,35 @@
     "details": [],
     "images": [],
     "id": "mp4j45r7mjx6p",
-    "stories": []
+    "stories": [],
+    "catawikiTitle": "Toilette ottocentesca in legno con specchio ovale e piano marmo",
+    "catawikiCategory": "Mobili",
+    "catawikiSubcategory": "Toilette",
+    "catawikiStyle": "Vittoriano",
+    "catawikiMaterial": "Legno massello con piano in marmo bianco",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiDescription": "Elegante toilette della seconda metà del XIX secolo in legno scuro, esemplare rappresentativo dell'arredamento signorile vittoriano. Caratterizzata da specchio ovale basculante con cornice ornamentale a volute, piano superiore in marmo bianco con due cassetti funzionali e struttura su quattro gambe tornite con piedini a sfere. Pezzo di qualità e pregio, ideale completamento per camera da letto d'epoca.",
+    "catawikiShippingAvailable": true,
+    "catawikiPickupAvailable": true,
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778773542581-IMG-1387.jpg"
+    ],
+    "catawikiWeight": "12.5",
+    "catawikiSpecific": {
+      "essenzaLegno": "Noce",
+      "materialeStruttura": "Legno massello",
+      "materialeRivestimento": "Nessuno",
+      "ferramenta": "Originale",
+      "finitura": "Noce scuro",
+      "colore": "Bruno",
+      "stile": "Art Déco",
+      "numeroCassetti": "0",
+      "numeroAnte": "0",
+      "patinaOriginale": true,
+      "difettiStrutturali": "Tarli (trattati)",
+      "usuraSuperficie": "Normale per l'età"
+    }
   },
   {
     "name": "Divano stile Impero in legno di mogano",
