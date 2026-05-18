@@ -1445,19 +1445,29 @@
     "images": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043336254-IMG-2014.png"
     ],
-    "catawikiTitle": "",
-    "catawikiCategory": "",
-    "catawikiSubcategory": "",
-    "catawikiStyle": "",
-    "catawikiMaterial": "",
-    "catawikiCountry": "",
+    "catawikiTitle": "Radio Radiomarelli in legno massello - anni '40/'50",
+    "catawikiCategory": "Oggetti",
+    "catawikiSubcategory": "Radio e apparecchi d'epoca",
+    "catawikiStyle": "Vintage",
+    "catawikiMaterial": "Legno massello (Burl Walnut) e ottone",
+    "catawikiCountry": "Italia",
     "catawikiRestored": false,
     "catawikiWeight": "",
     "catawikiShippingAvailable": true,
     "catawikiPickupAvailable": true,
-    "catawikiDescription": "",
-    "catawikiImages": [],
-    "catawikiSpecific": {},
+    "catawikiDescription": "Affascinante radio d'epoca Radiomarelli in legno nodoso marrone, realizzata negli anni '40/'50. La cassa in burl walnut presenta dettagli in ottone e quattro manopole in madreperla naturale. Dotata di sintonizzatore illuminato, doppio altoparlante con griglia in tela originale e quadrante in bachelite. Conserva i componenti elettronici e il trasformatore originale, oltre al cavo di alimentazione. Lo stato di conservazione è buono con naturale patina d'epoca. Un significativo esempio di design industriale italiano del dopoguerra per comunicazioni domestiche.",
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043321609-IMG-2013.png",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779043336254-IMG-2014.png"
+    ],
+    "catawikiSpecific": {
+      "tipoOggetto": "Radio",
+      "marchio": "Radiomarelli",
+      "materialeSecondario": "Metallo",
+      "tecnica": "Altro",
+      "colore": "Multicolore",
+      "soggetto": "Altro"
+    },
     "id": "mpa4i1pwtdvdk",
     "stories": []
   },
