@@ -158,21 +158,23 @@
     "images": [],
     "id": "mp4iacqhpk5jo",
     "stories": [],
-    "catawikiTitle": "Lampadario Modernista tre luci vetro opalino 1940-50",
+    "catawikiTitle": "Lampadario Modernista a tre luci anni '40-'50",
     "catawikiCategory": "Illuminazione",
     "catawikiSubcategory": "Lampadario",
     "catawikiStyle": "Modernista",
     "catawikiMaterial": "Metallo cromato e vetro opalino",
     "catawikiCountry": "Italia",
     "catawikiRestored": false,
-    "catawikiDescription": "Elegante lampadario a sospensione rappresentativo del design razionalista italiano della metà del XX secolo. Caratterizzato da tre diffusori in vetro opalino bianco a forma di pera, sapientemente montati su una struttura in metallo cromato con bracci sinuosi e dinamici. Le soluzioni costruttive risultano raffinate, evidenziando la qualità artigianale dell'epoca. L'altezza regolabile (70-100 cm) e il diametro di circa 60 cm lo rendono adatto a numerosi contesti abitativi. Un bell'esempio di come il Modernismo italiano coniugava eleganza formale con funzionalità costruttiva.",
-    "catawikiShippingAvailable": false,
+    "catawikiDescription": "Elegante lampadario a sospensione rappresentativo del design razionalista italiano del dopoguerra. Struttura in metallo cromato con bracci sinuosi che sostengono tre diffusori in vetro opalino sagomate a forma di pera. L'altezza regolabile (70-100 cm) e il diametro di circa 60 cm lo rendono versatile per molteplici ambienti. Eccellente esempio di artigianalità e soluzioni costruttive raffinate tipiche della modernità italiana. Una pregevole testimonianza del gusto estetico del periodo.",
+    "catawikiShippingAvailable": true,
     "catawikiPickupAvailable": true,
     "catawikiImages": [
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771402794-IMG-1265--1-.jpg"
     ],
     "catawikiWeight": "",
-    "catawikiSpecific": {}
+    "catawikiSpecific": {
+      "numeroPuntiLuce": ""
+    }
   },
   {
     "name": "Lampadario a cascata in cristallo e ottone dorato",
