@@ -4,7 +4,7 @@ import {
   Archive, Menu, X, Plus, SlidersHorizontal, MapPin, History,
   ChevronLeft, ChevronRight, Share2, Twitter, Facebook, Mail,
   ArrowLeft, ArrowRight, ExternalLink, Sparkles, Heart, Handshake,
-  Camera, User, Upload, LogOut, Edit, Trash2, Image as ImageIcon, Check,
+  Camera, User, Upload, LogOut, Edit, Trash2, Image as ImageIcon, Check, Download,
   LayoutGrid, Lamp, Sofa, BookOpen, Armchair, Star,
 } from 'lucide-react';
 import { HeritageItem, Memory, ViewType } from './types.ts';
@@ -1230,6 +1230,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('Tutti');
   const [selectedStatus, setSelectedStatus] = useState('Tutti');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showAdminDropdown, setShowAdminDropdown] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<HeritageItem | null>(null);
@@ -1669,14 +1670,18 @@ export default function App() {
               {/* Logo — collassato su item-detail */}
               <div className="flex items-center gap-2 md:gap-3 cursor-pointer group" onClick={() => handleBackToCatalog('home')}>
                 <div className="w-8 h-8 md:w-10 md:h-10 bg-heritage-gold rounded-full flex items-center justify-center text-emerald-950 group-hover:bg-white transition-colors flex-shrink-0">
-                  <History size={18} />
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                    <path d="M12 7v5l3 3"/>
+                  </svg>
                 </div>
                 {view === 'item-detail' ? (
                   <span className="text-sm font-bold font-serif text-white leading-none tracking-tight">B26</span>
                 ) : (
                   <div>
                     <h1 className="text-sm md:text-lg font-bold font-serif text-white leading-none">Barberino2026</h1>
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-heritage-gold/80 font-medium mt-1">Archivio di Famiglia</p>
+                    <p className="text-[11px] uppercase tracking-[0.55em] text-heritage-gold/80 font-medium mt-0.5">Archivio</p>
                   </div>
                 )}
               </div>
@@ -1695,8 +1700,7 @@ export default function App() {
               <NavItem active={false} onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} icon={<Heart size={18} />} label="Ricordi" />
             </nav>
 
-            <div className="flex items-center gap-2 md:gap-4">
-              {/* Syncing indicator */}
+            <div className="flex items-center gap-2 md:gap-3">
               {isSyncing && (
                 <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full border border-white/10">
                   <div className="w-3 h-3 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" />
@@ -1705,36 +1709,61 @@ export default function App() {
               )}
               {currentUser ? (
                 <div className="flex items-center gap-2 md:gap-3">
-                  {/* Token warning badge */}
                   {!githubToken && (
                     <button onClick={() => setIsLoginModalOpen(true)} className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 border border-red-400/30 rounded-full text-[11px] font-bold uppercase tracking-widest text-red-300 hover:bg-red-500/30 transition-all">
-                      ⚠️ Token mancante
+                      ⚠️ Token
                     </button>
                   )}
-                  <div className="hidden sm:flex gap-2">
-                    <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); }} className="flex items-center gap-2 bg-heritage-gold text-white px-4 py-2 rounded-full text-sm font-bold hover:scale-105 transition-all shadow-md">
-                      <Plus size={16} /><span className="hidden lg:inline">Nuovo</span>
+                  <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); }} className="flex items-center gap-2 bg-heritage-gold text-white px-3 py-2 rounded-full text-[12px] font-bold hover:scale-105 transition-all shadow-md">
+                    <Plus size={15} /><span className="hidden lg:inline">Nuovo</span>
+                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowAdminDropdown(!showAdminDropdown)}
+                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all border ${showAdminDropdown ? 'bg-heritage-gold/20 border-heritage-gold/40 text-heritage-gold' : 'bg-white/10 border-white/10 text-white/70 hover:bg-white/20'}`}
+                    >
+                      <User size={16} />
                     </button>
-                    <button onClick={() => downloadJson(items)} title="Scarica items.json aggiornato" className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-bold border border-white/20 hover:bg-white/20 transition-all shadow-md">
-                      <span className="hidden lg:inline">↓ items.json</span><span className="lg:hidden">↓</span>
-                    </button>
-                    <button onClick={() => exportCatawikiTxt(items)} title="Esporta schede Catawiki" className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-full text-sm font-bold border border-white/20 hover:bg-white/20 transition-all shadow-md">
-                      <span className="hidden lg:inline">↓ Catawiki</span><span className="lg:hidden">C↓</span>
-                    </button>
+                    {showAdminDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-11 w-52 bg-emerald-950 border border-white/10 rounded-2xl overflow-hidden z-[200] shadow-2xl"
+                      >
+                        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/8">
+                          <div className="w-8 h-8 bg-heritage-gold rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
+                            {currentUser.slice(0,2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-white text-[12px] font-bold leading-tight">{currentUser}</p>
+                            <p className="text-white/40 text-[10px] uppercase tracking-widest">Editor</p>
+                          </div>
+                        </div>
+                        <div className="p-1.5">
+                          <button onClick={() => { downloadJson(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
+                            <Download size={14} /> Scarica items.json
+                          </button>
+                          <button onClick={() => { exportCatawikiTxt(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
+                            <ExternalLink size={14} /> Esporta Catawiki
+                          </button>
+                          <div className="h-px bg-white/8 my-1" />
+                          <button onClick={() => { handleLogout(); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400/70 hover:bg-red-500/10 transition-colors text-[12px] text-left">
+                            <LogOut size={14} /> Esci
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
                   </div>
-                  <div className="hidden sm:flex flex-col items-end mr-1">
-                    <p className="text-[11px] uppercase font-bold text-heritage-gold">{currentUser}</p>
-                    <p className="text-[11px] uppercase font-bold text-white/40">Editor</p>
-                  </div>
-                  <button onClick={handleLogout} className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"><LogOut size={18} /></button>
                 </div>
               ) : (
-                <button onClick={() => setIsLoginModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full text-[11px] md:text-[12px] font-bold uppercase tracking-widest transition-all text-white shadow-sm">
-                  <User size={14} /><span className="hidden xs:inline">Famiglia</span>
+                <button onClick={() => setIsLoginModalOpen(true)} className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all text-white shadow-sm">
+                  <User size={14} /><span className="hidden sm:inline">Accedi</span>
                 </button>
               )}
-              <button className="lg:hidden p-2 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <button className="lg:hidden w-9 h-9 flex items-center justify-center text-white hover:bg-white/10 rounded-full transition-colors" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
           </div>
@@ -1746,13 +1775,7 @@ export default function App() {
                   <button onClick={() => handleBackToCatalog('catalog')} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
                   <button onClick={() => { setView('home'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
                   <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
-                  {isAdmin && (
-                    <div className="flex flex-col gap-2 mt-2">
-                      <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 heritage-button-gold w-full"><Plus size={18} /><span className="font-heritage">Nuovo Oggetto</span></button>
-                      <button onClick={() => { downloadJson(items); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-white/10 text-white p-3 rounded-xl border border-white/10"><span className="font-heritage">↓ Scarica items.json</span></button>
-                      <button onClick={() => { exportCatawikiTxt(items); setIsMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-white/10 text-white p-3 rounded-xl border border-white/10"><span className="font-heritage">↓ Esporta Catawiki</span></button>
-                    </div>
-                  )}
+
                 </div>
               </motion.div>
             )}
