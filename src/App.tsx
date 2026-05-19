@@ -1858,9 +1858,10 @@ export default function App() {
                     const m6 = all.slice(0, 6);
                     const [main, b, c, wide, e5, e6, e7] = all.slice(0, 7);
 
-                    const Card = ({ item, cls, h, delay = 0 }: { item: typeof main; cls?: string; h: number; delay?: number }) => !item ? null : (
+                    const renderCard = (item: typeof main, extraCls: string, h: number, delay = 0) => !item ? null : (
                       <motion.div
-                        className={`rounded-2xl overflow-hidden relative cursor-pointer group ${cls || ''}`}
+                        key={item.id}
+                        className={`rounded-2xl overflow-hidden relative cursor-pointer group ${extraCls}`}
                         style={{minHeight: h}}
                         initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay }}
                         onClick={() => openItem(item)}
@@ -1870,7 +1871,7 @@ export default function App() {
                         {isAdmin && <button onClick={e => toggleFeatured(item.id, e)} className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-[12px] transition-all ${item.isFeatured ? 'bg-heritage-gold text-white' : 'bg-black/30 text-white/50 border border-white/20'}`}>★</button>}
                         <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
                           <p className="text-heritage-gold text-[9px] uppercase tracking-[0.2em] font-bold mb-0.5">{item.category}</p>
-                          <h4 className="text-white text-sm md:text-base leading-tight mb-0.5"><span className="font-serif italic">{item.name.split(' ')[0]} </span><span className="font-sans font-bold">{item.name.split(' ').slice(1).join(' ')}</span></h4>
+                          <h4 className="text-white text-sm md:text-base leading-tight mb-0.5 line-clamp-2"><span className="font-serif italic">{item.name.split(' ')[0]} </span><span className="font-sans font-bold">{item.name.split(' ').slice(1).join(' ')}</span></h4>
                           {(item.price || item.estimatedValue) && <p className="text-heritage-gold font-serif italic text-xs md:text-sm">{item.price || item.estimatedValue}</p>}
                         </div>
                       </motion.div>
@@ -1880,27 +1881,27 @@ export default function App() {
                       <>
                         {/* MOBILE — 1-2-1-2 */}
                         <div className="md:hidden flex flex-col gap-2">
-                          <Card item={m6[0]} h={300} />
+                          {renderCard(m6[0], '', 300)}
                           <div className="grid grid-cols-2 gap-2">
-                            <Card item={m6[1]} h={200} delay={0.05} />
-                            <Card item={m6[2]} h={200} delay={0.1} />
+                            {renderCard(m6[1], '', 200, 0.05)}
+                            {renderCard(m6[2], '', 200, 0.1)}
                           </div>
-                          <Card item={m6[3]} h={300} delay={0.15} />
+                          {renderCard(m6[3], '', 300, 0.15)}
                           <div className="grid grid-cols-2 gap-2">
-                            <Card item={m6[4]} h={200} delay={0.2} />
-                            <Card item={m6[5]} h={200} delay={0.25} />
+                            {renderCard(m6[4], '', 200, 0.2)}
+                            {renderCard(m6[5], '', 200, 0.25)}
                           </div>
                         </div>
 
                         {/* DESKTOP — bento 3col */}
                         <div className="hidden md:grid md:grid-cols-3 gap-3">
-                          <Card item={main} cls="md:row-span-2" h={480} />
-                          <Card item={b} h={230} delay={0.1} />
-                          <Card item={c} h={230} delay={0.15} />
-                          <Card item={wide} cls="md:col-span-2" h={320} delay={0.2} />
-                          <Card item={e5} h={280} delay={0.25} />
-                          <Card item={e6} h={280} delay={0.3} />
-                          <Card item={e7} h={280} delay={0.35} />
+                          {renderCard(main, 'md:row-span-2', 480)}
+                          {renderCard(b, '', 230, 0.1)}
+                          {renderCard(c, '', 230, 0.15)}
+                          {renderCard(wide, 'md:col-span-2', 320, 0.2)}
+                          {renderCard(e5, '', 280, 0.25)}
+                          {renderCard(e6, '', 280, 0.3)}
+                          {renderCard(e7, '', 280, 0.35)}
                         </div>
                       </>
                     );
