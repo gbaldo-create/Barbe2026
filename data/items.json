@@ -656,7 +656,7 @@
     "productCode": "",
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
-    "isFeatured": true,
+    "isFeatured": false,
     "order": 24,
     "details": [],
     "images": [
