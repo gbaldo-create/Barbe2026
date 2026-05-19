@@ -179,7 +179,7 @@
     "productCode": "1",
     "wearCondition": "Buono",
     "shipping": "",
-    "isFeatured": true,
+    "isFeatured": false,
     "order": 12,
     "details": [],
     "images": [],
