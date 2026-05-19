@@ -1,11 +1,11 @@
 export type ViewType = 'home' | 'catalog' | 'item-detail' | 'favorites' | 'adoption' | 'memories';
-
+ 
 export type ItemStatus = 'Disponibile' | 'Riservato' | 'Affidato' | 'Venduto' | 'Non in Vendita';
 export type AcquisitionType = 'Vendita' | 'Catawiki' | 'Lascito Affettivo' | 'Famiglia' | 'Regalo';
 export type Destination = 'Barberino' | 'Firenze' | 'Torino' | 'Cinisello Balsamo' | 'Sorella' | 'Altro';
 export type WearCondition = 'Ottimo' | 'Buono' | 'Discreto' | 'Da restaurare';
 export type ShippingOption = 'Disponibile' | 'Non disponibile' | 'Da concordare' | 'Ritiro in sede' | 'Spedizione possibile' | 'Solo ritiro' | 'Concordare';
-
+ 
 export interface Memory {
   id: string;
   author: string;
@@ -13,7 +13,7 @@ export interface Memory {
   date: string;
   itemId?: string;
 }
-
+ 
 export interface HeritageItem {
   id: string;
   name: string;
