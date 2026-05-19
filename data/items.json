@@ -788,7 +788,9 @@
     "isFeatured": false,
     "order": 30,
     "details": [],
-    "images": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779200824352-IMG-1371--1-.jpg"
+    ],
     "catawikiTitle": "Tavolino da gioco Luigi XV ciliegio massello piano panno verde XVIII-XIX sec",
     "catawikiCategory": "Mobili",
     "catawikiSubcategory": "Tavolo da gioco",
