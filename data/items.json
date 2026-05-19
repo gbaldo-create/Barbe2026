@@ -1,24 +1,41 @@
 [
   {
-    "name": "Poltrona in legno con seduta in paglia",
-    "description": "Elegante poltrona in legno di noce o mogano, caratterizzata da braccioli sinuosi e spalliera traforata con motivo geometrico. La seduta è rivestita in paglia intrecciata secondo la tradizione italiana, conferendo al pezzo un aspetto rustico ma raffinato.",
-    "room": "Salotto",
+    "name": "Poltrona neoclassica con seduta in paglia di Vienna",
+    "description": "Poltrona con struttura in legno massello tinto, schienale con traversa centrale decorata a losanghe ottagonali intagliate, braccioli a sciabola con terminazione arrotondata. La seduta è in paglia di Vienna intrecciata a raggiera, tipica della produzione italiana tra fine Settecento e primo Ottocento in stile Direttorio/Impero. Il numero '62' sul dorso suggerisce provenienza da lotto d'asta o inventario.",
+    "room": "Sala da pranzo",
     "category": "Sedute",
-    "year": "Metà XIX Secolo",
-    "dimensions": "65x70x95 cm",
+    "year": "1780–1830 circa, possibile riproduzione tardiva fine XIX secolo",
+    "dimensions": "circa 60×55×90 cm (LxPxH stimati)",
     "status": "Disponibile",
     "acquisitionType": "Vendita",
-    "price": "€ 600",
+    "price": "€ 180–400",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771605237-IMG-1370.jpg",
-    "technicalNotes": "",
+    "technicalNotes": "Struttura in legno massello (probabilmente noce o ciliegio tinto/laccato). Traversa centrale dello schienale con elementi geometrici ottagonali intagliati a giorno, tipici del gusto Direttorio-Impero italiano. Braccioli a sciabola con attacchi alle gambe anteriori, caratteristici del periodo. Seduta in paglia di Vienna intrecciata a raggiera, probabilmente non originale o ritessuta. Etichetta manoscritta '62' sul top rail: indica lotto o numero inventariale. Verifica opportuna: presenza di giunture a coda di rondine o spine in legno per datazione; assenza di viti Phillips coerente con pre-1940. Da periziare per distinguere originale d'epoca da riproduzione tardo-ottocentesca.",
     "destination": "Barberino",
     "estimatedValue": "",
     "productCode": "062",
+    "wearCondition": "Discreto",
+    "shipping": "",
     "isFeatured": false,
     "order": 8,
     "details": [],
     "images": [],
+    "catawikiTitle": "Poltrona neoclassica Direttorio/Impero legno massello paglia di Vienna",
+    "catawikiCategory": "Mobili",
+    "catawikiSubcategory": "Poltrona",
+    "catawikiStyle": "Neoclassico / Direttorio-Impero",
+    "catawikiMaterial": "Noce o ciliegio massello, paglia di Vienna",
+    "catawikiCountry": "Italia",
+    "catawikiRestored": false,
+    "catawikiWeight": "",
+    "catawikiShippingAvailable": true,
+    "catawikiPickupAvailable": true,
+    "catawikiDescription": "Poltrona in legno massello (noce o ciliegio) con schienale aperto a traversa centrale decorata con elementi geometrici ottagonali, braccioli a sciabola tipici del gusto Direttorio-Impero italiano. Seduta in paglia di Vienna intrecciata a raggiera, ritessuta. Databile tra fine XVIII e primo XIX secolo, o riproduzione di qualità tardo-ottocentesca. Condizioni discrete: struttura solida, lievi segni d'uso.",
+    "catawikiImages": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771605237-IMG-1370.jpg"
+    ],
+    "catawikiSpecific": {},
     "id": "mp4892tpaya24",
     "stories": [
       {
@@ -28,21 +45,7 @@
         "date": "2026-05-15",
         "itemId": "mp4892tpaya24"
       }
-    ],
-    "catawikiTitle": "Poltrona in legno noce con seduta in paglia - XIX",
-    "catawikiCategory": "Sedute antiche",
-    "catawikiSubcategory": "Poltrona",
-    "catawikiStyle": "Rustico",
-    "catawikiMaterial": "Noce massello e paglia intrecciata",
-    "catawikiCountry": "Italia",
-    "catawikiRestored": false,
-    "catawikiDescription": "Elegante poltrona della metà del XIX secolo in legno di noce, caratterizzata da braccioli sinuosi e spalliera traforata con raffinato motivo geometrico. La seduta è rivestita in paglia intrecciata secondo la tradizione italiana artigianale. L'oggetto presenta una pregevole combinazione tra l'austerità rurale e l'eleganza formale, tipica della produzione mobile dell'epoca. Pezzo di grande interesse per collezionisti di mobili italiani d'epoca e amatori dell'arredamento autentico.",
-    "catawikiShippingAvailable": true,
-    "catawikiPickupAvailable": true,
-    "catawikiImages": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771605237-IMG-1370.jpg"
-    ],
-    "catawikiWeight": ""
+    ]
   },
   {
     "name": "Poltrona vittoriana in velluto a coste bordeaux",
