@@ -2024,7 +2024,7 @@ export default function App() {
                 </div>{/* chiude gallery full-width */}
 
               {/* ── SEZIONE 3: TRE PASSI — full width dark ── */}
-              <section id="how-it-works" className="w-full py-12 md:py-16 bg-heritage-ink mt-12 md:mt-16">
+              <section id="how-it-works" className="w-full py-12 md:py-16 bg-heritage-ink mt-12 md:mt-16" style={{ scrollMarginTop: '120px' }}>
                 <div className="max-w-7xl mx-auto px-4 md:px-6">
                   <ScrollReveal><span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">Come funziona</span>
                   <h2 className="text-4xl md:text-5xl text-white leading-tight mb-2"><span className="font-serif italic">Semplice, umano.</span><br /><span className="font-serif italic text-heritage-gold">Da casa </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">a casa.</span></h2>
