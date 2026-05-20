@@ -395,7 +395,7 @@ const emptyForm = {
   price: '', catawikiUrl: '', imageUrl: '', technicalNotes: '',
   destination: 'Barberino' as any, estimatedValue: '', productCode: '', displayPrice: '',
   wearCondition: '' as any, shipping: '' as any,
-  isFeatured: false, order: 0, details: [] as { label: string; value: string }[], images: [] as string[],
+  isFeatured: false, isImportant: false, order: 0, details: [] as { label: string; value: string }[], images: [] as string[],
   // Campi Catawiki
   catawikiTitle: '', catawikiCategory: '', catawikiSubcategory: '',
   catawikiStyle: '', catawikiMaterial: '', catawikiCountry: '',
@@ -2214,7 +2214,7 @@ export default function App() {
                       </div>
                       {/* Stato */}
                       <div className="flex items-center gap-1.5">
-                        {statusFilters.map(s => <button key={s} onClick={() => setSelectedStatus(s)} className={`px-3 py-2 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white/50 text-heritage-ink/50 hover:text-heritage-ink'}`}>{s}</button>)}
+                        {statusFilters.map(s => <button key={s} onClick={() => { setSelectedStatus(s); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-3 py-2 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white/50 text-heritage-ink/50 hover:text-heritage-ink'}`}>{s}</button>)}
                       </div>
                       {isAdmin && <button onClick={() => setShowFavoritesOnly(!showFavoritesOnly)} className={`p-2 rounded-full transition-all border ${showFavoritesOnly ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white/50 border-heritage-ink/5 text-heritage-ink/50'}`}><Heart size={15} fill={showFavoritesOnly ? 'currentColor' : 'none'} /></button>}
                     </div>
@@ -2222,7 +2222,7 @@ export default function App() {
                   {/* Riga categorie */}
                   <div className="flex items-center gap-1.5 pb-3 border-t border-heritage-ink/6 pt-2.5">
                     {categoriesWithCount.map(cat => (
-                      <button key={cat.name} onClick={() => { setSelectedCategory(cat.name); setSelectedRoomFilter(null); }} className={`px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all flex items-center gap-1.5 ${selectedCategory === cat.name && !selectedRoomFilter ? 'bg-heritage-olive text-white' : 'text-heritage-ink/50 hover:text-heritage-ink'}`}>
+                      <button key={cat.name} onClick={() => { setSelectedCategory(cat.name); setSelectedRoomFilter(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-3 py-1.5 rounded-full text-[11px] uppercase tracking-widest font-bold transition-all flex items-center gap-1.5 ${selectedCategory === cat.name && !selectedRoomFilter ? 'bg-heritage-olive text-white' : 'text-heritage-ink/50 hover:text-heritage-ink'}`}>
                         <span>{cat.name}</span>
                         <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedCategory === cat.name && !selectedRoomFilter ? 'bg-white/20 text-white' : 'bg-heritage-ink/8 text-heritage-ink/50'}`}>{cat.count}</span>
                       </button>
@@ -2259,7 +2259,7 @@ export default function App() {
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-2xl font-serif">Filtra</h3>
                           <div className="flex items-center gap-4">
-                            <button onClick={() => { setSelectedCategory('Tutti'); setSelectedStatus('Tutti'); }} className="text-[12px] uppercase font-bold tracking-widest text-heritage-gold">Reset</button>
+                            <button onClick={() => { setSelectedCategory('Tutti'); setSelectedStatus('Tutti'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-[12px] uppercase font-bold tracking-widest text-heritage-gold">Reset</button>
                             <button onClick={() => setIsMobileFilterOpen(false)} className="p-2 bg-heritage-ink/5 rounded-full text-heritage-ink/65"><X size={24} /></button>
                           </div>
                         </div>
@@ -2270,13 +2270,13 @@ export default function App() {
                         </div>
                         <h4 className="text-[12px] uppercase font-bold tracking-widest text-heritage-ink/65 mb-4">Categorie</h4>
                           <div className="grid grid-cols-2 gap-2">
-                            {categoriesWithCount.map(cat => <button key={cat.name} onClick={() => { setSelectedCategory(cat.name); setSelectedRoomFilter(null); }} className={`px-4 py-3 rounded-xl text-[12px] uppercase tracking-widest font-bold transition-all text-left flex justify-between items-center ${selectedCategory === cat.name && !selectedRoomFilter ? 'bg-heritage-olive text-white' : 'bg-white text-heritage-ink/65 border border-heritage-ink/5'}`}><span>{cat.name}</span><span className={`text-[11px] px-2 py-0.5 rounded-full ${selectedCategory === cat.name ? 'bg-white/20' : 'bg-heritage-ink/5 text-heritage-ink/20'}`}>{cat.count}</span></button>)}
+                            {categoriesWithCount.map(cat => <button key={cat.name} onClick={() => { setSelectedCategory(cat.name); setSelectedRoomFilter(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-4 py-3 rounded-xl text-[12px] uppercase tracking-widest font-bold transition-all text-left flex justify-between items-center ${selectedCategory === cat.name && !selectedRoomFilter ? 'bg-heritage-olive text-white' : 'bg-white text-heritage-ink/65 border border-heritage-ink/5'}`}><span>{cat.name}</span><span className={`text-[11px] px-2 py-0.5 rounded-full ${selectedCategory === cat.name ? 'bg-white/20' : 'bg-heritage-ink/5 text-heritage-ink/20'}`}>{cat.count}</span></button>)}
                           </div>
                         </div>
                         <div>
                           <h4 className="text-[12px] uppercase font-bold tracking-widest text-heritage-ink/65 mb-4">Stato</h4>
                           <div className="flex flex-wrap gap-2">
-                            {statusFilters.map(s => <button key={s} onClick={() => setSelectedStatus(s)} className={`px-4 py-2 rounded-full text-[12px] uppercase tracking-widest font-bold ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white border border-heritage-ink/10 text-heritage-ink/65'}`}>{s}</button>)}
+                            {statusFilters.map(s => <button key={s} onClick={() => { setSelectedStatus(s); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-4 py-2 rounded-full text-[12px] uppercase tracking-widest font-bold ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white border border-heritage-ink/10 text-heritage-ink/65'}`}>{s}</button>)}
                           </div>
                         </div>
                         <button onClick={() => setIsMobileFilterOpen(false)} className="w-full heritage-button py-4 text-sm">Mostra Risultati</button>
@@ -2295,8 +2295,8 @@ export default function App() {
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: Math.min(index % 12, 11) * 0.055, ease: [0.22, 1, 0.36, 1] }}
-                    className={`${index % 5 === 2 ? 'basis-full md:flex-grow md:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]' : 'flex-grow basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]'}`}>
-                    <ItemCard item={item} onToggleFavorite={isAdmin ? toggleFavorite : undefined} onToggleFeatured={isAdmin ? toggleFeatured : undefined} onClick={() => openItem(item)} isAdmin={isAdmin} showFeaturedBadge />
+                    className={`${(item.catawikiUrl || (item as any).isImportant) ? 'basis-full md:flex-grow md:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]' : 'flex-grow basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]'}`}>
+                    <ItemCard item={item} onToggleFavorite={isAdmin ? toggleFavorite : undefined} onToggleFeatured={isAdmin ? toggleFeatured : undefined} onClick={() => openItem(item)} isAdmin={isAdmin} showFeaturedBadge isHighlight={!!(item.catawikiUrl || item.isFeatured || (item as any).isImportant)} />
                   </motion.div>
                 ))}
                 {filteredItems.length === 0 && !isSyncing && (
@@ -2460,7 +2460,7 @@ export default function App() {
                         <div className="flex items-center gap-3 text-heritage-gold uppercase tracking-[0.3em] text-[12px] font-bold"><span className="w-8 h-[1px] bg-heritage-gold" />{currentItem.category}</div>
                         {isAdmin && <button onClick={e => toggleFavorite(currentItem.id, e)} className={`p-2.5 rounded-full transition-all border ${currentItem.isFavorite ? 'bg-red-50 border-red-200 text-red-500' : 'bg-heritage-ink/5 border-heritage-ink/10 text-heritage-ink/65'}`}><Heart size={18} fill={currentItem.isFavorite ? 'currentColor' : 'none'} /></button>}
                       </div>
-                      <h2 className="text-4xl md:text-6xl font-serif italic text-heritage-ink leading-tight mb-6">
+                      <h2 className="text-4xl md:text-5xl font-serif italic text-heritage-ink leading-tight mb-6">
                         <span className="font-serif italic">{currentItem.name.split(' ')[0]} </span>
                         <span className="text-emerald-950 not-italic font-display font-bold tracking-tight">{currentItem.name.split(' ').slice(1).join(' ')}</span>
                       </h2>
@@ -2633,26 +2633,44 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
 
 
               {/* ── MOBILE STICKY BAR — crema leggera ── */}
-              <motion.div initial={{ y: 80 }} animate={{ y: 0 }} transition={{ type: 'spring', damping: 26, stiffness: 220, delay: 0.15 }} className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-heritage-cream/95 backdrop-blur-sm border-t border-heritage-ink/8 flex items-center gap-3 px-4 pt-2" style={{paddingBottom: "max(10px, env(safe-area-inset-bottom, 8px))"}}>
-                <div className="flex-1 min-w-0">
-                  {currentItem.catawikiUrl ? (
-                    <a href={currentItem.catawikiUrl} target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 bg-[#7B1818] text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
-                      Catawiki <ExternalLink size={10} />
-                    </a>
-                  ) : (
-                    <>
-                      <p className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/40 leading-none mb-0.5">Prezzo</p>
-                      <p className="text-heritage-ink font-serif italic text-base leading-none truncate">{getAdozioneLabel(currentItem) ?? ((currentItem as any).displayPrice || 'Su richiesta')}</p>
-                    </>
-                  )}
-                </div>
-                <a href={`https://wa.me/393394468130?text=${encodeURIComponent(`Buongiorno, vorrei informazioni su:
+              <motion.div initial={{ y: 80 }} animate={{ y: 0 }} transition={{ type: 'spring', damping: 26, stiffness: 220, delay: 0.15 }} className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-heritage-cream/95 backdrop-blur-sm border-t border-heritage-ink/8 px-4 pt-2" style={{paddingBottom: "max(10px, env(safe-area-inset-bottom, 8px))"}}>
+                {/* Prev/Next row */}
+                {(prevItem || nextItem) && (
+                  <div className="flex items-center justify-between mb-2 border-b border-heritage-ink/5 pb-2">
+                    {prevItem ? (
+                      <button onClick={() => openItem(prevItem)} className="flex items-center gap-1 text-heritage-ink/50 hover:text-heritage-ink transition-colors">
+                        <ChevronLeft size={14} /><span className="text-[10px] uppercase tracking-widest font-bold truncate max-w-[120px]">{prevItem.name.split(' ').slice(0,2).join(' ')}</span>
+                      </button>
+                    ) : <span />}
+                    {nextItem ? (
+                      <button onClick={() => openItem(nextItem)} className="flex items-center gap-1 text-heritage-ink/50 hover:text-heritage-ink transition-colors">
+                        <span className="text-[10px] uppercase tracking-widest font-bold truncate max-w-[120px]">{nextItem.name.split(' ').slice(0,2).join(' ')}</span><ChevronRight size={14} />
+                      </button>
+                    ) : <span />}
+                  </div>
+                )}
+                {/* Price + WhatsApp row */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    {currentItem.catawikiUrl ? (
+                      <a href={currentItem.catawikiUrl} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 bg-[#7B1818] text-white px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
+                        Catawiki <ExternalLink size={10} />
+                      </a>
+                    ) : (
+                      <>
+                        <p className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/40 leading-none mb-0.5">Prezzo</p>
+                        <p className="text-heritage-ink font-serif italic text-base leading-none truncate">{getAdozioneLabel(currentItem) ?? ((currentItem as any).displayPrice || 'Su richiesta')}</p>
+                      </>
+                    )}
+                  </div>
+                  <a href={`https://wa.me/393394468130?text=${encodeURIComponent(`Buongiorno, vorrei informazioni su:
 ${currentItem.name}
 ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-[#25D366] text-white px-5 py-2.5 rounded-full font-bold text-[12px] uppercase tracking-wider flex-shrink-0">
-                  <WhatsAppIcon size={14} color="white" /> WhatsApp
-                </a>
+                    className="flex items-center gap-2 bg-[#128C7E] hover:bg-[#0e7066] text-white px-5 py-2.5 rounded-full font-bold text-[12px] uppercase tracking-wider flex-shrink-0 transition-colors">
+                    <WhatsAppIcon size={14} color="white" /> WhatsApp
+                  </a>
+                </div>
               </motion.div>
 
               {relatedItems.length > 0 && (
@@ -2671,13 +2689,42 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
       </main>
 
       {/* Footer */}
-      <footer className="py-16 border-t border-heritage-ink/5 bg-heritage-cream/10">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="mb-8">
-            <h4 className="font-serif text-2xl mb-4 italic text-heritage-ink">Ti interessa un pezzo o vuoi saperne di più?</h4>
-            <a href="https://wa.me/393394468130" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-[#25D366] text-white rounded-full hover:bg-[#128C7E] transition-all shadow-lg group"><WhatsAppIcon size={20} color="white" /><span className="font-heritage tracking-wide">Contattaci su WhatsApp</span></a>
+      <footer className="bg-heritage-ink text-white pt-16 pb-8">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-9 h-9 bg-heritage-gold rounded-full flex items-center justify-center text-emerald-950 flex-shrink-0">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg>
+                </div>
+                <div>
+                  <p className="font-serif font-bold text-white leading-none">Barberino2026</p>
+                  <p className="text-[10px] uppercase tracking-[0.4em] text-heritage-gold/70 mt-0.5">Archivio di Famiglia</p>
+                </div>
+              </div>
+              <p className="text-white/50 text-sm font-serif italic leading-relaxed">Una casa che cambia, ricordi che restano. Ogni oggetto porta con sé un frammento di storia.</p>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-heritage-gold mb-5">Esplora</p>
+              <ul className="space-y-3">
+                <li><button onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">La storia</button></li>
+                <li><button onClick={() => setIsExplorePanelOpen(true)} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Il catalogo</button></li>
+                <li><button onClick={() => { setView('home'); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Vendita e adozione</button></li>
+                <li><button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">I ricordi</button></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-heritage-gold mb-5">Contatti</p>
+              <p className="text-white/50 text-sm mb-5 font-serif italic">Scrivici per qualsiasi oggetto — siamo persone, non un negozio.</p>
+              <a href="https://wa.me/393394468130" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-[#128C7E] hover:bg-[#0e7066] text-white rounded-full text-[12px] font-bold uppercase tracking-wider transition-all">
+                <WhatsAppIcon size={15} color="white" /> WhatsApp
+              </a>
+            </div>
           </div>
-          <p className="text-sm font-serif opacity-70">Custodito per le generazioni future • 2026 • Barberino di Mugello</p>
+          <div className="border-t border-white/8 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-white/25 text-[11px] font-serif italic">1 Corso Corsini · Barberino di Mugello · 2026</p>
+            <p className="text-white/25 text-[11px]">Custodito per le generazioni future</p>
+          </div>
         </div>
       </footer>
 
@@ -2833,12 +2880,12 @@ function DetailBox({ label, value }: { label: string; value: string }) {
   );
 }
 
-interface ItemCardProps { item: HeritageItem; onClick: () => void; onToggleFavorite?: (id: string, e: React.MouseEvent) => void; onToggleFeatured?: (id: string, e: React.MouseEvent) => void; isAdmin?: boolean; aspectClassName?: string; imageHeightRatio?: string; isFeaturedCard?: boolean; showFeaturedBadge?: boolean; }
+interface ItemCardProps { item: HeritageItem; onClick: () => void; onToggleFavorite?: (id: string, e: React.MouseEvent) => void; onToggleFeatured?: (id: string, e: React.MouseEvent) => void; isAdmin?: boolean; aspectClassName?: string; imageHeightRatio?: string; isFeaturedCard?: boolean; showFeaturedBadge?: boolean; isHighlight?: boolean; }
 
-function ItemCard({ item, onClick, onToggleFavorite, onToggleFeatured, isAdmin, aspectClassName = 'aspect-[3/4]', imageHeightRatio, isFeaturedCard, showFeaturedBadge }: ItemCardProps) {
+function ItemCard({ item, onClick, onToggleFavorite, onToggleFeatured, isAdmin, aspectClassName = 'aspect-[3/4]', imageHeightRatio, isFeaturedCard, showFeaturedBadge, isHighlight }: ItemCardProps) {
   return (
-    <motion.div onClick={onClick} whileHover={{ y: -5, transition: { type: 'spring', stiffness: 320, damping: 24 } }} className={`group cursor-pointer overflow-hidden flex flex-col h-full w-full ${isFeaturedCard ? 'heritage-card border-none shadow-xl' : 'heritage-card'}`}>
-      <div className={`overflow-hidden relative shrink-0 w-full ${imageHeightRatio ? '' : (aspectClassName)}`} style={imageHeightRatio ? { height: imageHeightRatio } : { aspectRatio: '3/4' }}>
+    <motion.div onClick={onClick} whileHover={{ y: -5, transition: { type: 'spring', stiffness: 320, damping: 24 } }} className={`group cursor-pointer overflow-hidden flex flex-col h-full w-full ${isFeaturedCard ? 'heritage-card border-none shadow-xl' : isHighlight ? 'heritage-card shadow-xl' : 'heritage-card'}`}>
+      <div className={`overflow-hidden relative shrink-0 w-full ${imageHeightRatio ? '' : aspectClassName}`} style={imageHeightRatio ? { height: imageHeightRatio } : { aspectRatio: '3/4' }}>
         <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
         {isFeaturedCard && (
           <div className="absolute inset-0 flex flex-col justify-end">
@@ -2873,18 +2920,18 @@ function ItemCard({ item, onClick, onToggleFavorite, onToggleFeatured, isAdmin, 
           })()}
         </div>
       </div>
-      <div className="p-3 md:p-6 flex flex-col flex-grow">
+      <div className={`p-3 md:p-5 flex flex-col flex-grow ${item.catawikiUrl ? "bg-[#7B1818] text-white" : (item.isFeatured || (item as any).isImportant) ? "bg-heritage-ink text-white" : ""}`}>
         <span className="text-[11px] md:text-[12px] uppercase tracking-widest font-bold text-heritage-gold block mb-1">{item.category}</span>
-        <h3 className="text-[16px] md:text-xl font-serif leading-tight mb-2 line-clamp-3 w-[70%] md:w-full">{item.name}</h3>
-        <div className="flex items-center gap-1.5 text-[12px] md:text-sm text-heritage-ink/80 mb-3 font-medium"><MapPin size={10} /><span className="truncate">{item.room}</span></div>
-        <div className="flex items-center justify-between text-heritage-gold pt-3 border-t border-heritage-ink/5 mt-auto">
+        <h3 className={`text-[16px] md:text-xl font-serif leading-tight mb-2 line-clamp-3 w-[70%] md:w-full ${isHighlight ? 'text-white' : ''}`}>{item.name}</h3>
+        <div className={`flex items-center gap-1.5 text-[12px] md:text-sm mb-3 font-medium ${item.catawikiUrl ? 'text-white/50' : item.isFeatured ? 'text-white/50' : 'text-heritage-ink/80'}`}><MapPin size={10} /><span className="truncate">{item.room}</span></div>
+        <div className={`flex items-center justify-between text-heritage-gold pt-3 mt-auto ${isHighlight ? 'border-t border-heritage-gold/30' : 'border-t border-heritage-ink/5'}`}>
           <div className="flex flex-col">
             {!item.catawikiUrl && !isAdozione(item) && (item as any).displayPrice && (
-              <span className="text-[12px] md:text-sm font-serif italic text-heritage-ink/70 mb-1">
+              <span className={`text-[12px] md:text-sm font-serif italic mb-1 ${isHighlight ? 'text-heritage-gold' : 'text-heritage-ink/70'}`}>
                 {(item as any).displayPrice}
               </span>
             )}
-            <span className="text-[11px] md:text-[12px] font-bold uppercase tracking-widest opacity-60">Dettagli</span>
+            <span className={`text-[11px] md:text-[12px] font-bold uppercase tracking-widest opacity-60 ${isHighlight ? "text-white" : ""}`}>Dettagli</span>
           </div>
           <ChevronRight size={14} />
         </div>
@@ -4431,6 +4478,12 @@ function ItemFormContent({ form, setForm, isDragging, setIsDragging, isProcessin
             </div>
             <span className="text-[11px] uppercase font-bold tracking-widest text-heritage-ink/50">In evidenza (Home)</span>
           </div>
+          <div className="flex items-center gap-3 cursor-pointer pt-1" onClick={() => setForm((p: any) => ({ ...p, isImportant: !p.isImportant }))}>
+            <div className={`w-10 h-5 rounded-full transition-colors relative ${(form as any).isImportant ? 'bg-heritage-ink' : 'bg-heritage-ink/10'}`}>
+              <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${(form as any).isImportant ? 'translate-x-5' : 'translate-x-0'}`} />
+            </div>
+            <span className="text-[11px] uppercase font-bold tracking-widest text-heritage-ink/50">Importante (sfondo nero catalogo)</span>
+          </div>
         </div>
       </div>
 
@@ -4491,7 +4544,7 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
         imageUrl: initialData.imageUrl || '', technicalNotes: initialData.technicalNotes || '',
         destination: initialData.destination || 'Barberino', estimatedValue: initialData.estimatedValue || '',
         productCode: initialData.productCode || '', wearCondition: initialData.wearCondition || '',
-        shipping: initialData.shipping || '', isFeatured: initialData.isFeatured || false,
+        shipping: initialData.shipping || '', isFeatured: initialData.isFeatured || false, isImportant: (initialData as any).isImportant || false,
         order: initialData.order ?? nextOrder, details: initialData.details || [], images: initialData.images || [],
         catawikiTitle: initialData.catawikiTitle || '', catawikiCategory: initialData.catawikiCategory || '',
         catawikiSubcategory: initialData.catawikiSubcategory || '', catawikiStyle: initialData.catawikiStyle || '',
