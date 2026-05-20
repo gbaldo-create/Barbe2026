@@ -1716,7 +1716,7 @@
     "status": "Disponibile",
     "acquisitionType": "Vendita",
     "price": "€ 700",
-    "catawikiUrl": "",
+    "catawikiUrl": "https://www.catawiki.com/it?utm_medium=branded-cpc&utm_source=google&utm_content=145196140475&utm_term=catawiki&gad_source=1&gad_campaignid=19248435034&gbraid=0AAAAADHD_vSjS0EbJ_m3fDCnLc_tScXbP&gclid=Cj0KCQjwlLDQBhDjARIsAPlIefEfEmOvB0ookINUlcB4VC74Xi1k4TQreJnMC4l0-HL5BmsbyJPAd9waAhcUEALw_wcB",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779181024483-IMG-1945.jpg",
     "technicalNotes": "Corpo cilindrico in acciaio o alluminio verniciato a fuoco nero lucido · diffusore a disco in lamiera stampata verniciata bianco opaco/lucido · cappello superiore emisferico in metallo laccato nero · cavo tessile nero con interruttore in linea tipo anni '70 · spina bipolare italiana piatta visibile · marchio inciso a rilievo sulla base: 'LAMPIATTA / DESIGN/DEPAS D'URBINO LOMAZZI / STILNOVO / made in Italy' · stato conservazione apparentemente molto buono, verniciatura integra senza scrostature visibili · da verificare funzionalità elettrica e conformità impianto prima dell'uso · coppia omogenea e coerente",
     "destination": "Barberino",
@@ -1743,6 +1743,7 @@
     "catawikiDescription": "Coppia di lampade da tavolo modello 'Lampiatta', progettate dallo studio DDL (De Pas, D'Urbino, Lomazzi) per Stilnovo, Milano, 1969–1970 circa. Struttura cilindrica in metallo laccato nero, diffusore a disco piatto orientabile in metallo bianco, cappello emisferico superiore. Marchio originale inciso sulla base. Esemplari originali d'epoca in buono stato, impianto elettrico da verificare.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "300",
     "id": "mp8ushaobkeju",
     "stories": []
   },
