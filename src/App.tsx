@@ -1881,23 +1881,23 @@ export default function App() {
                 <motion.div className="absolute inset-0 z-0" style={{ y: heroParallax }}>
                   <img src={heroImageUrl} className="w-full h-full object-cover object-right" alt="Barberino2026" />
                   <div className="absolute inset-0 bg-heritage-ink/10" />
+                </motion.div>
+                <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pb-44 md:pb-20">
                   {isAdmin && (
-                    <div className="absolute top-24 right-6 md:bottom-10 md:top-auto md:right-10 z-30">
+                    <div className="absolute top-24 right-6 md:bottom-10 md:top-auto md:right-10">
                       <button onClick={() => setIsHeroModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md text-white rounded-full text-sm font-bold border border-white/30 hover:bg-white/30 transition-all shadow-2xl">
                         <ImageIcon size={16} /><span>Cambia Sfondo</span>
                       </button>
                     </div>
                   )}
-                </motion.div>
-                <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pb-44 md:pb-20">
-                  <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-md md:max-w-xl lg:max-w-[50%] bg-heritage-cream/60 backdrop-blur-xl p-6 md:py-5 md:px-10 lg:py-6 lg:px-12 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl border-l-[4px] md:border-l-[8px] border-heritage-gold space-y-2 md:space-y-3">
+                  <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-md md:max-w-xl lg:max-w-[60%] xl:max-w-[70%] p-6 md:py-6 md:px-0 space-y-3 md:space-y-4">
                     <div>
-                      <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-emerald-800/80 text-[12px] uppercase tracking-[0.3em] font-bold mb-0.5 block">1 Corso Corsini</motion.span>
-                      <h2 className="text-3xl md:text-4xl lg:text-5xl leading-[1.1] font-serif text-heritage-ink italic"><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="block">Una casa che <span className="text-emerald-950 not-italic font-display font-bold tracking-tight">cambia,</span></motion.span><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="block">ricordi che <span className="text-emerald-950 not-italic font-display font-bold tracking-tight">restano.</span></motion.span></h2>
+                      <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-heritage-gold text-[11px] uppercase tracking-[0.35em] font-bold mb-1 block">1 Corso Corsini</motion.span>
+                      <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] leading-[1.02] font-serif text-white italic"><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="block">Una casa che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">cambia,</span></motion.span><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="block">ricordi che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">restano.</span></motion.span></h2>
                     </div>
-                    <p className="text-sm md:text-base text-heritage-ink/85 leading-snug font-heritage italic">"Ogni oggetto che parte porta con sé un frammento di noi. Lo affidiamo a chi saprà tenerlo."</p>
+                    <p className="text-base md:text-lg text-white/75 leading-snug font-heritage italic">"Ogni oggetto che parte porta con sé un frammento di noi. Lo affidiamo a chi saprà tenerlo."</p>
                     <div className="pt-1">
-                      <button onClick={() => setIsExplorePanelOpen(true)} className="px-6 py-3 bg-heritage-ink text-white rounded-lg font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-heritage-gold transition-all shadow-xl group flex items-center gap-3">
+                      <button onClick={() => setIsExplorePanelOpen(true)} className="px-7 py-3.5 bg-heritage-gold text-white rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white hover:text-heritage-ink transition-all shadow-xl group flex items-center gap-3">
                         Esplora la Collezione <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
@@ -1908,47 +1908,44 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4 md:px-6">
 
                 {/* ── SEZIONE 1: IN VENDITA / CATAWIKI / ADOZIONE ── */}
-                <section className="border-y border-heritage-gold/15 -mx-4 md:-mx-6 px-4 md:px-6 py-16 md:py-24 mb-0 bg-heritage-cream/40">
+                <section className="border-y border-heritage-gold/15 -mx-4 md:-mx-6 px-4 md:px-6 py-2 md:py-16 mb-0 bg-heritage-cream/40">
                   <div className="max-w-4xl mx-auto">
-                    <ScrollReveal><span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">Il nostro approccio</span>
+                    <ScrollReveal><div className="flex items-center gap-3 mb-6"><span className="w-4 h-px bg-heritage-gold" /><span className="text-heritage-gold text-lg">✦</span><span className="w-4 h-px bg-heritage-gold" /></div><span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">Scegli il tuo percorso</span>
                     <h2 className="text-4xl md:text-5xl text-heritage-ink leading-tight mb-2"><span className="font-serif italic">Non stiamo vendendo oggetti.</span><br /><span className="font-serif italic text-heritage-gold">Stiamo affidando</span> <span className="font-display font-medium tracking-tight text-heritage-gold not-italic">ricordi.</span></h2>
                     </ScrollReveal>
                     <div className="w-11 h-px bg-heritage-gold opacity-70 my-6" />
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-                      {/* Vendita diretta */}
                       <ScrollReveal delay={0.05}><div className="border border-heritage-ink/10 bg-white rounded-2xl p-7 relative overflow-hidden h-full">
                         <div className="absolute top-4 right-5 font-serif text-[64px] text-heritage-ink/[0.04] leading-none pointer-events-none select-none">€</div>
-                        <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-heritage-gold mb-4">Vendita diretta</p>
-                        <p className="text-[16px] leading-relaxed text-heritage-ink/90 italic font-heritage">Alcuni oggetti hanno attraversato un secolo. Il loro prezzo riconosce la storia, la mano che li ha creati, il tempo che li ha resi unici.</p>
+                        <p className="text-[11px] tracking-[0.25em] uppercase font-bold text-heritage-gold mb-3 text-[13px]">Acquista</p>
+                        <p className="text-[17px] leading-relaxed text-heritage-ink font-heritage">Scegli l'oggetto che ti ha colpito e scrivici. Trattiamo insieme — siamo persone, non un negozio.</p>
                       </div></ScrollReveal>
-                      {/* Catawiki */}
                       <ScrollReveal delay={0.12}><div className="border border-heritage-gold/25 rounded-2xl p-7 bg-heritage-gold/8 relative overflow-hidden h-full">
                         <div className="absolute top-4 right-5 font-serif text-[64px] text-heritage-gold/[0.06] leading-none pointer-events-none select-none">⟡</div>
                         <div className="flex items-center gap-2 mb-4">
-                          <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-heritage-gold">Su Catawiki</p>
+                          <p className="text-[11px] tracking-[0.25em] uppercase font-bold text-heritage-gold text-[13px]">Partecipa all'asta</p>
                           <span className="text-[11px] tracking-wider uppercase font-bold bg-[#7B1818] text-white px-2 py-0.5 rounded-full">asta</span>
                         </div>
-                        <p className="text-[16px] leading-relaxed text-heritage-ink/90 italic font-heritage mb-4">Alcuni pezzi di pregio vengono battuti all'asta su Catawiki, piattaforma europea per oggetti da collezione.</p>
+                        <p className="text-[17px] leading-relaxed text-heritage-ink font-heritage mb-4">Alcuni pezzi di pregio sono su Catawiki. Fai la tua offerta e portalo a casa attraverso la piattaforma.</p>
                         <div className="bg-heritage-gold/5 border border-heritage-gold/20 rounded-xl p-3.5">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-[11px] tracking-wider uppercase font-bold bg-[#7B1818] text-white px-2.5 py-1 rounded-full">Su Catawiki</span>
                             <ExternalLink size={10} className="text-heritage-gold/50" />
                           </div>
-                          <p className="text-[13px] leading-relaxed text-heritage-ink/80 italic font-heritage">Nel catalogo troverai questo badge con link diretto all'asta.</p>
+                          <p className="text-[13px] leading-relaxed text-heritage-ink italic font-heritage">Nel catalogo troverai questo badge con link diretto all'asta.</p>
                         </div>
                       </div></ScrollReveal>
-                      {/* Adozione */}
                       <ScrollReveal delay={0.19}><div className="border border-heritage-ink/10 bg-white rounded-2xl p-7 relative overflow-hidden h-full">
                         <div className="absolute top-4 right-5 font-serif text-[64px] text-heritage-ink/[0.04] leading-none pointer-events-none select-none">♡</div>
-                        <p className="text-[11px] tracking-[0.35em] uppercase font-bold text-heritage-gold mb-4">In adozione</p>
-                        <p className="text-[16px] leading-relaxed text-heritage-ink/90 italic font-heritage">Per questi non chiediamo nulla. Solo che finiscano nelle mani giuste — qualcuno che li faccia vivere ancora, come faceva papà.</p>
+                        <p className="text-[11px] tracking-[0.25em] uppercase font-bold text-heritage-gold mb-3 text-[13px]">Adotta</p>
+                        <p className="text-[17px] leading-relaxed text-heritage-ink font-heritage">Per alcuni oggetti non chiediamo nulla. Solo che vadano nelle mani giuste — qualcuno che li ami come li amava papà.</p>
                       </div></ScrollReveal>
                     </div>
                   </div>
                 </section>
 
                 {/* ── SEZIONE 2: GALLERY IN EVIDENZA ── */}
-                <div className="mt-12 md:mt-16 relative pb-8">
+                <div className="mt-16 md:mt-20 relative pb-8">
                   {/* Header sezione */}
                   <div className="flex items-end justify-between mb-6">
                     <ScrollReveal><div>
@@ -1962,6 +1959,7 @@ export default function App() {
                       </span>
                     </button>
                   </div>
+
 
                   {/* Mobile: 6 oggetti 1-2-1-2 | Desktop: bento 3col 7 oggetti */}
                   {(() => {
@@ -1982,7 +1980,7 @@ export default function App() {
                         {isAdmin && <button onClick={e => toggleFeatured(item.id, e)} className={`absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center text-[12px] transition-all ${item.isFeatured ? 'bg-heritage-gold text-white' : 'bg-black/30 text-white/50 border border-white/20'}`}>★</button>}
                         <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
                           <p className="text-heritage-gold text-[10px] uppercase tracking-[0.2em] font-bold mb-0.5">{item.category}</p>
-                          <h4 className="text-white text-[17px] md:text-xl leading-tight mb-0.5 line-clamp-3 w-[70%]"><span className="font-serif italic">{item.name.split(' ')[0]} </span><span className="font-sans font-bold">{item.name.split(' ').slice(1).join(' ')}</span></h4>
+                          <h4 className="text-white text-[19px] md:text-2xl leading-tight mb-0.5 line-clamp-3 w-[70%]"><span className="font-serif italic">{item.name.split(' ')[0]} </span><span className="font-sans font-bold">{item.name.split(' ').slice(1).join(' ')}</span></h4>
                           {item.catawikiUrl || isAdozione(item)
                             ? null
                             : (item as any).displayPrice && <p className="text-heritage-gold font-serif italic text-xs md:text-sm">{(item as any).displayPrice}</p>}
@@ -2008,10 +2006,10 @@ export default function App() {
 
                         {/* DESKTOP — bento 3col */}
                         <div className="hidden md:grid md:grid-cols-3 gap-3">
-                          {renderCard(main, 'md:row-span-2', 480)}
+                          {renderCard(main, 'md:row-span-2', 560)}
                           {renderCard(b, '', 230, 0.1)}
                           {renderCard(c, '', 230, 0.15)}
-                          {renderCard(wide, 'md:col-span-2', 320, 0.2)}
+                          {renderCard(wide, 'md:col-span-2', 360, 0.2)}
                           {renderCard(e5, '', 280, 0.25)}
                           {renderCard(e6, '', 280, 0.3)}
                           {renderCard(e7, '', 280, 0.35)}
@@ -2024,9 +2022,9 @@ export default function App() {
                 </div>{/* chiude gallery full-width */}
 
               {/* ── SEZIONE 3: TRE PASSI — full width dark ── */}
-              <section id="how-it-works" className="w-full py-12 md:py-16 bg-heritage-ink mt-12 md:mt-16" style={{ scrollMarginTop: '120px' }}>
+              <section id="how-it-works" className="w-full py-10 md:py-14 bg-heritage-ink mt-10 md:mt-20" style={{ scrollMarginTop: '120px' }}>
                 <div className="max-w-7xl mx-auto px-4 md:px-6">
-                  <ScrollReveal><span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">Come funziona</span>
+                  <ScrollReveal><div className="flex items-center gap-3 mb-6"><span className="w-4 h-px bg-heritage-gold" /><span className="text-heritage-gold text-lg">✦</span><span className="w-4 h-px bg-heritage-gold" /></div><span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">Come funziona</span>
                   <h2 className="text-4xl md:text-5xl text-white leading-tight mb-2"><span className="font-serif italic">Semplice, umano.</span><br /><span className="font-serif italic text-heritage-gold">Da casa </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">a casa.</span></h2>
                   </ScrollReveal><div className="w-11 h-px bg-heritage-gold/40 mt-5 mb-12" />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12">
@@ -2036,10 +2034,10 @@ export default function App() {
                       { n: "03", t: "Porta a casa", b: "Ritiro a Cinisello Balsamo o spedizione concordata. L'oggetto riparte. Il ricordo resta." },
                     ].map((s, i) => (
                       <div key={i} className="flex flex-col gap-4">
-                        <div className="font-serif text-[52px] text-heritage-gold opacity-80 leading-none">{s.n}</div>
+                        <div className="font-serif text-[72px] text-heritage-gold opacity-60 leading-none">{s.n}</div>
                         <div className="w-7 h-px bg-heritage-gold opacity-60" />
                         <p className="text-[14px] tracking-[0.25em] uppercase font-bold text-white">{s.t}</p>
-                        <p className="text-[16px] leading-relaxed text-white/70 italic font-heritage">{s.b}</p>
+                        <p className="text-[17px] leading-loose text-white/70 italic font-heritage">{s.b}</p>
                       </div>
                     ))}
                   </div>
@@ -2054,7 +2052,7 @@ export default function App() {
               <div className="max-w-7xl mx-auto px-4 md:px-6">{/* riapre max-w-7xl dopo Come funziona */}
 
                 {/* ── SEZIONE 4: LA NOSTRA STORIA ── */}
-                <section className="mt-12 md:mt-16 pt-8 md:pt-12 border-t border-heritage-ink/8">
+                <section className="mt-10 md:mt-20 pt-8 md:pt-12 border-t border-heritage-ink/8">
                   <span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">La nostra storia</span>
                   <h2 className="text-4xl md:text-5xl text-heritage-ink leading-tight mb-2"><span className="font-serif italic">La casa della</span><br /><span className="font-serif italic text-heritage-gold">famiglia </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">Manescalchi/Giorgi</span></h2>
                   <div className="w-11 h-px bg-heritage-gold/40 mt-5 mb-12" />
@@ -2086,7 +2084,7 @@ export default function App() {
                 </section>
 
                 {/* ── SEZIONE 5: LE VOCI DI CASA ── */}
-                <section className="mt-12 md:mt-16 -mx-4 md:-mx-6 px-4 md:px-6 py-12 md:py-16 bg-heritage-cream/60">
+                <section className="mt-10 md:mt-20 -mx-4 md:-mx-6 px-4 md:px-6 py-10 md:py-16 bg-heritage-cream/60">
                   <div className="max-w-4xl mx-auto">
                     <span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">I ricordi di famiglia</span>
                     <h2 className="text-4xl md:text-5xl text-heritage-ink leading-tight mb-2"><span className="font-serif italic">Le voci </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">di casa</span></h2>
@@ -2460,7 +2458,7 @@ export default function App() {
                         <div className="flex items-center gap-3 text-heritage-gold uppercase tracking-[0.3em] text-[12px] font-bold"><span className="w-8 h-[1px] bg-heritage-gold" />{currentItem.category}</div>
                         {isAdmin && <button onClick={e => toggleFavorite(currentItem.id, e)} className={`p-2.5 rounded-full transition-all border ${currentItem.isFavorite ? 'bg-red-50 border-red-200 text-red-500' : 'bg-heritage-ink/5 border-heritage-ink/10 text-heritage-ink/65'}`}><Heart size={18} fill={currentItem.isFavorite ? 'currentColor' : 'none'} /></button>}
                       </div>
-                      <h2 className="text-4xl md:text-5xl font-serif italic text-heritage-ink leading-tight mb-6">
+                      <h2 className="text-5xl md:text-6xl lg:text-6xl font-serif italic text-heritage-ink leading-[1.02] mb-8">
                         <span className="font-serif italic">{currentItem.name.split(' ')[0]} </span>
                         <span className="text-emerald-950 not-italic font-display font-bold tracking-tight">{currentItem.name.split(' ').slice(1).join(' ')}</span>
                       </h2>
@@ -2674,7 +2672,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
       </main>
 
       {/* Footer */}
-      {window.matchMedia('(min-width: 768px)').matches && view !== 'item-detail' && (
+      {window.matchMedia('(min-width: 768px)').matches && (
       <footer className="site-footer bg-heritage-ink text-white pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
@@ -4542,7 +4540,7 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
         catawikiDescription: initialData.catawikiDescription || '',
         catawikiImages: initialData.catawikiImages || [],
         catawikiSpecific: (initialData as any).catawikiSpecific || {},
-        displayPrice: (initialData as any).displayPrice || '',
+        displayPrice: (initialData as any).displayPrice || initialData.price || '',
       });
     } else {
       setForm({ ...emptyForm, order: nextOrder });
