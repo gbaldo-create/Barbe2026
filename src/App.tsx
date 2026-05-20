@@ -1884,9 +1884,9 @@ export default function App() {
                 </motion.div>
                 <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pb-44 md:pb-20">
                   {isAdmin && (
-                    <div className="absolute top-24 right-6 md:bottom-10 md:top-auto md:right-10">
-                      <button onClick={() => setIsHeroModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md text-white rounded-full text-sm font-bold border border-white/30 hover:bg-white/30 transition-all shadow-2xl">
-                        <ImageIcon size={16} /><span>Cambia Sfondo</span>
+                    <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8">
+                      <button onClick={() => setIsHeroModalOpen(true)} title="Cambia sfondo" className="w-9 h-9 flex items-center justify-center bg-black/20 hover:bg-black/40 backdrop-blur-sm text-white/60 hover:text-white rounded-full border border-white/10 transition-all">
+                        <ImageIcon size={14} />
                       </button>
                     </div>
                   )}
