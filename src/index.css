@@ -36,3 +36,9 @@ h1, h2, h3, h4 {
 .scroll-fade {
   mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
 }
+
+@media (max-width: 767px) {
+  footer.site-footer {
+    display: none !important;
+  }
+}

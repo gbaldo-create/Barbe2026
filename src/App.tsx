@@ -1859,7 +1859,7 @@ export default function App() {
             {isMobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="lg:hidden bg-emerald-900 border-t border-white/10 overflow-hidden rounded-b-[2rem]">
                 <div className="flex flex-col p-6 gap-4">
-                  <button onClick={() => handleBackToCatalog('catalog')} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
+                  <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
                   <button onClick={() => { setView('home'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
                   <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
 
@@ -2331,7 +2331,7 @@ export default function App() {
 
           {/* ── DETAIL ── */}
           {view === 'item-detail' && currentItem && (
-            <motion.div key={currentItem.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="pb-20 md:pb-12 bg-heritage-cream">
+            <motion.div key={currentItem.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="pb-32 md:pb-12 bg-heritage-cream">
 
               {/* ── MOBILE HERO — foto + overlay con titolo e prezzo ── */}
               <div className="md:hidden relative" style={{marginTop: '-1px'}}>
@@ -2428,8 +2428,8 @@ export default function App() {
               <div className="hidden md:flex items-center justify-between mb-8">
                 <button onClick={() => handleBackToCatalog()} className="flex items-center gap-2 text-heritage-ink/80 hover:text-heritage-ink group transition-colors"><ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /><span className="font-heritage">Ritorna alla Collezione</span></button>
                 <div className="flex items-center gap-2">
-                  {prevItem && <button onClick={() => openItem(prevItem)} className="flex items-center gap-1.5 px-4 py-2 bg-heritage-ink/5 hover:bg-heritage-ink/10 rounded-full text-sm font-bold uppercase tracking-widest text-heritage-ink/60 transition-all"><ChevronLeft size={16} /><span>{prevItem.name.split(' ').slice(0,2).join(' ')}</span></button>}
-                  {nextItem && <button onClick={() => openItem(nextItem)} className="flex items-center gap-1.5 px-4 py-2 bg-heritage-ink/5 hover:bg-heritage-ink/10 rounded-full text-sm font-bold uppercase tracking-widest text-heritage-ink/60 transition-all"><span>{nextItem.name.split(' ').slice(0,2).join(' ')}</span><ChevronRight size={16} /></button>}
+                  {prevItem && <button onClick={() => openItem(prevItem)} className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-heritage-ink/5 hover:bg-heritage-ink/10 rounded-full text-sm font-bold uppercase tracking-widest text-heritage-ink/60 transition-all"><ChevronLeft size={16} /><span>{prevItem.name.split(' ').slice(0,2).join(' ')}</span></button>}
+                  {nextItem && <button onClick={() => openItem(nextItem)} className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-heritage-ink/5 hover:bg-heritage-ink/10 rounded-full text-sm font-bold uppercase tracking-widest text-heritage-ink/60 transition-all"><span>{nextItem.name.split(' ').slice(0,2).join(' ')}</span><ChevronRight size={16} /></button>}
                 </div>
               </div>
 
@@ -2634,21 +2634,6 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
 
               {/* ── MOBILE STICKY BAR — crema leggera ── */}
               <motion.div initial={{ y: 80 }} animate={{ y: 0 }} transition={{ type: 'spring', damping: 26, stiffness: 220, delay: 0.15 }} className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-heritage-cream/95 backdrop-blur-sm border-t border-heritage-ink/8 px-4 pt-2" style={{paddingBottom: "max(10px, env(safe-area-inset-bottom, 8px))"}}>
-                {/* Prev/Next row */}
-                {(prevItem || nextItem) && (
-                  <div className="flex items-center justify-between mb-2 border-b border-heritage-ink/5 pb-2">
-                    {prevItem ? (
-                      <button onClick={() => openItem(prevItem)} className="flex items-center gap-1 text-heritage-ink/50 hover:text-heritage-ink transition-colors">
-                        <ChevronLeft size={14} /><span className="text-[10px] uppercase tracking-widest font-bold truncate max-w-[120px]">{prevItem.name.split(' ').slice(0,2).join(' ')}</span>
-                      </button>
-                    ) : <span />}
-                    {nextItem ? (
-                      <button onClick={() => openItem(nextItem)} className="flex items-center gap-1 text-heritage-ink/50 hover:text-heritage-ink transition-colors">
-                        <span className="text-[10px] uppercase tracking-widest font-bold truncate max-w-[120px]">{nextItem.name.split(' ').slice(0,2).join(' ')}</span><ChevronRight size={14} />
-                      </button>
-                    ) : <span />}
-                  </div>
-                )}
                 {/* Price + WhatsApp row */}
                 <div className="flex items-center gap-3">
                   <div className="flex-1 min-w-0">
@@ -2689,7 +2674,8 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
       </main>
 
       {/* Footer */}
-      <footer className="bg-heritage-ink text-white pt-16 pb-8">
+      {window.matchMedia('(min-width: 768px)').matches && view !== 'item-detail' && (
+      <footer className="site-footer bg-heritage-ink text-white pt-16 pb-8">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div>
@@ -2727,6 +2713,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
           </div>
         </div>
       </footer>
+      )}
 
       {/* ── Modals ── */}
 
