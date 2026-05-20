@@ -883,6 +883,7 @@
     "wearCondition": "Da restaurare",
     "shipping": "Solo ritiro",
     "isFeatured": false,
+    "isImportant": false,
     "order": 32,
     "details": [],
     "images": [],
@@ -899,6 +900,7 @@
     "catawikiDescription": "Scrivania da studio a pianale rettangolare con doppia cassettiera laterale e vano centrale ad arco. Costruita in legno massello, probabilmente noce o ciliegio tinto, con maniglie ad anello in ottone ossidato. Databile tra fine Ottocento e inizio Novecento per le guide in legno e la costruzione a telaio. Il piano è segnato da uso prolungato; struttura solida ma necessita restauro superficiale.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 950",
     "id": "mp4j0neptbski",
     "stories": []
   },
