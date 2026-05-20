@@ -145,6 +145,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 11,
     "details": [],
     "images": [],
@@ -161,6 +162,7 @@
     "catawikiDescription": "Stampa tipografica in bianco e nero raffigurante una scena di musica e convivio con figure in costume storico, intitolata 'Canzone Amena'. Riproduce probabilmente un dipinto di soggetto genere della seconda metà dell'Ottocento. Montata su passpartout grigio in cornice dorata a foglia, con doratura consunta. Carta ingiallita, condizioni discrete. Probabile produzione editoriale italiana degli anni 1870–1900.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 100",
     "id": "mp4i7d3q9ioy8",
     "stories": []
   },
