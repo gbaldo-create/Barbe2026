@@ -1331,6 +1331,7 @@
     "wearCondition": "Da restaurare",
     "shipping": "Solo ritiro",
     "isFeatured": true,
+    "isImportant": false,
     "order": 1,
     "details": [],
     "images": [
