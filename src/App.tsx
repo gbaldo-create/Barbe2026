@@ -2295,7 +2295,7 @@ export default function App() {
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.35, delay: Math.min(index % 12, 11) * 0.055, ease: [0.22, 1, 0.36, 1] }}
-                    className={`${(item.catawikiUrl || (item as any).isImportant) ? 'basis-full md:flex-grow md:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]' : 'flex-grow basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]'}`}>
+                    className={`${(item.catawikiUrl || (item as any).isImportant || item.isFeatured) ? 'basis-full md:flex-grow md:basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]' : 'flex-grow basis-[calc(50%-1rem)] lg:basis-[calc(33.333%-2rem)]'}`}>
                     <ItemCard item={item} onToggleFavorite={isAdmin ? toggleFavorite : undefined} onToggleFeatured={isAdmin ? toggleFeatured : undefined} onClick={() => openItem(item)} isAdmin={isAdmin} showFeaturedBadge isHighlight={!!(item.catawikiUrl || item.isFeatured || (item as any).isImportant)} />
                   </motion.div>
                 ))}
@@ -4778,4 +4778,4 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
 
 // build Wed May 20 11:19:48 UTC 2026
 
-// 124528
+// deploy 20260520142743
