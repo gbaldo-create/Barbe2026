@@ -4460,6 +4460,7 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
         catawikiDescription: initialData.catawikiDescription || '',
         catawikiImages: initialData.catawikiImages || [],
         catawikiSpecific: (initialData as any).catawikiSpecific || {},
+        displayPrice: (initialData as any).displayPrice || '',
       });
     } else {
       setForm({ ...emptyForm, order: nextOrder });
