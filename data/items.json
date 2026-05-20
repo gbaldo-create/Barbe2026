@@ -1319,7 +1319,7 @@
     "status": "Disponibile",
     "acquisitionType": "Catawiki",
     "price": "€ 400–900",
-    "catawikiUrl": "https://www.catawiki.com/it?utm_medium=branded-cpc&utm_source=google&utm_content=145196140475&utm_term=catawiki&gad_source=1&gad_campaignid=19248435034&gbraid=0AAAAADHD_vSjS0EbJ_m3fDCnLc_tScXbP&gclid=Cj0KCQjwlLDQBhDjARIsAPlIefEfEmOvB0ookINUlcB4VC74Xi1k4TQreJnMC4l0-HL5BmsbyJPAd9waAhcUEALw_wcB",
+    "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778771315866-IMG-1513--1-.jpg",
     "technicalNotes": "Corpo in gesso/stucco pressato a matrice con decorazioni a rilievo stampate; tracce di policromia stratificata (azzurro-grigio, ocra, bianco). Piano superiore in marmo giallo venato (Giallo Antico o similare), molto consumato e opacizzato. Apertura ad arco a tutto sesto con interno annerito da uso o da ossidazione. Nessun marchio, firma o punzone rilevato nelle tre immagini esaminate. Produzione artigianale italiana di carattere eclettico-storicista, probabilmente da bottega specializzata in elementi decorativi architettonici. Presenza di lesioni superficiali, stuccature e scagliature diffuse. Per escludere presenza di etichette o timbri: esaminare retro e base.",
     "destination": "Barberino",
@@ -1358,6 +1358,7 @@
       "ferramenta": "Assente",
       "finitura": ""
     },
+    "displayPrice": "",
     "id": "mp5fh4tbdrsjr",
     "stories": []
   },
