@@ -843,6 +843,7 @@
     "wearCondition": "Buono",
     "shipping": "Solo ritiro",
     "isFeatured": true,
+    "isImportant": false,
     "order": 31,
     "details": [],
     "images": [],
@@ -859,6 +860,7 @@
     "catawikiDescription": "Lampadario a dodici luci su due corone di bracci in ferro brunito a volute, con corpo centrale in legno tornito a finitura patinata chiaro-avorio. Riprende il modello olandese-fiammingo del XVII-XVIII secolo in versione da produzione artigianale novecentesca, databile indicativamente tra il 1940 e il 1970. Nessun marchio identificato. Condizione buona, patina omogenea. Impianto elettrico da verificare prima dell'uso.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 360",
     "id": "mp4izwlkeu4g5",
     "stories": []
   },
