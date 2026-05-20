@@ -277,6 +277,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 14,
     "details": [],
     "images": [
@@ -309,6 +310,7 @@
       "colore": "Multicolore",
       "stile": "Barocco"
     },
+    "displayPrice": "€ 800",
     "id": "mp4ic2yu9iy4a",
     "stories": []
   },
