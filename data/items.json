@@ -1613,7 +1613,7 @@
     "productCode": "001",
     "wearCondition": "Buono",
     "shipping": "Spedizione possibile",
-    "isFeatured": false,
+    "isFeatured": true,
     "order": 58,
     "details": [],
     "images": [],
