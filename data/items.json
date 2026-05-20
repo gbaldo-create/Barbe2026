@@ -145,6 +145,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 11,
     "details": [],
     "images": [],
@@ -161,6 +162,7 @@
     "catawikiDescription": "Stampa tipografica in bianco e nero raffigurante una scena di musica e convivio con figure in costume storico, intitolata 'Canzone Amena'. Riproduce probabilmente un dipinto di soggetto genere della seconda metà dell'Ottocento. Montata su passpartout grigio in cornice dorata a foglia, con doratura consunta. Carta ingiallita, condizioni discrete. Probabile produzione editoriale italiana degli anni 1870–1900.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 100",
     "id": "mp4i7d3q9ioy8",
     "stories": []
   },
@@ -275,6 +277,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 14,
     "details": [],
     "images": [
@@ -307,6 +310,7 @@
       "colore": "Multicolore",
       "stile": "Barocco"
     },
+    "displayPrice": "€ 800",
     "id": "mp4ic2yu9iy4a",
     "stories": []
   },
@@ -839,6 +843,7 @@
     "wearCondition": "Buono",
     "shipping": "Solo ritiro",
     "isFeatured": true,
+    "isImportant": false,
     "order": 31,
     "details": [],
     "images": [],
@@ -855,6 +860,7 @@
     "catawikiDescription": "Lampadario a dodici luci su due corone di bracci in ferro brunito a volute, con corpo centrale in legno tornito a finitura patinata chiaro-avorio. Riprende il modello olandese-fiammingo del XVII-XVIII secolo in versione da produzione artigianale novecentesca, databile indicativamente tra il 1940 e il 1970. Nessun marchio identificato. Condizione buona, patina omogenea. Impianto elettrico da verificare prima dell'uso.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 360",
     "id": "mp4izwlkeu4g5",
     "stories": []
   },
@@ -877,6 +883,7 @@
     "wearCondition": "Da restaurare",
     "shipping": "Solo ritiro",
     "isFeatured": false,
+    "isImportant": false,
     "order": 32,
     "details": [],
     "images": [],
@@ -893,6 +900,7 @@
     "catawikiDescription": "Scrivania da studio a pianale rettangolare con doppia cassettiera laterale e vano centrale ad arco. Costruita in legno massello, probabilmente noce o ciliegio tinto, con maniglie ad anello in ottone ossidato. Databile tra fine Ottocento e inizio Novecento per le guide in legno e la costruzione a telaio. Il piano è segnato da uso prolungato; struttura solida ma necessita restauro superficiale.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 950",
     "id": "mp4j0neptbski",
     "stories": []
   },
