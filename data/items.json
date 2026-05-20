@@ -2108,8 +2108,8 @@
     "category": "Oggetti",
     "year": "1948–1955 circa",
     "dimensions": "circa 55×20×35 cm",
-    "status": "Disponibile",
-    "acquisitionType": "Vendita",
+    "status": "Affidato",
+    "acquisitionType": "Famiglia",
     "price": "€ 180–320",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779206605980-8b6f382a-d3eb-485e-8d03-a94da306b025.jpg",
@@ -2148,6 +2148,7 @@
       "colore": "Multicolore",
       "soggetto": "Altro"
     },
+    "displayPrice": "",
     "id": "mpa4i1pwtdvdk",
     "stories": []
   },
