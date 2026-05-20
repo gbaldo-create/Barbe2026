@@ -433,6 +433,7 @@
     "wearCondition": "Buono",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 17,
     "details": [],
     "images": [],
@@ -449,6 +450,7 @@
     "catawikiDescription": "Specchiera monumentale in mogano e legno ebonizzato, con due colonne laterali tornite a capitello corinzio in metallo dorato e basi a zampa di leone. Struttura a trumeau con fregio superiore pieno, tipica del repertorio Impero-Carlo X, databile al secondo quarto del XIX secolo. Lo specchio presenta cornice interna dorata; la lastra è da verificare per eventuale riargentatura. Conservazione buona, coerente con l'età. Presenza di etichetta inventariale visibile.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "350",
     "id": "mp4if8slalw9f",
     "stories": []
   },
