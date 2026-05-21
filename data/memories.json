@@ -5,7 +5,7 @@
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
-    "visibility": "public"
+    "_updated": "2026-05-21T11:50:55.795721"
   },
   {
     "id": "mem_legacy_002",
@@ -109,6 +109,14 @@
     "author": "Aleria",
     "date": "2005-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364716343.jpg",
+    "visibility": "public"
+  },
+  {
+    "id": "mem_1779389953234",
+    "text": "Papà amava intrattenersi con i vecchi amici in piazza, noro un po meno...",
+    "author": "Emanuela",
+    "date": "2026-05-21",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779389951486.jpg",
     "visibility": "public"
   }
 ]
