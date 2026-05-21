@@ -961,7 +961,7 @@
     "year": "1870–1895 circa",
     "dimensions": "circa 110×55×95 cm (senza specchiera)",
     "status": "Disponibile",
-    "acquisitionType": "Vendita",
+    "acquisitionType": "Catawiki",
     "price": "€ 600–1.200",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774940962-IMG-1383-2--1-.jpg",
@@ -972,7 +972,7 @@
     "wearCondition": "Buono",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
-    "isImportant": false,
+    "isImportant": true,
     "order": 34,
     "details": [],
     "images": [
@@ -991,7 +991,7 @@
     "catawikiDescription": "Comò a tre cassetti in noce massello con fronti impiallacciati in radica di noce a specchio centinato. Piano in marmo bianco di Carrara in due lastre. Maniglie e bocchette in ottone ossidato originali. Specchiera separata con colonnine ebonizzate tornite inclusa. Produzione italiana, ultimo quarto del XIX secolo. Condizioni buone, piccole mancanze di impiallacciatura sul cassetto inferiore.",
     "catawikiImages": [],
     "catawikiSpecific": {},
-    "displayPrice": "€ 600–1.200",
+    "displayPrice": "€ 700",
     "id": "mp4j33i60opq3",
     "stories": []
   },
