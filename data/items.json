@@ -2,7 +2,7 @@
   {
     "name": "Poltrona neoclassica con seduta in paglia di Vienna",
     "description": "Poltrona con struttura in legno massello tinto, schienale con traversa centrale decorata a losanghe ottagonali intagliate, braccioli a sciabola con terminazione arrotondata. La seduta è in paglia di Vienna intrecciata a raggiera, tipica della produzione italiana tra fine Settecento e primo Ottocento in stile Direttorio/Impero. Il numero '62' sul dorso suggerisce provenienza da lotto d'asta o inventario.",
-    "room": "Sala da pranzo",
+    "room": "Corridoio",
     "category": "Sedute",
     "year": "1780–1830 circa, possibile riproduzione tardiva fine XIX secolo",
     "dimensions": "circa 60×55×90 cm (LxPxH stimati)",
@@ -18,6 +18,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 8,
     "details": [],
     "images": [],
