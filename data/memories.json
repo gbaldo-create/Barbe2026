@@ -4,7 +4,8 @@
     "text": "La scrivania di papà era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
+    "_updated": "2026-05-21T11:50:55.795721"
   },
   {
     "id": "mem_legacy_002",
@@ -77,16 +78,13 @@
     "id": "mem_legacy_012",
     "text": "Il Pontabuchi era il podere di papà. Ci andava spesso, camminava tra gli olivi, controllava tutto. Tornava con le mani sporche di terra e soddisfatto.",
     "author": "Aleria",
-    "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779361375325.jpg"
+    "date": "2026-01-01"
   },
   {
     "id": "mem_legacy_013",
     "text": "La Futa in auto con papà era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.",
     "author": "Emanuela",
-    "date": "2013-02-07",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779363429645.jpg",
-    "visibility": "public"
+    "date": "2026-01-01"
   },
   {
     "id": "mem_legacy_014",
@@ -100,13 +98,5 @@
     "author": "Olivia",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/IMG_1547%204.jpg"
-  },
-  {
-    "id": "mem_1779362436525",
-    "text": "Mi viene spesso in mente quando mia nonna tirava fuori il vecchio quadro con l'albero genealogico disegnato a mano, le righe storte perché aveva scritto di fretta. La storia della famiglia Manescalchi e Giorgi viene da molto lontano, da paesi che ora conosco solo dai nomi sulle mappe polverose che papà teneva nello studio...",
-    "author": "Aleria",
-    "date": "2026-05-21",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779362434655.jpg",
-    "visibility": "public"
   }
 ]
