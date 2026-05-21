@@ -799,6 +799,7 @@
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
+    "isImportant": false,
     "order": 30,
     "details": [],
     "images": [
@@ -822,6 +823,7 @@
     "catawikiDescription": "Tavolo da gioco a piano ribaltabile in ciliegio massello, con rivestimento in feltro verde (sostituzione non originale) e cassetto frontale con pomello tornito. Le gambe a cabriole con piedini a sabot sono coerenti con la produzione artigianale italiana di area centro-settentrionale tra fine Settecento e primo Ottocento. Nessun marchio o etichetta identificativa. Struttura integra; piano con usura e alone da oggetto. Attribuibile a manifattura locale anonima, stile Luigi XV in transizione verso il gusto neoclassico.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 700",
     "id": "mp4iys9t2yrb8",
     "stories": []
   },
