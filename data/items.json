@@ -519,7 +519,8 @@
     "productCode": "",
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
-    "isFeatured": true,
+    "isFeatured": false,
+    "isImportant": false,
     "order": 19,
     "details": [],
     "images": [],
@@ -536,6 +537,7 @@
     "catawikiDescription": "Poltroncina senza braccioli (slipper chair) con schienale a sviluppo continuo, struttura in legno massello scuro con gambe anteriori tornite su rotelle originali. Tappezzeria a righe in toni giallo-ocra e rosso, probabilmente non coeva alla struttura. Databile tra fine Ottocento e primo Novecento. Presenta segni d'uso sul sedile e piccoli fori; struttura portante apparentemente solida. Adatta a reupholstery.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 150–320",
     "id": "mp4igz2tbeofa",
     "stories": []
   },
