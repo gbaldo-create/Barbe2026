@@ -1010,13 +1010,14 @@ const EXPLORE_ROOMS = [
 ];
 
 function ExplorePanel({
-  isOpen, onClose, totalItems, categoriesWithCount, onExplore,
+  isOpen, onClose, totalItems, categoriesWithCount, onExplore, mode = 'discover',
 }: {
   isOpen: boolean;
   onClose: () => void;
   totalItems: number;
   categoriesWithCount: { name: string; count: number }[];
   onExplore: (opts: { category?: string; roomMatch?: (r: string) => boolean; catawikiOnly?: boolean }) => void;
+  mode?: 'discover' | 'filter';
 }) {
   const [selType, setSelType] = useState<'all' | 'category' | 'room' | 'catawiki'>('all');
   const [selCategory, setSelCategory] = useState<string | null>(null);
@@ -1066,52 +1067,53 @@ function ExplorePanel({
             key="ep-sheet-mobile"
             initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="md:hidden fixed bottom-0 left-0 right-0 z-[210] bg-[#f5f0e8] rounded-t-[24px] shadow-2xl flex flex-col"
+            className="md:hidden fixed bottom-0 left-0 right-0 z-[210] bg-heritage-cream rounded-t-[24px] shadow-2xl flex flex-col"
             style={{ maxHeight: '92svh' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onClick={e => e.stopPropagation()}
           >
             {/* Handle */}
-            <div className="flex justify-center pt-2 flex-shrink-0">
-              <div className="w-8 h-1 bg-heritage-ink/15 rounded-full" />
+            <div className="flex justify-center pt-3 flex-shrink-0">
+              <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="px-5 pt-2 pb-2 flex-shrink-0 flex items-center justify-between">
+            <div className="px-6 pt-4 pb-4 flex-shrink-0 flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-heritage-gold">Archivio di famiglia</p>
-                <h2 className="font-serif italic text-[20px] text-heritage-ink leading-tight">
-                  Da dove vuoi <span className="not-italic font-bold text-heritage-ink">iniziare?</span>
+                <h2 className="font-serif italic text-[26px] text-heritage-ink leading-tight">
+                  {mode === 'discover' ? <><span>Da dove vuoi </span><span className="not-italic font-bold">iniziare?</span></> : 'Filtra'}
                 </h2>
               </div>
-              <button onClick={onClose} className="p-2 rounded-full bg-heritage-ink/8">
-                <X size={16} className="text-heritage-ink/50" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button onClick={() => { setSelType('all'); setSelCategory(null); setSelRoom(null); }} className="text-[12px] font-bold uppercase tracking-widest text-heritage-gold">Reset</button>
+                <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-heritage-ink/8">
+                  <X size={15} className="text-heritage-ink/50" />
+                </button>
+              </div>
             </div>
 
-            <div className="h-px bg-heritage-ink/8 mx-5 flex-shrink-0" />
+            <div className="h-px bg-heritage-ink/8 mx-6 flex-shrink-0" />
 
             {/* Scrollable content */}
-            <div className="overflow-y-auto flex-1 px-5 pt-3 pb-2 space-y-3">
+            <div className="overflow-y-auto flex-1 px-6 pt-4 pb-2 space-y-5">
 
               {/* CATEGORIE */}
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Categorie</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {/* Tutti */}
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Categorie</p>
+                <div className="grid grid-cols-2 gap-2">
                   <button onClick={selectAll}
-                    className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-2 font-bold text-[13px] uppercase tracking-wide transition-all col-span-2 ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    className={`col-span-2 flex items-center justify-between px-4 py-3 rounded-2xl border font-bold text-[13px] uppercase tracking-wider transition-all ${selType === 'all' ? 'bg-[#4a5a38] border-[#4a5a38] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
                     <span>Tutti</span>
-                    <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${selType === 'all' ? 'bg-white/20 text-white' : 'bg-heritage-ink/8 text-heritage-ink/50'}`}>{totalItems}</span>
+                    <span className={`text-[12px] font-bold px-2.5 py-0.5 rounded-full ${selType === 'all' ? 'bg-white/20 text-white' : 'bg-heritage-ink/6 text-heritage-ink/40'}`}>{totalItems}</span>
                   </button>
                   {EXPLORE_CATEGORIES.map(cat => {
                     const active = selType === 'category' && selCategory === cat.name;
                     return (
                       <button key={cat.name} onClick={() => selectCat(cat.name)}
-                        className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-2 font-bold text-[13px] uppercase tracking-wide transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                        className={`flex items-center justify-between px-4 py-3 rounded-2xl border font-bold text-[13px] uppercase tracking-wider transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
                         <span>{cat.name}</span>
-                        <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-heritage-ink/8 text-heritage-ink/50'}`}>{countFor(cat.name)}</span>
+                        <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-heritage-ink/6 text-heritage-ink/40'}`}>{countFor(cat.name)}</span>
                       </button>
                     );
                   })}
@@ -1120,14 +1122,14 @@ function ExplorePanel({
 
               {/* STATO */}
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Stato</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Stato</p>
                 <div className="flex flex-wrap gap-2">
                   <button onClick={selectAll}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
                     Tutti
                   </button>
                   <button onClick={selectCatawiki}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
                     Su Catawiki
                   </button>
                 </div>
@@ -1135,13 +1137,13 @@ function ExplorePanel({
 
               {/* STANZE */}
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-2">Stanza</p>
-                <div className="flex flex-wrap gap-1.5">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Stanza</p>
+                <div className="flex flex-wrap gap-2">
                   {EXPLORE_ROOMS.map(room => {
                     const active = selType === 'room' && selRoom === room.name;
                     return (
                       <button key={room.name} onClick={() => selectRoom(room.name)}
-                        className={`px-4 py-2 rounded-full border-2 font-bold text-[12px] uppercase tracking-wide transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                        className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
                         {room.name}
                       </button>
                     );
@@ -1152,9 +1154,9 @@ function ExplorePanel({
             </div>
 
             {/* CTA fisso in fondo */}
-            <div className="px-5 pb-6 pt-3 flex-shrink-0 border-t border-heritage-ink/8">
+            <div className="px-6 pb-8 pt-4 flex-shrink-0">
               <button onClick={handleConfirm}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-heritage-ink text-white rounded-2xl font-bold text-[13px] uppercase tracking-[0.2em] active:opacity-90 transition-opacity">
+                className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] active:opacity-90 transition-opacity">
                 Mostra Risultati
               </button>
             </div>
@@ -1170,85 +1172,86 @@ function ExplorePanel({
             className="hidden md:flex fixed inset-0 z-[210] items-center justify-center pointer-events-none"
             onClick={e => e.stopPropagation()}
           >
-            <div className="bg-[#f5f0e8] rounded-3xl shadow-2xl w-full max-w-lg pointer-events-auto overflow-hidden">
+            <div className="bg-heritage-cream rounded-3xl shadow-2xl w-full max-w-lg pointer-events-auto overflow-hidden">
 
               {/* Header */}
-              <div className="px-8 pt-7 pb-5 flex items-start justify-between">
+              <div className="px-8 pt-7 pb-4 flex items-start justify-between">
                 <div>
-                  <p className="text-[12px] font-bold uppercase tracking-[0.25em] text-heritage-gold mb-2">Archivio di famiglia</p>
-                  <h2 className="font-serif italic text-[34px] text-heritage-ink leading-tight">
-                    Da dove vuoi<br />
-                    <span className="not-italic font-bold text-emerald-950">iniziare?</span>
+                  <h2 className="font-serif italic text-[28px] text-heritage-ink leading-tight">
+                    {mode === 'discover'
+                      ? <>Da dove vuoi <span className="not-italic font-bold">iniziare?</span></>
+                      : 'Filtra'}
                   </h2>
                 </div>
-                <button onClick={onClose} className="p-2 hover:bg-heritage-ink/8 rounded-full transition-colors mt-1">
-                  <X size={20} className="text-heritage-ink/50" />
-                </button>
+                <div className="flex items-center gap-3 mt-1">
+                  <button onClick={() => { setSelType('all'); setSelCategory(null); setSelRoom(null); }} className="text-[12px] font-bold uppercase tracking-widest text-heritage-gold">Reset</button>
+                  <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-heritage-ink/8 hover:bg-heritage-ink/15 transition-colors">
+                    <X size={15} className="text-heritage-ink/50" />
+                  </button>
+                </div>
               </div>
 
               <div className="border-t border-heritage-ink/8 mx-8" />
 
-              <div className="px-8 pt-5 pb-7 space-y-4">
+              <div className="px-8 pt-5 pb-7 space-y-5">
 
-                {/* Tutto */}
-                <button onClick={selectAll} className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all ${selType === 'all' ? 'bg-emerald-950 ring-2 ring-heritage-gold/40' : 'bg-emerald-950/90 hover:bg-emerald-950'}`}>
-                  <LayoutGrid size={22} className="text-heritage-gold flex-shrink-0" />
-                  <div className="text-left flex-1">
-                    <p className="font-bold text-[18px] text-[#f5f0e8]">Voglio vedere tutto</p>
-                    <p className="font-serif italic text-[14px] text-heritage-gold/80">{totalItems} pezzi disponibili</p>
-                  </div>
-                  {selType === 'all' && <div className="w-5 h-5 rounded-full bg-heritage-gold flex items-center justify-center flex-shrink-0"><Check size={11} className="text-white" strokeWidth={3} /></div>}
-                </button>
-
-                {/* Categorie */}
-                <div className="grid grid-cols-3 gap-2">
-                  {EXPLORE_CATEGORIES.map(cat => {
-                    const active = selType === 'category' && selCategory === cat.name;
-                    return (
-                      <button key={cat.name} onClick={() => selectCat(cat.name)}
-                        className={`flex flex-col gap-1.5 p-3 rounded-xl border-[1.5px] text-left transition-all ${active ? 'border-emerald-950 bg-white shadow-md' : 'border-heritage-ink/10 bg-white hover:border-heritage-gold/40'}`}>
-                        <div className={active ? 'text-emerald-950' : 'text-heritage-gold'}>{cat.icon}</div>
-                        <p className="font-bold text-[15px] text-heritage-ink">{cat.name}</p>
-                        <p className="font-serif italic text-[13px] text-heritage-ink/50">{countFor(cat.name)} pezzi</p>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Stanze */}
+                {/* CATEGORIE */}
                 <div>
-                  <p className="text-center font-serif italic text-[14px] text-heritage-ink/50 mb-2">oppure cammina per la casa</p>
-                  <div className="flex flex-wrap gap-2">
-                    {EXPLORE_ROOMS.map(room => {
-                      const active = selType === 'room' && selRoom === room.name;
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Categorie</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={selectAll}
+                      className={`col-span-2 flex items-center justify-between px-4 py-3 rounded-2xl border font-bold text-[13px] uppercase tracking-wider transition-all ${selType === 'all' ? 'bg-[#4a5a38] border-[#4a5a38] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                      <span>Tutti</span>
+                      <span className={`text-[12px] font-bold px-2.5 py-0.5 rounded-full ${selType === 'all' ? 'bg-white/20 text-white' : 'bg-heritage-ink/6 text-heritage-ink/40'}`}>{totalItems}</span>
+                    </button>
+                    {EXPLORE_CATEGORIES.map(cat => {
+                      const active = selType === 'category' && selCategory === cat.name;
                       return (
-                        <button key={room.name} onClick={() => selectRoom(room.name)}
-                          className={`flex flex-col px-4 py-2 rounded-full border-[1.5px] transition-all ${active ? 'bg-emerald-950 border-emerald-950' : 'bg-white border-heritage-ink/10 hover:border-heritage-gold/50'}`}>
-                          <span className={`font-bold text-[14px] leading-tight ${active ? 'text-[#f5f0e8]' : 'text-heritage-ink'}`}>{room.name}</span>
-                          <span className={`font-serif italic text-[12px] ${active ? 'text-heritage-gold' : 'text-heritage-ink/40'}`}>{room.subtitle}</span>
+                        <button key={cat.name} onClick={() => selectCat(cat.name)}
+                          className={`flex items-center justify-between px-4 py-3 rounded-2xl border font-bold text-[13px] uppercase tracking-wider transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                          <span>{cat.name}</span>
+                          <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-heritage-ink/6 text-heritage-ink/40'}`}>{countFor(cat.name)}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Catawiki — in evidenza granata */}
-                <button onClick={selectCatawiki}
-                  className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl border-2 transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] shadow-lg' : 'bg-[#7B1818]/8 border-[#7B1818]/50 hover:bg-[#7B1818]/15'}`}>
-                  <div className={`flex-shrink-0 px-3 py-1.5 rounded-full font-bold text-[12px] uppercase tracking-wider ${selType === 'catawiki' ? 'bg-white/20 text-white' : 'bg-[#7B1818] text-white'}`}>
-                    Catawiki
+                {/* STATO */}
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Stato</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button onClick={selectAll}
+                      className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${selType === 'all' ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                      Tutti
+                    </button>
+                    <button onClick={selectCatawiki}
+                      className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${selType === 'catawiki' ? 'bg-[#7B1818] border-[#7B1818] text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                      Su Catawiki
+                    </button>
                   </div>
-                  <div className="text-left flex-1">
-                    <p className={`font-bold text-[16px] leading-tight ${selType === 'catawiki' ? 'text-white' : 'text-[#7B1818]'}`}>Solo aste in corso</p>
-                    <p className={`font-serif italic text-[13px] ${selType === 'catawiki' ? 'text-white/70' : 'text-[#7B1818]/60'}`}>Pezzi battuti all'asta</p>
+                </div>
+
+                {/* STANZE */}
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-heritage-ink/40 mb-3">Stanza</p>
+                  <div className="flex flex-wrap gap-2">
+                    {EXPLORE_ROOMS.map(room => {
+                      const active = selType === 'room' && selRoom === room.name;
+                      return (
+                        <button key={room.name} onClick={() => selectRoom(room.name)}
+                          className={`px-5 py-2.5 rounded-full border font-bold text-[12px] uppercase tracking-wider transition-all ${active ? 'bg-heritage-ink border-heritage-ink text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                          {room.name}
+                        </button>
+                      );
+                    })}
                   </div>
-                  {selType === 'catawiki' && <div className="ml-auto w-5 h-5 rounded-full bg-white/30 flex items-center justify-center flex-shrink-0"><Check size={11} className="text-white" strokeWidth={3} /></div>}
-                </button>
+                </div>
 
                 {/* CTA */}
                 <button onClick={handleConfirm}
-                  className="w-full flex items-center justify-center gap-3 py-4 bg-emerald-950 text-[#f5f0e8] rounded-2xl font-bold text-[14px] uppercase tracking-[0.2em] hover:bg-emerald-900 transition-colors shadow-lg">
-                  Mostra la selezione <ArrowRight size={16} />
+                  className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] hover:bg-heritage-ink/90 transition-colors">
+                  Mostra Risultati
                 </button>
 
               </div>
@@ -1306,6 +1309,7 @@ export default function App() {
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [heroImageUrl, setHeroImageUrl] = useState(() => localStorage.getItem('b2026_hero') || (SETTINGS_DATA as any).heroImageUrl || 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&q=80&w=2000');
   const [isHeroModalOpen, setIsHeroModalOpen] = useState(false);
+  const [explorePanelMode, setExplorePanelMode] = useState<'discover' | 'filter'>('discover');
   const [favorites, setFavorites] = useState<string[]>(() => { try { return JSON.parse(localStorage.getItem('b2026_favs') || '[]'); } catch { return []; } });
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isExplorePanelOpen, setIsExplorePanelOpen] = useState(false);
@@ -1770,7 +1774,7 @@ export default function App() {
             </motion.div>
 
             <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.25, ease: [0.22, 1, 0.36, 1] }} className="hidden lg:flex items-center gap-8">
-              <NavItem active={view === 'catalog'} onClick={() => handleBackToCatalog('catalog')} icon={<Archive size={18} />} label="Gli Oggetti di Casa" />
+              <NavItem active={view === 'catalog'} onClick={() => { setExplorePanelMode('discover'); handleBackToCatalog('catalog'); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} icon={<Archive size={18} />} label="Gli Oggetti di Casa" />
               <NavItem active={false} onClick={() => { setView('home'); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} icon={<Handshake size={18} />} label="Vendita / Adozione" />
               <NavItem active={false} onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} icon={<Heart size={18} />} label="Ricordi" />
             </motion.nav>
@@ -1859,7 +1863,7 @@ export default function App() {
             {isMobileMenuOpen && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="lg:hidden bg-emerald-900 border-t border-white/10 overflow-hidden rounded-b-[2rem]">
                 <div className="flex flex-col p-6 gap-4">
-                  <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setIsMobileMenuOpen(false); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
+                  <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setExplorePanelMode('discover'); setIsMobileMenuOpen(false); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
                   <button onClick={() => { setView('home'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
                   <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
 
@@ -1895,10 +1899,10 @@ export default function App() {
                       <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-heritage-gold text-[11px] uppercase tracking-[0.35em] font-bold mb-1 block">1 Corso Corsini</motion.span>
                       <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] leading-[1.02] font-serif text-white italic"><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="block">Una casa che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">cambia,</span></motion.span><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="block">ricordi che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">restano.</span></motion.span></h2>
                     </div>
-                    <p className="text-base md:text-lg text-white/75 leading-snug font-heritage italic">"Ogni oggetto che parte porta con sé un frammento di noi. Lo affidiamo a chi saprà tenerlo."</p>
+                    <p className="text-base md:text-lg text-white/75 leading-snug font-heritage italic">"Ogni oggetto che parte porta con sé un frammento di noi. Lo affidiamo a chi saprà amarlo."</p>
                     <div className="pt-1">
-                      <button onClick={() => setIsExplorePanelOpen(true)} className="px-7 py-3.5 bg-heritage-gold text-white rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white hover:text-heritage-ink transition-all shadow-xl group flex items-center gap-3">
-                        Esplora la Collezione <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      <button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="px-7 py-3.5 bg-heritage-gold text-white rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white hover:text-heritage-ink transition-all shadow-xl group flex items-center gap-3">
+                        Entra in Casa <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
                   </motion.div>
@@ -1952,7 +1956,7 @@ export default function App() {
                       <span className="text-heritage-gold text-[10px] uppercase tracking-[0.35em] font-bold block mb-2">In evidenza</span>
                       <h3 className="text-4xl md:text-5xl text-heritage-ink leading-tight"><span className="font-serif italic">Da non </span><span className="font-display font-bold tracking-tight text-emerald-950 not-italic">perdere</span></h3>
                     </div></ScrollReveal>
-                    <button onClick={() => setIsExplorePanelOpen(true)} className="group text-[11px] font-bold uppercase tracking-widest text-heritage-gold flex items-center gap-3 hover:opacity-70 transition-opacity">
+                    <button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="group text-[11px] font-bold uppercase tracking-widest text-heritage-gold flex items-center gap-3 hover:opacity-70 transition-opacity">
                       Vedi tutto
                       <span className="w-7 h-7 flex items-center justify-center border border-heritage-gold/30 rounded-full group-hover:bg-heritage-gold group-hover:text-white group-hover:border-heritage-gold transition-all">
                         <ChevronRight size={12} />
@@ -2277,7 +2281,7 @@ export default function App() {
                             {statusFilters.map(s => <button key={s} onClick={() => { setSelectedStatus(s); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-4 py-2 rounded-full text-[12px] uppercase tracking-widest font-bold ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white border border-heritage-ink/10 text-heritage-ink/65'}`}>{s}</button>)}
                           </div>
                         </div>
-                        <button onClick={() => setIsMobileFilterOpen(false)} className="w-full heritage-button py-4 text-sm">Mostra Risultati</button>
+                        <button onClick={() => setIsMobileFilterOpen(false)} className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] hover:bg-heritage-ink/90 transition-colors">Mostra Risultati</button>
                       </div>
                     </motion.div>
                   </>
@@ -2692,7 +2696,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
               <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-heritage-gold mb-5">Esplora</p>
               <ul className="space-y-3">
                 <li><button onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">La storia</button></li>
-                <li><button onClick={() => setIsExplorePanelOpen(true)} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Il catalogo</button></li>
+                <li><button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Il catalogo</button></li>
                 <li><button onClick={() => { setView('home'); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Vendita e adozione</button></li>
                 <li><button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">I ricordi</button></li>
               </ul>
@@ -2762,6 +2766,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
         totalItems={mergedItems.length}
         categoriesWithCount={categoriesWithCount}
         onExplore={handleExploreConfirm}
+        mode={explorePanelMode}
       />
 
       {/* Login */}
