@@ -2,7 +2,7 @@
   {
     "name": "Poltrona neoclassica con seduta in paglia di Vienna",
     "description": "Poltrona con struttura in legno massello tinto, schienale con traversa centrale decorata a losanghe ottagonali intagliate, braccioli a sciabola con terminazione arrotondata. La seduta è in paglia di Vienna intrecciata a raggiera, tipica della produzione italiana tra fine Settecento e primo Ottocento in stile Direttorio/Impero. Il numero '62' sul dorso suggerisce provenienza da lotto d'asta o inventario.",
-    "room": "Sala da pranzo",
+    "room": "Corridoio",
     "category": "Sedute",
     "year": "1780–1830 circa, possibile riproduzione tardiva fine XIX secolo",
     "dimensions": "circa 60×55×90 cm (LxPxH stimati)",
@@ -18,6 +18,7 @@
     "wearCondition": "Discreto",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 8,
     "details": [],
     "images": [],
@@ -748,8 +749,8 @@
     "category": "Mobili",
     "year": "1950–1980 circa",
     "dimensions": "130×55×80 cm circa",
-    "status": "Disponibile",
-    "acquisitionType": "Lascito Affettivo",
+    "status": "Affidato",
+    "acquisitionType": "Famiglia",
     "price": "€ 350–700",
     "catawikiUrl": "",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774672989-IMG-1364--1-.jpg",
@@ -760,6 +761,7 @@
     "wearCondition": "Buono",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
+    "isImportant": false,
     "order": 29,
     "details": [],
     "images": [],
@@ -776,6 +778,7 @@
     "catawikiDescription": "Scrittoio a due cassetti con gambe a sciabola e traversa centrale a doppio arco intagliato, in legno massello tinto scuro (ciliegio o noce). Riprende la tipologia iberica 'pata de jabalí' diffusa anche nella produzione italiana tradizionale. Databile alla seconda metà del XX secolo. Pomoli in ottone brunito originali. Condizioni buone: superficie con normali segni d'uso, struttura stabile.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 350–700",
     "id": "mp4ixor5mfsq7",
     "stories": []
   },
@@ -798,6 +801,7 @@
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
+    "isImportant": false,
     "order": 30,
     "details": [],
     "images": [
@@ -821,6 +825,7 @@
     "catawikiDescription": "Tavolo da gioco a piano ribaltabile in ciliegio massello, con rivestimento in feltro verde (sostituzione non originale) e cassetto frontale con pomello tornito. Le gambe a cabriole con piedini a sabot sono coerenti con la produzione artigianale italiana di area centro-settentrionale tra fine Settecento e primo Ottocento. Nessun marchio o etichetta identificativa. Struttura integra; piano con usura e alone da oggetto. Attribuibile a manifattura locale anonima, stile Luigi XV in transizione verso il gusto neoclassico.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 700",
     "id": "mp4iys9t2yrb8",
     "stories": []
   },
@@ -1327,7 +1332,7 @@
   {
     "name": "Caminetto decorativo in stucco con fregio a tralci di vite",
     "description": "Piccolo caminetto autonomo o elemento decorativo architettonico in gesso/stucco stampato a matrice, con apertura ad arco a tutto sesto e ricco apparato ornamentale a rilievo di gusto rinascimentale. Il fregio superiore presenta tralci di vite e grappoli d'uva, le lesene laterali motivi fitomorfi; tracce di policromia (azzurro-grigio sotto strato ocra) suggeriscono ridipinture successive. Il piano è in marmo giallo venato, probabilmente Giallo Antico o Marmo di Siena.",
-    "room": "Salotto principale",
+    "room": "Atrio",
     "category": "Oggetti",
     "year": "Fine XIX – inizio XX secolo (1880–1920 circa)",
     "dimensions": "circa 90×60×120 cm (stima da proporzioni visive)",
