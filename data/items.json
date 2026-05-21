@@ -970,9 +970,12 @@
     "wearCondition": "Buono",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
+    "isImportant": false,
     "order": 34,
     "details": [],
-    "images": [],
+    "images": [
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779373870865-IMG-1382--1-.JPG"
+    ],
     "catawikiTitle": "Comò umbertino noce e radica con piano marmo e specchiera, 1870-1895",
     "catawikiCategory": "Mobili",
     "catawikiSubcategory": "Comò",
@@ -986,6 +989,7 @@
     "catawikiDescription": "Comò a tre cassetti in noce massello con fronti impiallacciati in radica di noce a specchio centinato. Piano in marmo bianco di Carrara in due lastre. Maniglie e bocchette in ottone ossidato originali. Specchiera separata con colonnine ebonizzate tornite inclusa. Produzione italiana, ultimo quarto del XIX secolo. Condizioni buone, piccole mancanze di impiallacciatura sul cassetto inferiore.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 600–1.200",
     "id": "mp4j33i60opq3",
     "stories": []
   },
