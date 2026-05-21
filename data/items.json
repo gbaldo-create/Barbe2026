@@ -1749,10 +1749,13 @@
     "wearCondition": "Buono",
     "shipping": "",
     "isFeatured": false,
+    "isImportant": false,
     "order": 61,
     "details": [],
     "images": [
-      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779181284060-IMG-1907.jpg"
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779181284060-IMG-1907.jpg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779358322391-IMG-1425-2.jpg",
+      "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1779358338066-IMG-1427-2.jpg"
     ],
     "catawikiTitle": "Coppia lampade Lampiatta De Pas D'Urbino Lomazzi Stilnovo 1969",
     "catawikiCategory": "Illuminazione",
