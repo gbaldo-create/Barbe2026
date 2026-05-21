@@ -517,7 +517,7 @@
     "productCode": "",
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
-    "isFeatured": false,
+    "isFeatured": true,
     "order": 19,
     "details": [],
     "images": [],
