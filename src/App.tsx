@@ -20,6 +20,7 @@ interface FamilyMemory {
   date: string;
   itemId?: string;
   imageUrl?: string;
+  visibility?: 'public' | 'private'; // omitted = public
 }
 
 const INITIAL_ITEMS: HeritageItem[] = ITEMS_DATA as HeritageItem[];
@@ -33,131 +34,8 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
-// ─── family memories (voci di casa) ──────────────────────────────────────────
-
-const FAMILY_MEMORIES_BASE = [
-  {
-    text: 'La scrivania di papà era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.',
-    author: 'Emanuela',
-    initials: 'EM',
-    context: 'Le sere dopo cena',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg' as string,
-  },
-  {
-    text: "Il cassone all'ingresso era il primo mobile che vedevi entrando in casa. Papà ci teneva le coperte buone. Noi ci nascondevamo dentro da piccole, e lui faceva finta di non trovarci.",
-    author: 'Aleria',
-    initials: 'AL',
-    context: "L'ingresso di casa",
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778838591027-IMG-1501-2--1-.jpg' as string,
-  },
-  {
-    text: 'Il lampadario del salone lo accendeva solo nelle grandi occasioni. Quando si illuminava, i cristalli proiettavano riflessi dappertutto — sembrava di stare in un palazzo.',
-    author: 'Olivia',
-    initials: 'OL',
-    context: 'Ogni Natale',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg' as string,
-  },
-  {
-    text: 'Franco non era un uomo di molte parole, ma ogni gesto parlava per lui. La casa di Barberino era il suo modo di tenerci tutte insieme. Continua a farlo, anche adesso.',
-    author: 'Emanuela',
-    initials: 'EM',
-    context: 'Per sempre',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg' as string,
-  },
-  {
-    text: 'Il sabato mattina si andava al mercato in piazza tutti insieme. Papà contrattava con il formaggiaio, mamma sceglieva le verdure. Era il rito più bello della settimana.',
-    author: 'Emanuela',
-    initials: 'EM',
-    context: 'Ogni sabato mattina',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg' as string,
-  },
-  {
-    text: "La grande cucina aveva il camino sempre acceso d'inverno. Ci si sedeva intorno dopo cena, e il tempo sembrava fermarsi.",
-    author: 'Olivia',
-    initials: 'OL',
-    context: "Le sere d'inverno",
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: 'Quando nacque Emma, la quarta nipote, papà la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.',
-    author: 'Aleria',
-    initials: 'AL',
-    context: 'La quarta nipote di Franco',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg' as string,
-  },
-  {
-    text: 'Una mattina di agosto trovammo Macchia e Teresa sotto il fico. Papà disse subito di no. Li tenne entrambi senza discutere.',
-    author: 'Olivia',
-    initials: 'OL',
-    context: 'Estate in giardino',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg' as string,
-  },
-  {
-    text: 'Con nonna Lia bastava poco per scoppiare a ridere. Una parola, uno sguardo — e giù. Non sapevamo mai perché, ma non importava.',
-    author: 'Aleria',
-    initials: 'AL',
-    context: 'Sempre',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg' as string,
-  },
-  {
-    text: "La ciccia bona alla brace era il rito dell'estate. Papà guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
-    author: 'Emanuela',
-    initials: 'EM',
-    context: 'Le estati a Barberino',
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: "L'olio buono di Franco — ogni anno ne portavamo qualche bottiglia a Torino. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
-    author: 'Olivia',
-    initials: 'OL',
-    context: 'Il rituale del ritorno',
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: 'Il Pontabuchi era il podere di papà. Ci andava spesso, camminava tra gli olivi, controllava tutto. Tornava con le mani sporche di terra e soddisfatto.',
-    author: 'Aleria',
-    initials: 'AL',
-    context: 'Il paese di Franco',
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: 'La Futa in auto con papà era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.',
-    author: 'Emanuela',
-    initials: 'EM',
-    context: 'Il passo della Futa',
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: 'Il cronometro per il tragitto Torino-Barberino era una cosa seria. Tre ore e cinquantotto era il record. Non ricordiamo chi lo batteva, ma ognuna giurava di avercela fatta.',
-    author: 'Olivia',
-    initials: 'OL',
-    context: 'Il viaggio di casa',
-    itemId: null as string | null,
-    imageUrl: '' as string,
-  },
-  {
-    text: 'Mamma e Leap in giardino — lui sempre vicino a lei, lei sempre a parlargli come se capisse tutto. Probabilmente capiva.',
-    author: 'Olivia',
-    initials: 'OL',
-    context: 'Il giardino di Barberino',
-    itemId: null as string | null,
-    imageUrl: 'https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/IMG_1547%204.jpg' as string,
-  },
-];
-const FAMILY_MEMORIES = shuffleArray(FAMILY_MEMORIES_BASE);
+// ─── family memories — loaded from GitHub memories.json ─────────────────────
+// All memories are managed via the Admin Panel and stored in data/memories.json
 
 // ─── users database ───────────────────────────────────────────────────────────
 
@@ -1010,7 +888,7 @@ const EXPLORE_ROOMS = [
 ];
 
 function ExplorePanel({
-  isOpen, onClose, totalItems, categoriesWithCount, onExplore, mode = 'discover',
+  isOpen, onClose, totalItems, categoriesWithCount, onExplore, mode = 'discover', isAdmin = false, favorites = [], showFavoritesOnly = false, onToggleFavoritesOnly,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -1018,6 +896,10 @@ function ExplorePanel({
   categoriesWithCount: { name: string; count: number }[];
   onExplore: (opts: { category?: string; roomMatch?: (r: string) => boolean; catawikiOnly?: boolean }) => void;
   mode?: 'discover' | 'filter';
+  isAdmin?: boolean;
+  favorites?: string[];
+  showFavoritesOnly?: boolean;
+  onToggleFavoritesOnly?: () => void;
 }) {
   const [selType, setSelType] = useState<'all' | 'category' | 'room' | 'catawiki'>('all');
   const [selCategory, setSelCategory] = useState<string | null>(null);
@@ -1154,7 +1036,14 @@ function ExplorePanel({
             </div>
 
             {/* CTA fisso in fondo */}
-            <div className="px-6 pb-8 pt-4 flex-shrink-0">
+            <div className="px-6 pb-8 pt-4 flex-shrink-0 space-y-3">
+              {isAdmin && favorites.length > 0 && onToggleFavoritesOnly && (
+                <button onClick={() => { onToggleFavoritesOnly(); onExplore({}); onClose(); }}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border font-bold text-[13px] uppercase tracking-[0.15em] transition-all ${showFavoritesOnly ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                  <Heart size={14} fill={showFavoritesOnly ? 'currentColor' : 'none'} />
+                  I miei preferiti · {favorites.length}
+                </button>
+              )}
               <button onClick={handleConfirm}
                 className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] active:opacity-90 transition-opacity">
                 Mostra Risultati
@@ -1249,6 +1138,13 @@ function ExplorePanel({
                 </div>
 
                 {/* CTA */}
+                {isAdmin && favorites.length > 0 && onToggleFavoritesOnly && (
+                  <button onClick={() => { onToggleFavoritesOnly(); onExplore({}); onClose(); }}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border font-bold text-[13px] uppercase tracking-[0.15em] transition-all ${showFavoritesOnly ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                    <Heart size={14} fill={showFavoritesOnly ? 'currentColor' : 'none'} />
+                    I miei preferiti · {favorites.length}
+                  </button>
+                )}
                 <button onClick={handleConfirm}
                   className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] hover:bg-heritage-ink/90 transition-colors">
                   Mostra Risultati
@@ -1299,7 +1195,11 @@ export default function App() {
   const [selectedStatus, setSelectedStatus] = useState('Tutti');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
-  const [memories, setMemories] = useState<FamilyMemory[]>([]);
+  const [showNuovoDropdown, setShowNuovoDropdown] = useState(false);
+  const [memories, setMemories] = useState<FamilyMemory[]>(() => {
+    try { const c = localStorage.getItem('b2026_memories'); return c ? JSON.parse(c) : []; }
+    catch { return []; }
+  });
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<FamilyMemory | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -1330,11 +1230,23 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const isAdmin = !!currentUser;
 
+  // visibleMemories: public always; private only for logged-in users
+  const visibleMemories = useMemo(() =>
+    memories.filter(m => isAdmin || !m.visibility || m.visibility === 'public'),
+  [memories, isAdmin]);
+  const shuffledMemories = useMemo(() => shuffleArray(visibleMemories), [visibleMemories]);
+
   useEffect(() => {
     if (alreadySeen) return;
-    const randomIdx = Math.floor(Math.random() * FAMILY_MEMORIES.length); setLoaderIndex(randomIdx); setLoaderQuote(FAMILY_MEMORIES[randomIdx]);
     setTimeout(() => setIsLoading(false), 1100);
   }, []);
+
+  // Sync loaderQuote when memories load from GitHub
+  useEffect(() => {
+    if (shuffledMemories.length > 0 && loaderIndex < shuffledMemories.length) {
+      setLoaderQuote({ text: shuffledMemories[loaderIndex]?.text || '', author: shuffledMemories[loaderIndex]?.author || '' });
+    }
+  }, [shuffledMemories, loaderIndex]);
 
   useEffect(() => {
     sessionStorage.setItem('b2026_view', view);
@@ -1403,7 +1315,7 @@ export default function App() {
         try {
           const memUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${MEMORIES_PATH}?t=${Date.now()}`;
           const memRes = await fetch(memUrl);
-          if (memRes.ok) { const memData = await memRes.json(); setMemories(memData); }
+          if (memRes.ok) { const memData = await memRes.json(); setMemories(memData); try { localStorage.setItem('b2026_memories', JSON.stringify(memData)); } catch {} }
         } catch {}
 
         const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${GITHUB_PATH}?t=${Date.now()}`;
@@ -1686,34 +1598,34 @@ export default function App() {
                 <motion.div key={loaderIndex} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.35 }} className="flex flex-col items-center w-full max-w-sm gap-5">
 
                   {/* Foto */}
-                  {FAMILY_MEMORIES[loaderIndex].imageUrl && (
+                  {shuffledMemories[loaderIndex]?.imageUrl && (
                     <div className="w-full rounded-2xl overflow-hidden border border-heritage-ink/10" style={{aspectRatio: '4/3'}}>
-                      <img src={FAMILY_MEMORIES[loaderIndex].imageUrl} alt={FAMILY_MEMORIES[loaderIndex].author} className="w-full h-full object-cover" />
+                      <img src={shuffledMemories[loaderIndex]?.imageUrl} alt={shuffledMemories[loaderIndex]?.author || ""} className="w-full h-full object-cover" />
                     </div>
                   )}
                   {/* Testo */}
-                  <p className="text-heritage-ink/90 text-lg font-heritage italic leading-relaxed text-center">"{FAMILY_MEMORIES[loaderIndex].text}"</p>
+                  <p className="text-heritage-ink/90 text-lg font-heritage italic leading-relaxed text-center">"{shuffledMemories[loaderIndex]?.text || ""}"</p>
                   <div className="flex flex-col items-center gap-0.5">
-                    <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px]">— {FAMILY_MEMORIES[loaderIndex].author}</p>
-                    <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{FAMILY_MEMORIES[loaderIndex].context}</p>
+                    <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px]">— {shuffledMemories[loaderIndex]?.author || ""}</p>
+                    <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{shuffledMemories[loaderIndex]?.date || ""}</p>
                   </div>
 
                   {/* Frecce */}
                   <div className="flex items-center gap-4">
-                    <button onClick={() => setLoaderIndex(i => (i - 1 + FAMILY_MEMORIES.length) % FAMILY_MEMORIES.length)} className="w-11 h-11 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"><ChevronLeft size={20} className="text-heritage-ink" /></button>
-                    <button onClick={() => setLoaderIndex(i => (i + 1) % FAMILY_MEMORIES.length)} className="w-11 h-11 rounded-full bg-heritage-gold border-none flex items-center justify-center transition-colors"><ChevronRight size={20} className="text-white" /></button>
+                    <button onClick={() => setLoaderIndex(i => (i - 1 + Math.max(shuffledMemories.length, 1)) % Math.max(shuffledMemories.length, 1))} className="w-11 h-11 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"><ChevronLeft size={20} className="text-heritage-ink" /></button>
+                    <button onClick={() => setLoaderIndex(i => (i + 1) % Math.max(shuffledMemories.length, 1))} className="w-11 h-11 rounded-full bg-heritage-gold border-none flex items-center justify-center transition-colors"><ChevronRight size={20} className="text-white" /></button>
                   </div>
                 </motion.div>
               ) : (
                 <motion.div key={loaderIndex} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center max-w-lg w-full">
                   <h2 className="text-3xl font-serif mb-6 italic text-center">Raccogliendo i Ricordi...</h2>
-                  {FAMILY_MEMORIES[loaderIndex].imageUrl && (
+                  {shuffledMemories[loaderIndex]?.imageUrl && (
                     <div className="w-full max-w-xs rounded-2xl overflow-hidden border border-heritage-ink/10 mb-4" style={{aspectRatio:'4/3'}}>
-                      <img src={FAMILY_MEMORIES[loaderIndex].imageUrl} alt="" className="w-full h-full object-cover" />
+                      <img src={shuffledMemories[loaderIndex]?.imageUrl} alt="" className="w-full h-full object-cover" />
                     </div>
                   )}
-                  <p className="text-heritage-ink/90 text-xl font-heritage italic leading-relaxed text-center">"{FAMILY_MEMORIES[loaderIndex].text}"</p>
-                  <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px] mt-3">— {FAMILY_MEMORIES[loaderIndex].author}</p>
+                  <p className="text-heritage-ink/90 text-xl font-heritage italic leading-relaxed text-center">"{shuffledMemories[loaderIndex]?.text || ""}"</p>
+                  <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px] mt-3">— {shuffledMemories[loaderIndex]?.author || ""}</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1728,11 +1640,11 @@ export default function App() {
             {!loaderFromMenu && (
               <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-6">
                 <button
-                  onClick={() => setLoaderIndex(i => (i - 1 + FAMILY_MEMORIES.length) % FAMILY_MEMORIES.length)}
+                  onClick={() => setLoaderIndex(i => (i - 1 + Math.max(shuffledMemories.length, 1)) % Math.max(shuffledMemories.length, 1))}
                   className="w-9 h-9 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"
                 ><ChevronLeft size={16} className="text-heritage-ink/50" /></button>
                 <button
-                  onClick={() => setLoaderIndex(i => (i + 1) % FAMILY_MEMORIES.length)}
+                  onClick={() => setLoaderIndex(i => (i + 1) % Math.max(shuffledMemories.length, 1))}
                   className="w-9 h-9 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"
                 ><ChevronRight size={16} className="text-heritage-ink/50" /></button>
               </div>
@@ -1776,7 +1688,7 @@ export default function App() {
             <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.25, ease: [0.22, 1, 0.36, 1] }} className="hidden lg:flex items-center gap-8">
               <NavItem active={view === 'catalog'} onClick={() => { setExplorePanelMode('discover'); handleBackToCatalog('catalog'); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} icon={<Archive size={18} />} label="Gli Oggetti di Casa" />
               <NavItem active={false} onClick={() => { setView('home'); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} icon={<Handshake size={18} />} label="Vendita / Adozione" />
-              <NavItem active={false} onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} icon={<Heart size={18} />} label="Ricordi" />
+              <NavItem active={false} onClick={() => { setLoaderIndex(Math.floor(Math.random() * Math.max(shuffledMemories.length, 1))); setLoaderFromMenu(true); setDismissed(false); }} icon={<Heart size={18} />} label="Ricordi" />
             </motion.nav>
 
             <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="flex items-center gap-2 md:gap-3">
@@ -1793,12 +1705,34 @@ export default function App() {
                       ⚠️ Token
                     </button>
                   )}
-                  <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); }} className="flex items-center gap-2 bg-heritage-gold text-white px-3 py-2 rounded-full text-[12px] font-bold hover:scale-105 transition-all shadow-md">
-                    <Plus size={15} /><span className="hidden lg:inline">Nuovo</span>
-                  </button>
+                  <div className="relative">
+                    <div className="flex items-center bg-heritage-gold text-white rounded-full shadow-md overflow-hidden">
+                      <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); }} className="flex items-center gap-2 px-3 py-2 text-[12px] font-bold hover:bg-heritage-gold/80 transition-colors">
+                        <Plus size={15} /><span className="hidden lg:inline">Nuovo</span>
+                      </button>
+                      <button onClick={() => setShowNuovoDropdown((v: boolean) => !v)} className="hidden lg:flex items-center px-2 py-2 border-l border-white/20 hover:bg-heritage-gold/80 transition-colors" aria-label="Scegli tipo">
+                        <ChevronRight size={13} className={`transition-transform ${showNuovoDropdown ? 'rotate-90' : ''}`} />
+                      </button>
+                    </div>
+                    <AnimatePresence>
+                      {showNuovoDropdown && (
+                        <motion.div initial={{ opacity: 0, y: -6, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6, scale: 0.96 }} transition={{ duration: 0.13 }}
+                          className="absolute left-0 top-11 w-44 bg-emerald-950 border border-white/10 rounded-2xl overflow-hidden z-[200] shadow-2xl">
+                          <div className="p-1.5 flex flex-col gap-0.5">
+                            <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); setShowNuovoDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/85 hover:bg-white/10 transition-colors text-[12px] text-left font-bold">
+                              <Archive size={14} className="text-heritage-gold" /> Oggetto
+                            </button>
+                            <button onClick={() => { setEditingMemory(null); setIsMemoryModalOpen(true); setShowNuovoDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/85 hover:bg-white/10 transition-colors text-[12px] text-left font-bold">
+                              <BookHeart size={14} className="text-heritage-gold" /> Ricordo
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                   <div className="relative">
                     <button
-                      onClick={() => setShowAdminDropdown(!showAdminDropdown)}
+                      onClick={() => { setShowAdminDropdown(!showAdminDropdown); setShowNuovoDropdown(false); }}
                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all border ${showAdminDropdown ? 'bg-heritage-gold/20 border-heritage-gold/40 text-heritage-gold' : 'bg-white/10 border-white/10 text-white/70 hover:bg-white/20'}`}
                     >
                       <User size={16} />
@@ -1865,7 +1799,7 @@ export default function App() {
                 <div className="flex flex-col p-6 gap-4">
                   <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setExplorePanelMode('discover'); setIsMobileMenuOpen(false); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
                   <button onClick={() => { setView('home'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
-                  <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
+                  <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * Math.max(shuffledMemories.length, 1))); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
 
                 </div>
               </motion.div>
@@ -2094,31 +2028,34 @@ export default function App() {
                     <h2 className="text-4xl md:text-5xl text-heritage-ink leading-tight mb-2"><span className="font-serif italic">Le voci </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">di casa</span></h2>
                     <div className="w-11 h-px bg-heritage-gold/40 mt-5 mb-12" />
                     {/* Grid 3 colonne — card grande a sx su 2 righe */}
+                    {visibleMemories.length === 0 ? (
+                      <div className="text-center py-12 text-heritage-ink/30 italic font-heritage col-span-3">
+                        {isSyncing ? 'Caricamento ricordi...' : 'Nessun ricordo ancora.'}
+                      </div>
+                    ) : (<>
                     <div className="hidden md:grid gap-4" style={{gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto'}}>
-                      {/* Card grande — colonna 1, righe 1+2 */}
-                      {FAMILY_MEMORIES[0] && (() => { const mem = FAMILY_MEMORIES[0]; const photo = mem.imageUrl || null; return (
+                      {visibleMemories[0] && (() => { const mem = visibleMemories[0]; const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col" style={{gridColumn: '1', gridRow: '1 / 3'}}>
                           {photo && <div className="overflow-hidden" style={{height: '240px'}}><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="bg-heritage-cream/60 flex items-end px-6 pb-0" style={{height:'60px'}}><span className="font-serif text-5xl text-heritage-gold opacity-15 leading-none">"</span></div>}
                           <div className="p-6 flex flex-col flex-1 gap-4">
                             <p className="text-lg leading-relaxed text-heritage-ink/90 italic font-heritage">{mem.text}</p>
                             <div className="flex items-center gap-3 border-t border-heritage-ink/8 pt-4 mt-auto">
-                              <div className="w-7 h-7 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[11px] font-bold flex-shrink-0">{mem.initials}</div>
-                              <div><p className="text-[13px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[10px] tracking-widest uppercase text-heritage-gold font-bold mt-0.5">{mem.context}</p></div>
+                              <div className="w-7 h-7 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[11px] font-bold flex-shrink-0">{ini}</div>
+                              <div><p className="text-[13px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[10px] tracking-widest uppercase text-heritage-gold font-bold mt-0.5">{mem.date}</p></div>
                             </div>
                           </div>
                         </motion.div>
                       ); })()}
-                      {/* Card 2-5 — colonne 2 e 3 */}
-                      {FAMILY_MEMORIES.slice(1, 5).map((mem, i) => { const photo = mem.imageUrl || null; return (
-                        <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
+                      {visibleMemories.slice(1, 5).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
+                        <motion.div key={mem.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
                           {photo && <div className="overflow-hidden" style={{height: '120px'}}><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="bg-heritage-cream/60 flex items-end px-5 pb-0" style={{height:'40px'}}><span className="font-serif text-4xl text-heritage-gold opacity-15 leading-none">"</span></div>}
                           <div className="p-5 flex flex-col flex-1 gap-3">
                             <p className="text-[15px] leading-relaxed text-heritage-ink/90 italic font-heritage">{mem.text}</p>
                             <div className="flex items-center gap-2 border-t border-heritage-ink/8 pt-3 mt-auto">
-                              <div className="w-6 h-6 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[10px] font-bold flex-shrink-0">{mem.initials}</div>
-                              <div><p className="text-[12px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[9px] tracking-widest uppercase text-heritage-gold font-bold">{mem.context}</p></div>
+                              <div className="w-6 h-6 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[10px] font-bold flex-shrink-0">{ini}</div>
+                              <div><p className="text-[12px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[9px] tracking-widest uppercase text-heritage-gold font-bold">{mem.date}</p></div>
                             </div>
                           </div>
                         </motion.div>
@@ -2126,20 +2063,21 @@ export default function App() {
                     </div>
                     {/* Mobile: 3 card verticali */}
                     <div className="md:hidden flex flex-col gap-4">
-                      {FAMILY_MEMORIES.slice(0, 3).map((mem, i) => { const photo = mem.imageUrl || null; return (
-                        <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
+                      {visibleMemories.slice(0, 3).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
+                        <motion.div key={mem.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
                           {photo && <div className="h-48 overflow-hidden"><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="h-10 bg-heritage-cream/60 flex items-end px-5 pb-0"><span className="font-serif text-4xl text-heritage-gold opacity-15 leading-none">"</span></div>}
                           <div className="p-5 flex flex-col gap-3">
                             <p className="text-base leading-relaxed text-heritage-ink/90 italic font-heritage">{mem.text}</p>
                             <div className="flex items-center gap-3 border-t border-heritage-ink/8 pt-3">
-                              <div className="w-7 h-7 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[11px] font-bold flex-shrink-0">{mem.initials}</div>
-                              <div><p className="text-[13px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[10px] tracking-widest uppercase text-heritage-gold font-bold mt-0.5">{mem.context}</p></div>
+                              <div className="w-7 h-7 rounded-full bg-heritage-ink text-heritage-gold flex items-center justify-center text-[11px] font-bold flex-shrink-0">{ini}</div>
+                              <div><p className="text-[13px] font-bold text-heritage-ink">{mem.author}</p><p className="text-[10px] tracking-widest uppercase text-heritage-gold font-bold mt-0.5">{mem.date}</p></div>
                             </div>
                           </div>
                         </motion.div>
                       ); })}
                     </div>
+                    </>)}
                     {/* Link vedi tutti */}
                     <div className="flex justify-center mt-10">
                       <button onClick={() => { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); }} className="group flex items-center gap-3 px-8 py-4 bg-heritage-ink text-heritage-cream rounded-full text-[12px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-all shadow-lg">
@@ -2281,6 +2219,13 @@ export default function App() {
                             {statusFilters.map(s => <button key={s} onClick={() => { setSelectedStatus(s); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`px-4 py-2 rounded-full text-[12px] uppercase tracking-widest font-bold ${selectedStatus === s ? 'bg-heritage-ink text-white' : 'bg-white border border-heritage-ink/10 text-heritage-ink/65'}`}>{s}</button>)}
                           </div>
                         </div>
+                        {isAdmin && favorites.length > 0 && (
+                          <button onClick={() => { setShowFavoritesOnly(p => !p); setIsMobileFilterOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            className={`w-full flex items-center justify-center gap-2 py-3 rounded-full border font-bold text-[13px] uppercase tracking-[0.15em] transition-all ${showFavoritesOnly ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-heritage-ink/10 text-heritage-ink'}`}>
+                            <Heart size={14} fill={showFavoritesOnly ? 'currentColor' : 'none'} />
+                            I miei preferiti · {favorites.length}
+                          </button>
+                        )}
                         <button onClick={() => setIsMobileFilterOpen(false)} className="w-full flex items-center justify-center py-4 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-[0.2em] hover:bg-heritage-ink/90 transition-colors">Mostra Risultati</button>
                       </div>
                     </motion.div>
@@ -2698,7 +2643,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
                 <li><button onClick={() => { setView('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">La storia</button></li>
                 <li><button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Il catalogo</button></li>
                 <li><button onClick={() => { setView('home'); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">Vendita e adozione</button></li>
-                <li><button onClick={() => { setLoaderIndex(Math.floor(Math.random() * FAMILY_MEMORIES.length)); setLoaderFromMenu(true); setDismissed(false); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">I ricordi</button></li>
+                <li><button onClick={() => { setLoaderIndex(Math.floor(Math.random() * Math.max(shuffledMemories.length, 1))); setLoaderFromMenu(true); setDismissed(false); }} className="text-white/60 hover:text-white transition-colors text-sm font-serif italic">I ricordi</button></li>
               </ul>
             </div>
             <div>
@@ -2754,7 +2699,8 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
             editingMemory={editingMemory}
             memories={memories}
             items={items}
-            onSave={(updated) => { setMemories(updated); setIsMemoryModalOpen(false); }}
+            onSave={(updated) => { setMemories(updated); try { localStorage.setItem('b2026_memories', JSON.stringify(updated)); } catch {} setIsMemoryModalOpen(false); }}
+            onNotify={showNotif}
           />
         )}
       </AnimatePresence>
@@ -2767,6 +2713,10 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
         categoriesWithCount={categoriesWithCount}
         onExplore={handleExploreConfirm}
         mode={explorePanelMode}
+        isAdmin={isAdmin}
+        favorites={favorites}
+        showFavoritesOnly={showFavoritesOnly}
+        onToggleFavoritesOnly={() => { setShowFavoritesOnly(p => !p); handleBackToCatalog('catalog'); }}
       />
 
       {/* Login */}
@@ -3055,7 +3005,7 @@ function MobileDetailsSection({ form, setForm, handleDetailImages }: { form: any
 // ─── MemoryModal ──────────────────────────────────────────────────────────────
 
 function MemoryModal({
-  isOpen, onClose, editingMemory, memories, items, onSave
+  isOpen, onClose, editingMemory, memories, items, onSave, onNotify
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -3063,8 +3013,9 @@ function MemoryModal({
   memories: FamilyMemory[];
   items: HeritageItem[];
   onSave: (memories: FamilyMemory[]) => void;
+  onNotify: (msg: string, type?: 'success' | 'error') => void;
 }) {
-  const [form, setForm] = React.useState({ text: '', author: '', date: new Date().toISOString().split('T')[0], itemId: '', imageUrl: '' });
+  const [form, setForm] = React.useState({ text: '', author: '', date: new Date().toISOString().split('T')[0], itemId: '', imageUrl: '', visibility: 'public' as 'public' | 'private' });
   const [imageBase64, setImageBase64] = React.useState('');
   const [isUploading, setIsUploading] = React.useState(false);
   const [isAiLoading, setIsAiLoading] = React.useState(false);
@@ -3078,21 +3029,26 @@ function MemoryModal({
   }, [isOpen]);
 
   const openNew = () => {
-    setForm({ text: '', author: '', date: new Date().toISOString().split('T')[0], itemId: '', imageUrl: '' });
+    setForm({ text: '', author: '', date: new Date().toISOString().split('T')[0], itemId: '', imageUrl: '', visibility: 'public' });
     setRawText(''); setImageBase64(''); setEditId(null); setView('form');
   };
 
   const openEdit = (m: FamilyMemory) => {
-    setForm({ text: m.text, author: m.author, date: m.date, itemId: m.itemId || '', imageUrl: m.imageUrl || '' });
+    setForm({ text: m.text, author: m.author, date: m.date, itemId: m.itemId || '', imageUrl: m.imageUrl || '', visibility: m.visibility || 'public' });
     setRawText(''); setImageBase64(''); setEditId(m.id); setView('form');
   };
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImageBase64(reader.result as string);
-    reader.readAsDataURL(file);
+    e.target.value = '';
+    setIsUploading(true);
+    try {
+      const resized = await resizeImage(file);
+      setImageBase64(resized);
+      setForm(f => ({ ...f, imageUrl: resized })); // show preview immediately
+    } catch { console.error('Errore resize foto ricordo'); }
+    setIsUploading(false);
   };
 
   const handleAI = async () => {
@@ -3134,10 +3090,14 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
     if (!form.text.trim() || !form.author.trim()) return;
     setIsUploading(true);
     let imageUrl = form.imageUrl;
-    if (imageBase64) {
+    // Upload if we have a new base64 image (not already a remote URL)
+    const needsUpload = imageBase64 && imageBase64.startsWith('data:');
+    if (needsUpload) {
       const fileName = `memory_${Date.now()}.jpg`;
       const uploaded = await uploadImageToGitHub(imageBase64, fileName);
       if (uploaded) imageUrl = uploaded;
+      // If no token, keep the base64 as local preview but warn
+      else if (!imageUrl || imageUrl.startsWith('data:')) imageUrl = imageBase64;
     }
     const mem: FamilyMemory = {
       id: editId || `mem_${Date.now()}`,
@@ -3146,18 +3106,23 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
       date: form.date,
       itemId: form.itemId || undefined,
       imageUrl: imageUrl || undefined,
+      visibility: form.visibility,
     };
     const updated = editId ? memories.map(m => m.id === editId ? mem : m) : [...memories, mem];
-    await saveMemoriesToGitHub(updated);
+    const saved = await saveMemoriesToGitHub(updated);
     onSave(updated);
     setIsUploading(false);
+    if (saved) onNotify('Ricordo salvato su GitHub ✓');
+    else onNotify('Salvato in locale (GitHub non raggiungibile)', 'error');
     setView('list');
   };
 
   const handleDelete = async (id: string) => {
     const updated = memories.filter(m => m.id !== id);
-    await saveMemoriesToGitHub(updated);
+    const saved = await saveMemoriesToGitHub(updated);
     onSave(updated);
+    if (saved) onNotify('Ricordo eliminato ✓');
+    else onNotify('Eliminato in locale (GitHub non raggiungibile)', 'error');
   };
 
   if (!isOpen) return null;
@@ -3205,6 +3170,10 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
                           <span className="text-heritage-gold text-[11px] font-bold">{m.author}</span>
                           <span className="text-heritage-ink/30 text-[11px] ml-2">{m.date}</span>
                           {linked && <span className="text-heritage-ink/40 text-[11px] ml-2">· {linked.name.split(' ').slice(0,3).join(' ')}</span>}
+                          {m.visibility === 'private'
+                            ? <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-ink/8 text-heritage-ink/50 px-1.5 py-0.5 rounded-full">🔒 Famiglia</span>
+                            : <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">🌐 Tutti</span>
+                          }
                         </div>
                         <div className="flex gap-2">
                           <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors"><Pencil size={13} className="text-heritage-ink/50" /></button>
@@ -3221,20 +3190,35 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
               {/* Foto */}
               <div>
                 <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Foto (opzionale)</label>
-                {(imageBase64 || form.imageUrl) ? (
-                  <div className="relative">
-                    <img src={imageBase64 || form.imageUrl} alt="" className="w-full h-40 object-cover rounded-2xl" />
-                    <button onClick={() => { setImageBase64(''); setForm(f => ({ ...f, imageUrl: '' })); }} className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center text-white">
-                      <X size={13} />
-                    </button>
-                  </div>
-                ) : (
-                  <button onClick={() => fileRef.current?.click()} className="w-full h-28 border-2 border-dashed border-heritage-ink/15 rounded-2xl flex flex-col items-center justify-center gap-2 text-heritage-ink/40 hover:border-heritage-gold/40 transition-colors">
-                    <Camera size={20} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Aggiungi foto</span>
-                  </button>
-                )}
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImage} />
+                <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/20">
+                  {(imageBase64 || form.imageUrl) ? (
+                    <div className="relative h-44">
+                      <img src={imageBase64 || form.imageUrl} alt="" className={`absolute inset-0 w-full h-full object-cover ${isUploading ? 'opacity-50 blur-sm' : ''}`} />
+                      {isUploading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
+                      <button type="button" onClick={() => { setImageBase64(''); setForm(f => ({ ...f, imageUrl: '' })); }} className="absolute top-2 right-2 bg-white/90 text-heritage-ink px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
+                    </div>
+                  ) : (
+                    <div className="h-28 flex flex-col items-center justify-center gap-2 text-heritage-ink/30">
+                      {isUploading
+                        ? <><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40">Elaborazione...</p></>
+                        : <Camera size={28} />}
+                    </div>
+                  )}
+                  {!isUploading && (
+                    <div className="grid grid-cols-2 border-t border-heritage-ink/8">
+                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60">
+                        <Camera size={16} className="text-heritage-gold" />
+                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">Scatta</span>
+                        <input type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImage} />
+                      </label>
+                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer active:bg-heritage-cream/60">
+                        <ImageIcon size={16} className="text-heritage-gold" />
+                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">{(imageBase64 || form.imageUrl) ? 'Cambia' : 'Galleria'}</span>
+                        <input ref={fileRef} type="file" className="hidden" accept="image/*" onChange={handleImage} />
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Testo grezzo + AI */}
@@ -3288,6 +3272,23 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
                   <option value="">— Nessun oggetto —</option>
                   {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
                 </select>
+              </div>
+
+              {/* Visibilità */}
+              <div>
+                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Visibilità</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['public', 'private'] as const).map(v => (
+                    <button key={v} type="button"
+                      onClick={() => setForm(f => ({ ...f, visibility: v }))}
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-[12px] font-bold uppercase tracking-wide transition-all ${form.visibility === v ? (v === 'public' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-heritage-ink bg-heritage-ink/5 text-heritage-ink') : 'border-heritage-ink/10 text-heritage-ink/40 hover:border-heritage-ink/25'}`}>
+                      {v === 'public' ? '🌐 Tutti' : '🔒 Solo famiglia'}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] text-heritage-ink/35 italic mt-1.5">
+                  {form.visibility === 'public' ? 'Visibile a tutti i visitatori' : 'Visibile solo agli utenti loggati'}
+                </p>
               </div>
 
               {/* Salva */}
