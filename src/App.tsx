@@ -40,12 +40,23 @@ function shuffleArray<T>(arr: T[]): T[] {
 // ─── users database ───────────────────────────────────────────────────────────
 
 // ─── auth ────────────────────────────────────────────────────────────────────
-const USERS: Record<string, string> = {
-  olivia: 'olivia2026',
-  aleria: 'aleria2026',
-  emanuela: 'emanuela2026',
-  gianmaria: 'gianmaria2026',
-};
+// ─── auth — passwords as SHA-256 hashes in VITE_USERS env var ───────────────
+// Format: "user1:hash1,user2:hash2,..." — fallback: login fails if env not set
+function parseUsersEnv(): Record<string, string> {
+  const raw = (import.meta as any).env?.VITE_USERS || '';
+  const result: Record<string, string> = {};
+  raw.split(',').forEach((pair: string) => {
+    const [u, ...rest] = pair.split(':');
+    const h = rest.join(':'); // handle colons in hash
+    if (u && h) result[u.trim()] = h.trim();
+  });
+  return result;
+}
+
+async function sha256(str: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // ─── utils ────────────────────────────────────────────────────────────────────
 
@@ -1558,8 +1569,10 @@ export default function App() {
     showNotif('Oggetto eliminato');
   };
 
-  const handleLogin = (username: string, pwd: string, token?: string) => {
-    if (USERS[username] && USERS[username] === pwd) {
+  const handleLogin = async (username: string, pwd: string, token?: string) => {
+    const users = parseUsersEnv();
+    const hash = await sha256(pwd);
+    if (users[username] && users[username] === hash) {
       sessionStorage.setItem('b2026_user', username);
       setCurrentUser(username);
       if (token) {
@@ -1763,13 +1776,13 @@ export default function App() {
                             <Download size={14} /> Scarica items.json
                           </button>
                           <button onClick={async () => {
-                            if (!confirm('Impostare tutti i prezzi a "Da definire"?')) return;
-                            const updated = items.map(i => ({ ...i, price: 'Da definire', estimatedValue: '' }));
+                            if (!confirm('Azzerare il prezzo display di tutti gli oggetti? I prezzi di riferimento restano invariati.')) return;
+                            const updated = items.map(i => ({ ...i, displayPrice: '' }));
                             await persist(updated);
                             setShowAdminDropdown(false);
                             showNotif('Prezzi aggiornati ✓');
                           }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
-                            <Edit size={14} /> Reset prezzi → Da definire
+                            <Edit size={14} /> Azzera prezzi display
                           </button>
                           <button onClick={() => { exportCatawikiTxt(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
                             <ExternalLink size={14} /> Esporta Catawiki
@@ -4990,6 +5003,6 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
   );
 }
 
-// build Thu May 21 13:30:50 UTC 2026
+// build Thu May 21 14:14:48 UTC 2026
 
 // deploy 20260520142743
