@@ -1349,7 +1349,7 @@ export default function App() {
   const [githubToken, setGithubToken] = useState<string | null>(() => localStorage.getItem('b2026_github_token'));
   const [isGithubTokenModalOpen, setIsGithubTokenModalOpen] = useState(false);
   useEffect(() => {
-    const anyOpen = isItemModalOpen || isLoginModalOpen || isHeroModalOpen || isGithubTokenModalOpen || isExplorePanelOpen;
+    const anyOpen = isItemModalOpen || isLoginModalOpen || isHeroModalOpen || isGithubTokenModalOpen || isExplorePanelOpen || isMemoryModalOpen;
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
     if (anyOpen) {
       document.body.style.overflow = 'hidden';
@@ -1359,7 +1359,7 @@ export default function App() {
       document.body.style.paddingRight = '';
     }
     return () => { document.body.style.overflow = ''; document.body.style.paddingRight = ''; };
-  }, [isItemModalOpen, isLoginModalOpen, isHeroModalOpen, isGithubTokenModalOpen, isExplorePanelOpen]);
+  }, [isItemModalOpen, isLoginModalOpen, isHeroModalOpen, isGithubTokenModalOpen, isExplorePanelOpen, isMemoryModalOpen]);
 
   // ── persist ──
   const persist = async (updated: HeritageItem[]) => {
@@ -1722,7 +1722,7 @@ export default function App() {
                             <button onClick={() => { setEditingItem(null); setIsItemModalOpen(true); setShowNuovoDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/85 hover:bg-white/10 transition-colors text-[12px] text-left font-bold">
                               <Archive size={14} className="text-heritage-gold" /> Oggetto
                             </button>
-                            <button onClick={() => { setEditingMemory(null); setIsMemoryModalOpen(true); setShowNuovoDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/85 hover:bg-white/10 transition-colors text-[12px] text-left font-bold">
+                            <button onClick={() => { sessionStorage.setItem('b2026_scroll', String(window.scrollY)); setEditingMemory(null); setIsMemoryModalOpen(true); setShowNuovoDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/85 hover:bg-white/10 transition-colors text-[12px] text-left font-bold">
                               <BookHeart size={14} className="text-heritage-gold" /> Ricordo
                             </button>
                           </div>
@@ -1755,7 +1755,7 @@ export default function App() {
                           </div>
                         </div>
                         <div className="p-1.5">
-                          <button onClick={() => { setEditingMemory(null); setIsMemoryModalOpen(true); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
+                          <button onClick={() => { sessionStorage.setItem('b2026_scroll', String(window.scrollY)); setEditingMemory(null); setIsMemoryModalOpen(true); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
                             <BookHeart size={14} /> Gestisci ricordi
                           </button>
                           <button onClick={() => { downloadJson(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
@@ -2695,11 +2695,15 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
         {isMemoryModalOpen && (
           <MemoryModal
             isOpen={isMemoryModalOpen}
-            onClose={() => setIsMemoryModalOpen(false)}
+            onClose={() => {
+              setIsMemoryModalOpen(false);
+              const saved = sessionStorage.getItem('b2026_scroll');
+              if (saved) setTimeout(() => window.scrollTo({ top: parseInt(saved), behavior: 'instant' }), 0);
+            }}
             editingMemory={editingMemory}
             memories={memories}
             items={items}
-            onSave={(updated) => { setMemories(updated); try { localStorage.setItem('b2026_memories', JSON.stringify(updated)); } catch {} setIsMemoryModalOpen(false); }}
+            onSave={(updated) => { setMemories(updated); try { localStorage.setItem('b2026_memories', JSON.stringify(updated)); } catch {} setIsMemoryModalOpen(false); const saved = sessionStorage.getItem('b2026_scroll'); if (saved) setTimeout(() => window.scrollTo({ top: parseInt(saved), behavior: 'instant' }), 0); }}
             onNotify={showNotif}
           />
         )}
@@ -3134,8 +3138,12 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
         initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
         className="relative w-full max-w-lg bg-heritage-cream rounded-t-3xl md:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col"
       >
+        {/* Drag handle — mobile only */}
+        <div className="flex justify-center pt-3 pb-1 flex-shrink-0 md:hidden">
+          <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
+        </div>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-heritage-ink/8">
+        <div className="flex items-center justify-between px-6 py-3 md:py-4 border-b border-heritage-ink/8 flex-shrink-0">
           <div className="flex items-center gap-3">
             {view === 'form' && (
               <button onClick={() => setView('list')} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors">
@@ -3146,10 +3154,12 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
               {view === 'list' ? 'Ricordi di famiglia' : editId ? 'Modifica ricordo' : 'Nuovo ricordo'}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-heritage-ink/8 rounded-full transition-colors"><X size={18} /></button>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-heritage-ink/8 rounded-full transition-colors flex-shrink-0">
+            <X size={18} className="text-heritage-ink/60" />
+          </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 p-6">
+        <div className="overflow-y-auto flex-1 p-6 pb-24 md:pb-6">
           {view === 'list' ? (
             <div className="flex flex-col gap-3">
               <button onClick={openNew} className="flex items-center gap-2 bg-heritage-gold text-white px-4 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-wider w-fit">
@@ -3301,6 +3311,15 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
               </button>
             </div>
           )}
+        </div>
+        {/* Bottone chiudi fisso in fondo — mobile only */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 px-6 pb-8 pt-3 bg-heritage-cream border-t border-heritage-ink/8 flex-shrink-0 z-10">
+          <button
+            onClick={onClose}
+            className="w-full py-3.5 bg-heritage-ink text-white rounded-full font-bold text-[12px] uppercase tracking-widest flex items-center justify-center gap-2"
+          >
+            <X size={15} /> Chiudi
+          </button>
         </div>
       </motion.div>
     </div>
