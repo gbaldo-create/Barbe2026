@@ -1806,8 +1806,9 @@
     "estimatedValue": "",
     "productCode": "",
     "wearCondition": "Buono",
-    "shipping": "",
+    "shipping": "Spedizione possibile",
     "isFeatured": true,
+    "isImportant": false,
     "order": 62,
     "details": [],
     "images": [],
@@ -1826,6 +1827,7 @@
       "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778966714599-IMG-9957.jpeg"
     ],
     "catawikiSpecific": {},
+    "displayPrice": "€ 800–2.000",
     "id": "mp8uvca23qb9f",
     "stories": []
   },
