@@ -372,6 +372,7 @@
     "wearCondition": "Discreto",
     "shipping": "Ritiro in sede",
     "isFeatured": true,
+    "isImportant": false,
     "order": 16,
     "details": [],
     "images": [
@@ -410,6 +411,7 @@
       "altezzaTotale": "150",
       "diametro": "50"
     },
+    "displayPrice": "€ 1200",
     "id": "mp4ie7z7mkkgj",
     "stories": [
       {
