@@ -1,3 +1,4 @@
+// v2026-05-22
 import React, { useState, useMemo, ReactNode, FormEvent, useEffect, useRef, DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import {

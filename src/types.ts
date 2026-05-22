@@ -1,4 +1,4 @@
-export type ViewType = 'home' | 'catalog' | 'item-detail' | 'favorites' | 'adoption' | 'memories';
+export type ViewType = 'home' | 'catalog' | 'item-detail' | 'favorites' | 'adoption' | 'memories' | 'memories-reel' | 'memories-reel-v2';
 
 export type ItemStatus = 'Disponibile' | 'Riservato' | 'Affidato' | 'Venduto' | 'Non in Vendita';
 export type AcquisitionType = 'Vendita' | 'Catawiki' | 'Lascito Affettivo' | 'Famiglia' | 'Regalo';
