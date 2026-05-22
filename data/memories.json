@@ -3,9 +3,9 @@
     "id": "mem_legacy_001",
     "text": "La scrivania di papà era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
     "author": "Emanuela",
-    "date": "2026-01-01",
+    "date": "2015-11-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
-    "_updated": "2026-05-21T11:50:55.795721"
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_002",
@@ -45,8 +45,9 @@
     "id": "mem_legacy_007",
     "text": "Quando nacque Emma, la quarta nipote, papà la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
     "author": "Aleria",
-    "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg"
+    "date": "2009-08-13",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_008",
@@ -59,8 +60,9 @@
     "id": "mem_legacy_009",
     "text": "Con nonna Lia bastava poco per scoppiare a ridere. Una parola, uno sguardo — e giù. Non sapevamo mai perché, ma non importava.",
     "author": "Aleria",
-    "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg"
+    "date": "2009-08-05",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg",
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_010",
@@ -117,6 +119,14 @@
     "author": "Emanuela",
     "date": "2026-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779389951486.jpg",
+    "visibility": "public"
+  },
+  {
+    "id": "mem_1779398566098",
+    "text": "Quella foto del giardino di Barberino mi è sempre rimasta in mente: nonna Olga giovane, vestita con abiti da uomo insieme alle sue amiche, pronte per una passeggiata in paese e una prova teatrale. L'ho guardata tante volte, e ogni volta mi tornava voglia di farmi raccontare tutto da lei, mentre stava seduta nella sua poltrona con quella calma che aveva. Mi piaceva vederla lì, a ripercorrere quei momenti, con gli occhi che le brillavano quando ricordava quello che facevano lei e le sue amiche.",
+    "author": "Emanuela",
+    "date": "2026-05-21",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779398563849.jpg",
     "visibility": "public"
   }
 ]
