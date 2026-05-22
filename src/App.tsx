@@ -7,7 +7,7 @@ import {
   ArrowLeft, ArrowRight, ExternalLink, Sparkles, Heart, Handshake,
   Camera, User, Upload, LogOut, Edit, Trash2, Image as ImageIcon, Check, Download,
   LayoutGrid, Lamp, Sofa, BookOpen, Armchair, Star, BookHeart, Pencil,
-  ChevronUp, ChevronDown,
+  ChevronUp, ChevronDown, Bookmark, PenLine,
 } from 'lucide-react';
 import { HeritageItem, Memory, ViewType } from './types.ts';
 import ITEMS_DATA from '../data/items.json';
@@ -23,17 +23,38 @@ interface FamilyMemory {
   itemId?: string;
   imageUrl?: string;
   visibility?: 'public' | 'private'; // omitted = public
+  pinned?: boolean; // cover fissa — al massimo uno per volta
 }
 
 const INITIAL_ITEMS: HeritageItem[] = ITEMS_DATA as HeritageItem[];
 
-function shuffleArray<T>(arr: T[]): T[] {
+// Shuffle deterministico con seed — stesso ordine ad ogni reload
+// Il seed deriva dagli ID dei ricordi: cambia solo quando aggiungi/rimuovi ricordi
+function seededShuffle<T>(arr: T[], seed: number): T[] {
   const a = [...arr];
+  let s = seed;
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    const j = Math.abs(s) % (i + 1);
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+function memorySeed(memories: FamilyMemory[]): number {
+  // Hash semplice degli ID — stabile finché la lista non cambia
+  return memories.reduce((acc, m) => {
+    for (let k = 0; k < m.id.length; k++) acc = (acc * 31 + m.id.charCodeAt(k)) & 0xffffffff;
+    return acc;
+  }, 0x12345678);
+}
+
+// Ordina: pinned primo, resto in ordine seeded stabile
+function orderMemories(memories: FamilyMemory[]): FamilyMemory[] {
+  const pinned = memories.filter(m => m.pinned);
+  const rest = memories.filter(m => !m.pinned);
+  const seed = memorySeed(rest);
+  return [...pinned, ...seededShuffle(rest, seed)];
 }
 
 // ─── family memories — loaded from GitHub memories.json ─────────────────────
@@ -1260,7 +1281,7 @@ export default function App() {
   const visibleMemories = useMemo(() =>
     memories.filter(m => isAdmin || !m.visibility || m.visibility === 'public'),
   [memories, isAdmin]);
-  const shuffledMemories = useMemo(() => shuffleArray(visibleMemories), [visibleMemories]);
+  const shuffledMemories = useMemo(() => orderMemories(visibleMemories), [visibleMemories]);
 
   useEffect(() => {
     if (alreadySeen) return;
@@ -1341,7 +1362,23 @@ export default function App() {
         try {
           const memUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${MEMORIES_PATH}?t=${Date.now()}`;
           const memRes = await fetch(memUrl);
-          if (memRes.ok) { const memData = await memRes.json(); setMemories(memData); try { localStorage.setItem('b2026_memories', JSON.stringify(memData)); } catch {} }
+          if (memRes.ok) {
+            const memData: FamilyMemory[] = await memRes.json();
+            // Preserva i flag pinned dalla localStorage se GitHub non li ha ancora
+            // (raw.githubusercontent può essere in ritardo rispetto al push)
+            try {
+              const local = localStorage.getItem('b2026_memories');
+              if (local) {
+                const localMems: FamilyMemory[] = JSON.parse(local);
+                const localPins = new Map(localMems.filter(m => m.pinned).map(m => [m.id, true]));
+                if (localPins.size > 0) {
+                  memData.forEach(m => { if (localPins.has(m.id)) m.pinned = true; });
+                }
+              }
+            } catch {}
+            setMemories(memData);
+            try { localStorage.setItem('b2026_memories', JSON.stringify(memData)); } catch {}
+          }
         } catch {}
 
         const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${GITHUB_PATH}?t=${Date.now()}`;
@@ -1610,11 +1647,11 @@ export default function App() {
 
   // 🧪 Lab: Reel V1 (solo gianmaria)
   if (isLab('memories-reel') && view === 'memories-reel') {
-    return <MemoriesReelView memories={memories} onClose={() => setView('home')} />;
+    return <MemoriesReelView memories={shuffledMemories} onClose={() => setView('home')} />;
   }
   // Reel V2 — versione ufficiale mobile
   if (view === 'memories-reel-v2') {
-    return <MemoriesReelV2 memories={memories} onClose={() => setView('home')} />;
+    return <MemoriesReelV2 memories={shuffledMemories} onClose={() => setView('home')} />;
   }
 
   return (
@@ -2082,7 +2119,7 @@ export default function App() {
                       </div>
                     ) : (<>
                     <div className="hidden md:grid gap-4" style={{gridTemplateColumns: '1fr 1fr 1fr', gridTemplateRows: 'auto auto'}}>
-                      {visibleMemories[0] && (() => { const mem = visibleMemories[0]; const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
+                      {shuffledMemories[0] && (() => { const mem = shuffledMemories[0]; const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col" style={{gridColumn: '1', gridRow: '1 / 3'}}>
                           {photo && <div className="overflow-hidden" style={{height: '240px'}}><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="bg-heritage-cream/60 flex items-end px-6 pb-0" style={{height:'60px'}}><span className="font-serif text-5xl text-heritage-gold opacity-15 leading-none">"</span></div>}
@@ -2095,7 +2132,7 @@ export default function App() {
                           </div>
                         </motion.div>
                       ); })()}
-                      {visibleMemories.slice(1, 5).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
+                      {shuffledMemories.slice(1, 5).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
                         <motion.div key={mem.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
                           {photo && <div className="overflow-hidden" style={{height: '120px'}}><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="bg-heritage-cream/60 flex items-end px-5 pb-0" style={{height:'40px'}}><span className="font-serif text-4xl text-heritage-gold opacity-15 leading-none">"</span></div>}
@@ -2111,7 +2148,7 @@ export default function App() {
                     </div>
                     {/* Mobile: 3 card verticali */}
                     <div className="md:hidden flex flex-col gap-4">
-                      {visibleMemories.slice(0, 3).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
+                      {shuffledMemories.slice(0, 3).map((mem: FamilyMemory, i: number) => { const photo = mem.imageUrl || null; const ini = mem.author.split(' ').map((w:string)=>w[0]).join('').slice(0,2).toUpperCase(); return (
                         <motion.div key={mem.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-2xl overflow-hidden border border-heritage-ink/8 flex flex-col">
                           {photo && <div className="h-48 overflow-hidden"><img src={photo} alt={mem.author} className="w-full h-full object-cover" /></div>}
                           {!photo && <div className="h-10 bg-heritage-cream/60 flex items-end px-5 pb-0"><span className="font-serif text-4xl text-heritage-gold opacity-15 leading-none">"</span></div>}
@@ -2752,6 +2789,7 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
             memories={memories}
             items={items}
             onSave={(updated) => { setMemories(updated); try { localStorage.setItem('b2026_memories', JSON.stringify(updated)); } catch {} setIsMemoryModalOpen(false); const saved = sessionStorage.getItem('b2026_scroll'); if (saved) setTimeout(() => window.scrollTo({ top: parseInt(saved), behavior: 'instant' }), 0); }}
+            onPinSave={(updated) => { setMemories(updated); try { localStorage.setItem('b2026_memories', JSON.stringify(updated)); } catch {} }}
             onNotify={showNotif}
           />
         )}
@@ -3079,7 +3117,7 @@ function MobileDetailsSection({ form, setForm, handleDetailImages }: { form: any
 // ─── MemoryModal ──────────────────────────────────────────────────────────────
 
 function MemoryModal({
-  isOpen, onClose, editingMemory, memories, items, onSave, onNotify
+  isOpen, onClose, editingMemory, memories, items, onSave, onPinSave, onNotify
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -3087,6 +3125,7 @@ function MemoryModal({
   memories: FamilyMemory[];
   items: HeritageItem[];
   onSave: (memories: FamilyMemory[]) => void;
+  onPinSave: (memories: FamilyMemory[]) => void;
   onNotify: (msg: string, type?: 'success' | 'error') => void;
 }) {
   const [form, setForm] = React.useState({ text: '', author: '', date: new Date().toISOString().split('T')[0], itemId: '', imageUrl: '', visibility: 'public' as 'public' | 'private' });
@@ -3199,6 +3238,19 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
     else onNotify('Eliminato in locale (GitHub non raggiungibile)', 'error');
   };
 
+  const handlePin = async (id: string) => {
+    // Toggle: se è già pinned lo unpinna, altrimenti lo pinna (e rimuove il pin dagli altri)
+    const isCurrentlyPinned = memories.find(m => m.id === id)?.pinned;
+    const updated = memories.map(m => ({
+      ...m,
+      pinned: isCurrentlyPinned ? false : m.id === id,
+    }));
+    const saved = await saveMemoriesToGitHub(updated);
+    onPinSave(updated); // non chiude la modale
+    if (saved) onNotify(isCurrentlyPinned ? 'Cover rimossa ✓' : '📌 Cover impostata ✓');
+    else onNotify('Salvato in locale (GitHub non raggiungibile)', 'error');
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -3245,7 +3297,7 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
                 {memories.map(m => {
                   const linked = items.find(i => i.id === m.itemId);
                   return (
-                    <div key={m.id} className="bg-white rounded-2xl border border-heritage-ink/8 overflow-hidden">
+                    <div key={m.id} className={`bg-white rounded-2xl border overflow-hidden ${m.pinned ? 'border-heritage-gold/50 ring-1 ring-heritage-gold/20' : 'border-heritage-ink/8'}`}>
                       {m.imageUrl && <img src={m.imageUrl} alt="" className="w-full h-32 object-cover" />}
                       <div className="p-4">
                         <p className="text-heritage-ink text-sm leading-relaxed mb-2 line-clamp-3">{m.text}</p>
@@ -3254,14 +3306,26 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
                             <span className="text-heritage-gold text-[11px] font-bold">{m.author}</span>
                             <span className="text-heritage-ink/30 text-[11px] ml-2">{m.date}</span>
                             {linked && <span className="text-heritage-ink/40 text-[11px] ml-2">· {linked.name.split(' ').slice(0,3).join(' ')}</span>}
+                            {m.pinned && <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-gold/15 text-heritage-gold px-1.5 py-0.5 rounded-full">📌 Cover</span>}
                             {m.visibility === 'private'
                               ? <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-ink/8 text-heritage-ink/50 px-1.5 py-0.5 rounded-full">🔒 Famiglia</span>
                               : <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">🌐 Tutti</span>
                             }
                           </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors"><Pencil size={13} className="text-heritage-ink/50" /></button>
-                            <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors"><Trash2 size={13} className="text-red-400/70" /></button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handlePin(m.id)}
+                              title={m.pinned ? 'Rimuovi dalla cover' : 'Imposta come cover'}
+                              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${m.pinned ? 'bg-heritage-gold text-white shadow-sm' : 'text-heritage-ink/30 hover:text-heritage-gold hover:bg-heritage-gold/10'}`}
+                            >
+                              <Bookmark size={17} className={m.pinned ? 'fill-white' : ''} />
+                            </button>
+                            <button onClick={() => openEdit(m)} title="Modifica" className="w-9 h-9 rounded-full flex items-center justify-center text-heritage-ink/40 hover:text-heritage-ink hover:bg-heritage-ink/8 transition-all">
+                              <PenLine size={17} />
+                            </button>
+                            <button onClick={() => handleDelete(m.id)} title="Elimina" className="w-9 h-9 rounded-full flex items-center justify-center text-heritage-ink/25 hover:text-red-400 hover:bg-red-50 transition-all">
+                              <Trash2 size={17} />
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -5136,17 +5200,21 @@ function ReelV2Photo({ src, year }: { src: string; year?: string }) {
 // ─── 🧪 Lab: MemoriesReelV2 — stile loader ───────────────────────────────────
 function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClose: () => void }) {
   const [activeAuthor, setActiveAuthor] = React.useState('Tutti');
+  const [sortOrder, setSortOrder] = React.useState<'default' | 'asc' | 'desc'>('default');
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [current, setCurrent] = React.useState(0);
 
-  const filtered = React.useMemo(() =>
-    activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor),
-  [memories, activeAuthor]);
+  const filtered = React.useMemo(() => {
+    const base = activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor);
+    if (sortOrder === 'asc') return [...base].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+    if (sortOrder === 'desc') return [...base].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return base;
+  }, [memories, activeAuthor, sortOrder]);
 
   React.useEffect(() => {
     setCurrent(0);
     if (containerRef.current) containerRef.current.scrollTop = 0;
-  }, [activeAuthor]);
+  }, [activeAuthor, sortOrder]);
 
   React.useEffect(() => {
     const el = containerRef.current; if (!el) return;
@@ -5178,25 +5246,36 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
     <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: '#F5F0E8', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* Header filtri — fuori dal flusso dello scroll */}
-      <div style={{ flexShrink: 0, padding: '12px 16px 12px', background: '#F2EDE3', borderBottom: '1px solid rgba(28,26,22,0.06)', zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button onClick={onClose} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(28,26,22,0.08)', border: 'none', color: '#1C1A16', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', fontSize: 16 }}>←</button>
-          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', scrollbarWidth: 'none' as const }}>
-            {REEL_AUTHORS.map(a => {
-              const active = activeAuthor === a;
-              const c = REEL_COLORS[a];
-              return (
-                <button key={a} onClick={() => setActiveAuthor(a)} style={{
-                  flexShrink: 0, padding: '6px 14px', borderRadius: 100, border: `1px solid ${active ? (c || '#1C1A16') : 'rgba(28,26,22,0.15)'}`, cursor: 'pointer',
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
-                  background: active ? (c || '#1C1A16') : 'white',
-                  color: active ? 'white' : 'rgba(28,26,22,0.5)',
-                }}>
-                  {a}
-                </button>
-              );
-            })}
-          </div>
+      <div style={{ flexShrink: 0, padding: '10px 12px', background: '#F2EDE3', borderBottom: '1px solid rgba(28,26,22,0.06)', zIndex: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(28,26,22,0.08)', border: 'none', color: '#1C1A16', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', fontSize: 14 }}>←</button>
+          {REEL_AUTHORS.map(a => {
+            const active = activeAuthor === a;
+            const c = REEL_COLORS[a];
+            return (
+              <button key={a} onClick={() => setActiveAuthor(a)} style={{
+                flex: 1, padding: '6px 4px', borderRadius: 100, border: `1px solid ${active ? (c || '#1C1A16') : 'rgba(28,26,22,0.15)'}`, cursor: 'pointer',
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' as const,
+                background: active ? (c || '#1C1A16') : 'white',
+                color: active ? 'white' : 'rgba(28,26,22,0.5)',
+                whiteSpace: 'nowrap' as const, overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
+                {a}
+              </button>
+            );
+          })}
+          <button
+            onClick={() => setSortOrder(s => s === 'asc' ? 'desc' : s === 'desc' ? 'default' : 'asc')}
+            style={{
+              width: 32, height: 32, borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0,
+              background: sortOrder !== 'default' ? '#1C1A16' : 'rgba(28,26,22,0.08)',
+              color: sortOrder !== 'default' ? '#C5A059' : 'rgba(28,26,22,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700,
+              transition: 'all 0.2s',
+            }}
+          >
+            {sortOrder === 'asc' ? '↑' : sortOrder === 'desc' ? '↓' : '⇅'}
+          </button>
         </div>
       </div>
 
