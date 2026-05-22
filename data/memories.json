@@ -5,41 +5,47 @@
     "author": "Emanuela",
     "date": "2015-11-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_legacy_002",
     "text": "Il cassone all'ingresso era il primo mobile che vedevi entrando in casa. Papà ci teneva le coperte buone. Noi ci nascondevamo dentro da piccole, e lui faceva finta di non trovarci.",
     "author": "Aleria",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778838591027-IMG-1501-2--1-.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778838591027-IMG-1501-2--1-.jpg",
+    "pinned": false
   },
   {
     "id": "mem_legacy_003",
     "text": "Il lampadario del salone lo accendeva solo nelle grandi occasioni. Quando si illuminava, i cristalli proiettavano riflessi dappertutto — sembrava di stare in un palazzo.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg",
+    "pinned": false
   },
   {
     "id": "mem_legacy_004",
     "text": "Franco non era un uomo di molte parole, ma ogni gesto parlava per lui. La casa di Barberino era il suo modo di tenerci tutte insieme. Continua a farlo, anche adesso.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg",
+    "pinned": false
   },
   {
     "id": "mem_legacy_005",
     "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà contrattava con il formaggiaio, mamma sceglieva le verdure. Era il rito più bello della settimana.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
+    "pinned": false
   },
   {
     "id": "mem_legacy_006",
     "text": "La grande cucina aveva il camino sempre acceso d'inverno. Ci si sedeva intorno dopo cena, e il tempo sembrava fermarsi.",
     "author": "Olivia",
-    "date": "2026-01-01"
+    "date": "2026-01-01",
+    "pinned": false
   },
   {
     "id": "mem_legacy_007",
@@ -47,14 +53,16 @@
     "author": "Aleria",
     "date": "2009-08-13",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
-    "visibility": "private"
+    "visibility": "private",
+    "pinned": false
   },
   {
     "id": "mem_legacy_008",
     "text": "Una mattina di agosto trovammo Macchia e Teresa sotto il fico. Papà disse subito di no. Li tenne entrambi senza discutere.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg",
+    "pinned": false
   },
   {
     "id": "mem_legacy_009",
@@ -62,19 +70,22 @@
     "author": "Aleria",
     "date": "2009-08-05",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_legacy_010",
     "text": "La ciccia bona alla brace era il rito dell'estate. Papà guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
     "author": "Emanuela",
-    "date": "2026-01-01"
+    "date": "2026-01-01",
+    "pinned": false
   },
   {
     "id": "mem_legacy_011",
     "text": "L'olio buono di Franco — ogni anno ne portavamo qualche bottiglia a Torino. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
     "author": "Olivia",
-    "date": "2026-01-01"
+    "date": "2026-01-01",
+    "pinned": false
   },
   {
     "id": "mem_legacy_012",
@@ -82,7 +93,8 @@
     "author": "Aleria",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364500976.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_legacy_013",
@@ -90,20 +102,23 @@
     "author": "Emanuela",
     "date": "2011-01-10",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364466814.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_legacy_014",
     "text": "Il cronometro per il tragitto Torino-Barberino era una cosa seria. Tre ore e cinquantotto era il record. Non ricordiamo chi lo batteva, ma ognuna giurava di avercela fatta.",
     "author": "Olivia",
-    "date": "2026-01-01"
+    "date": "2026-01-01",
+    "pinned": false
   },
   {
     "id": "mem_legacy_015",
     "text": "Mamma e Leap in giardino — lui sempre vicino a lei, lei sempre a parlargli come se capisse tutto. Probabilmente capiva.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/IMG_1547%204.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/IMG_1547%204.jpg",
+    "pinned": true
   },
   {
     "id": "mem_1779364718193",
@@ -111,7 +126,8 @@
     "author": "Aleria",
     "date": "2005-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364716343.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_1779389953234",
@@ -119,7 +135,8 @@
     "author": "Emanuela",
     "date": "2026-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779389951486.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   },
   {
     "id": "mem_1779398566098",
@@ -127,6 +144,7 @@
     "author": "Emanuela",
     "date": "2026-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779398563849.jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": false
   }
 ]
