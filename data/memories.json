@@ -46,7 +46,8 @@
     "text": "Quando nacque Emma, la quarta nipote, papà la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
     "author": "Aleria",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_008",
