@@ -598,6 +598,7 @@
     "wearCondition": "Buono",
     "shipping": "Ritiro in sede",
     "isFeatured": false,
+    "isImportant": false,
     "order": 21,
     "details": [],
     "images": [],
@@ -614,6 +615,7 @@
     "catawikiDescription": "Sedia a medaglione (balloon back) in legno massello tinto mogano, databile alla seconda metà dell'Ottocento. Gambe cabriole anteriori con intagli floreali, traversa sagomata con elemento decorativo centrale. Seduta imbottita rivestita in tessuto damascato oro con motivi floreali, retappezzata in epoca successiva. Struttura solida, finitura con normali segni d'uso. Tipica produzione borghese europea del periodo Luigi Filippo/Vittoriano.",
     "catawikiImages": [],
     "catawikiSpecific": {},
+    "displayPrice": "€ 100",
     "id": "mp4iipx601xgl",
     "stories": []
   },
