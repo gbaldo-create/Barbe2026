@@ -2128,7 +2128,7 @@ export default function App() {
                     </>)}
                     {/* Link vedi tutti */}
                     <div className="flex justify-center mt-10">
-                      <button onClick={() => { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); }} className="group flex items-center gap-3 px-8 py-4 bg-heritage-ink text-heritage-cream rounded-full text-[12px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-all shadow-lg">
+                      <button onClick={() => { if (window.innerWidth < 1024) { setView('memories-reel-v2'); } else { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); } }} className="group flex items-center gap-3 px-8 py-4 bg-heritage-ink text-heritage-cream rounded-full text-[12px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-all shadow-lg">
                         Leggi tutti i ricordi <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
