@@ -60,8 +60,9 @@
     "id": "mem_legacy_009",
     "text": "Con nonna Lia bastava poco per scoppiare a ridere. Una parola, uno sguardo — e giù. Non sapevamo mai perché, ma non importava.",
     "author": "Aleria",
-    "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg"
+    "date": "2009-08-05",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg",
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_010",
