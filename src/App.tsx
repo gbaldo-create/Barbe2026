@@ -6,6 +6,7 @@ import {
   ArrowLeft, ArrowRight, ExternalLink, Sparkles, Heart, Handshake,
   Camera, User, Upload, LogOut, Edit, Trash2, Image as ImageIcon, Check, Download,
   LayoutGrid, Lamp, Sofa, BookOpen, Armchair, Star, BookHeart, Pencil,
+  ChevronUp, ChevronDown,
 } from 'lucide-react';
 import { HeritageItem, Memory, ViewType } from './types.ts';
 import ITEMS_DATA from '../data/items.json';
@@ -39,24 +40,12 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 // ─── users database ───────────────────────────────────────────────────────────
 
-// ─── auth ────────────────────────────────────────────────────────────────────
-// ─── auth — passwords as SHA-256 hashes in VITE_USERS env var ───────────────
-// Format: "user1:hash1,user2:hash2,..." — fallback: login fails if env not set
-function parseUsersEnv(): Record<string, string> {
-  const raw = (import.meta as any).env?.VITE_USERS || '';
-  const result: Record<string, string> = {};
-  raw.split(',').forEach((pair: string) => {
-    const [u, ...rest] = pair.split(':');
-    const h = rest.join(':'); // handle colons in hash
-    if (u && h) result[u.trim()] = h.trim();
-  });
-  return result;
-}
-
-async function sha256(str: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+const USERS: Record<string, string> = {
+  olivia: 'olivia2026',
+  aleria: 'aleria2026',
+  emanuela: 'emanuela2026',
+  gianmaria: 'gianmaria2026',
+};
 
 // ─── utils ────────────────────────────────────────────────────────────────────
 
@@ -103,7 +92,7 @@ async function analyzeImageWithClaude(
   detailImages?: { base64: string; tipo: string }[]
 ): Promise<Partial<typeof emptyForm> | null> {
   const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY;
-  if (!apiKey) { alert('Aggiungi VITE_ANTHROPIC_API_KEY nel file .env.local'); return null; }
+  if (!apiKey) return null;
 
   const toB64 = (b: string) => b.includes(',') ? b.split(',')[1] : b;
   const toMime = (b: string): 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' =>
@@ -303,7 +292,7 @@ const CATAWIKI_CATEGORIES = ['Mobili antichi', 'Illuminazione antica', 'Sedute a
 
 async function prepareCatawikiWithAI(item: HeritageItem): Promise<Partial<typeof emptyForm> | null> {
   const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY;
-  if (!apiKey) { alert('Aggiungi VITE_ANTHROPIC_API_KEY nel file .env.local'); return null; }
+  if (!apiKey) return null;
 
   const prompt = `Sei un esperto di aste Catawiki e antiquariato italiano. 
 Dati dell'oggetto:
@@ -1208,6 +1197,30 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
   const [showNuovoDropdown, setShowNuovoDropdown] = useState(false);
+
+  // Scroll robusto a una sezione
+  const scrollToSection = (id: string, fromView?: string) => {
+    const doScroll = (attempts = 0) => {
+      const el = document.getElementById(id);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      else if (attempts < 10) { setTimeout(() => doScroll(attempts + 1), 80); }
+    };
+    if (fromView && fromView !== 'home') { setView('home'); setTimeout(() => doScroll(), 150); }
+    else { doScroll(); }
+  };
+
+  // ── 🧪 Lab mode — visibile solo a gianmaria ──────────────────────────────
+  const [labFeatures, setLabFeatures] = useState<Record<string, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem('b2026_lab') || '{}'); } catch { return {}; }
+  });
+  const isLab = (feature: string) => currentUser === 'gianmaria' && !!labFeatures[feature];
+  const toggleLab = (feature: string) => {
+    setLabFeatures(prev => {
+      const next = { ...prev, [feature]: !prev[feature] };
+      try { localStorage.setItem('b2026_lab', JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
   const [memories, setMemories] = useState<FamilyMemory[]>(() => {
     try { const c = localStorage.getItem('b2026_memories'); return c ? JSON.parse(c) : []; }
     catch { return []; }
@@ -1361,7 +1374,7 @@ export default function App() {
   const [githubToken, setGithubToken] = useState<string | null>(() => localStorage.getItem('b2026_github_token'));
   const [isGithubTokenModalOpen, setIsGithubTokenModalOpen] = useState(false);
   useEffect(() => {
-    const anyOpen = isItemModalOpen || isLoginModalOpen || isHeroModalOpen || isGithubTokenModalOpen || isExplorePanelOpen || isMemoryModalOpen;
+    const anyOpen = isItemModalOpen || isLoginModalOpen || isHeroModalOpen || isGithubTokenModalOpen || isExplorePanelOpen || isMemoryModalOpen || isMobileMenuOpen || showAdminDropdown;
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
     if (anyOpen) {
       document.body.style.overflow = 'hidden';
@@ -1371,7 +1384,7 @@ export default function App() {
       document.body.style.paddingRight = '';
     }
     return () => { document.body.style.overflow = ''; document.body.style.paddingRight = ''; };
-  }, [isItemModalOpen, isLoginModalOpen, isHeroModalOpen, isGithubTokenModalOpen, isExplorePanelOpen, isMemoryModalOpen]);
+  }, [isItemModalOpen, isLoginModalOpen, isHeroModalOpen, isGithubTokenModalOpen, isExplorePanelOpen, isMemoryModalOpen, isMobileMenuOpen, showAdminDropdown]);
 
   // ── persist ──
   const persist = async (updated: HeritageItem[]) => {
@@ -1569,10 +1582,8 @@ export default function App() {
     showNotif('Oggetto eliminato');
   };
 
-  const handleLogin = async (username: string, pwd: string, token?: string) => {
-    const users = parseUsersEnv();
-    const hash = await sha256(pwd);
-    if (users[username] && users[username] === hash) {
+  const handleLogin = (username: string, pwd: string, token?: string) => {
+    if (USERS[username] && USERS[username] === pwd) {
       sessionStorage.setItem('b2026_user', username);
       setCurrentUser(username);
       if (token) {
@@ -1595,6 +1606,15 @@ export default function App() {
   };
 
   // ─── render ───────────────────────────────────────────────────────────────
+
+  // 🧪 Lab: Reel V1 (solo gianmaria)
+  if (isLab('memories-reel') && view === 'memories-reel') {
+    return <MemoriesReelView memories={memories} onClose={() => setView('home')} />;
+  }
+  // Reel V2 — versione ufficiale mobile
+  if (view === 'memories-reel-v2') {
+    return <MemoriesReelV2 memories={memories} onClose={() => setView('home')} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-heritage-cream overflow-x-hidden">
@@ -1746,54 +1766,11 @@ export default function App() {
                   </div>
                   <div className="relative">
                     <button
-                      onClick={() => { setShowAdminDropdown(!showAdminDropdown); setShowNuovoDropdown(false); }}
+                      onClick={() => { setShowAdminDropdown(!showAdminDropdown); setShowNuovoDropdown(false); setIsMobileMenuOpen(false); }}
                       className={`w-9 h-9 rounded-full flex items-center justify-center transition-all border ${showAdminDropdown ? 'bg-heritage-gold/20 border-heritage-gold/40 text-heritage-gold' : 'bg-white/10 border-white/10 text-white/70 hover:bg-white/20'}`}
                     >
                       <User size={16} />
                     </button>
-                    {showAdminDropdown && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-11 w-52 bg-emerald-950 border border-white/10 rounded-2xl overflow-hidden z-[200] shadow-2xl"
-                      >
-                        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/8">
-                          <div className="w-8 h-8 bg-heritage-gold rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0">
-                            {currentUser.slice(0,2).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="text-white text-[12px] font-bold leading-tight">{currentUser}</p>
-                            <p className="text-white/40 text-[10px] uppercase tracking-widest">Editor</p>
-                          </div>
-                        </div>
-                        <div className="p-1.5">
-                          <button onClick={() => { sessionStorage.setItem('b2026_scroll', String(window.scrollY)); setEditingMemory(null); setIsMemoryModalOpen(true); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
-                            <BookHeart size={14} /> Gestisci ricordi
-                          </button>
-                          <button onClick={() => { downloadJson(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
-                            <Download size={14} /> Scarica items.json
-                          </button>
-                          <button onClick={async () => {
-                            if (!confirm('Azzerare il prezzo display di tutti gli oggetti? I prezzi di riferimento restano invariati.')) return;
-                            const updated = items.map(i => ({ ...i, displayPrice: '' }));
-                            await persist(updated);
-                            setShowAdminDropdown(false);
-                            showNotif('Prezzi aggiornati ✓');
-                          }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
-                            <Edit size={14} /> Azzera prezzi display
-                          </button>
-                          <button onClick={() => { exportCatawikiTxt(items); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/75 hover:bg-white/10 transition-colors text-[12px] text-left">
-                            <ExternalLink size={14} /> Esporta Catawiki
-                          </button>
-                          <div className="h-px bg-white/8 my-1" />
-                          <button onClick={() => { handleLogout(); setShowAdminDropdown(false); }} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400/70 hover:bg-red-500/10 transition-colors text-[12px] text-left">
-                            <LogOut size={14} /> Esci
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
                   </div>
                 </div>
               ) : (
@@ -1801,7 +1778,7 @@ export default function App() {
                   <User size={14} /><span className="hidden sm:inline">Accedi</span>
                 </button>
               )}
-              <button className="lg:hidden w-9 h-9 flex items-center justify-center text-white hover:bg-white/10 rounded-full transition-colors" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              <button className="lg:hidden w-9 h-9 flex items-center justify-center text-white hover:bg-white/10 rounded-full transition-colors" onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); setShowAdminDropdown(false); }}>
                 {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </motion.div>
@@ -1812,12 +1789,61 @@ export default function App() {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="lg:hidden bg-emerald-900 border-t border-white/10 overflow-hidden rounded-b-[2rem]">
                 <div className="flex flex-col p-6 gap-4">
                   <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setExplorePanelMode('discover'); setIsMobileMenuOpen(false); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
-                  <button onClick={() => { setView('home'); setIsMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 400); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
-                  <button onClick={() => { setLoaderIndex(Math.floor(Math.random() * Math.max(shuffledMemories.length, 1))); setLoaderFromMenu(true); setDismissed(false); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
-
+                  <button onClick={() => { setIsMobileMenuOpen(false); scrollToSection('how-it-works', view); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
+                  <button onClick={() => { setIsMobileMenuOpen(false); setView('memories-reel-v2'); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
                 </div>
               </motion.div>
             )}
+            {/* Admin dropdown — stesso stile hamburger */}
+            <AnimatePresence>
+            {showAdminDropdown && currentUser && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="bg-emerald-900 border-t border-white/10 overflow-hidden rounded-b-[2rem]">
+                <div className="flex items-center gap-4 px-6 py-5 border-b border-white/10">
+                  <div className="w-10 h-10 bg-heritage-gold rounded-full flex items-center justify-center text-[13px] font-bold text-white flex-shrink-0">{currentUser.slice(0,2).toUpperCase()}</div>
+                  <div>
+                    <p className="text-white font-heritage italic text-lg leading-tight">{currentUser}</p>
+                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">Editor</p>
+                  </div>
+                </div>
+                <div className="flex flex-col p-6 gap-4">
+                  <button onClick={() => { sessionStorage.setItem('b2026_scroll', String(window.scrollY)); setEditingMemory(null); setIsMemoryModalOpen(true); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/10 transition-colors"><BookHeart size={20} /><span className="font-heritage text-lg">Gestisci ricordi</span></button>
+                  <button onClick={() => { downloadJson(items); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/10 transition-colors"><Download size={20} /><span className="font-heritage text-lg">Scarica items.json</span></button>
+                  <button onClick={async () => { if (!confirm('Azzerare il prezzo display di tutti gli oggetti?')) return; const updated = items.map(i => ({ ...i, displayPrice: '' })); await persist(updated); setShowAdminDropdown(false); showNotif('Prezzi aggiornati ✓'); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/10 transition-colors"><Edit size={20} /><span className="font-heritage text-lg">Azzera prezzi display</span></button>
+                  <button onClick={() => { exportCatawikiTxt(items); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60 hover:bg-white/10 transition-colors"><ExternalLink size={20} /><span className="font-heritage text-lg">Esporta Catawiki</span></button>
+                  {currentUser === 'gianmaria' && (
+                    <div className="border-t border-white/10 pt-4">
+                      <p className="text-[10px] uppercase tracking-widest text-white/30 mb-3 font-bold">🧪 Lab</p>
+                      <div className="flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-colors" onClick={() => toggleLab('memories-reel')}>
+                        <span className="flex items-center gap-3 text-white/60"><BookHeart size={20} /><span className="font-heritage text-lg">Reel Ricordi</span></span>
+                        <span className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 flex-shrink-0 ${labFeatures['memories-reel'] ? 'bg-heritage-gold' : 'bg-white/15'}`}>
+                          <span className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${labFeatures['memories-reel'] ? 'translate-x-5' : 'translate-x-0'}`} />
+                        </span>
+                      </div>
+                      {labFeatures['memories-reel'] && (
+                        <button onClick={() => { setView('memories-reel'); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-heritage-gold hover:bg-white/10 transition-colors w-full mt-1">
+                          <span className="font-heritage text-lg">▶ Apri Reel v1</span>
+                        </button>
+                      )}
+                      <div className="flex items-center justify-between p-3 rounded-xl hover:bg-white/10 transition-colors mt-1" onClick={() => toggleLab('memories-reel-v2')}>
+                        <span className="flex items-center gap-3 text-white/60"><BookHeart size={20} /><span className="font-heritage text-lg">Reel v2 (loader)</span></span>
+                        <span className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 flex-shrink-0 ${labFeatures['memories-reel-v2'] ? 'bg-heritage-gold' : 'bg-white/15'}`}>
+                          <span className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${labFeatures['memories-reel-v2'] ? 'translate-x-5' : 'translate-x-0'}`} />
+                        </span>
+                      </div>
+                      {labFeatures['memories-reel-v2'] && (
+                        <button onClick={() => { setView('memories-reel-v2'); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-heritage-gold hover:bg-white/10 transition-colors w-full mt-1">
+                          <span className="font-heritage text-lg">▶ Apri Reel v2</span>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <div className="border-t border-white/10 pt-2">
+                    <button onClick={() => { handleLogout(); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-red-400/70 hover:bg-red-500/10 transition-colors w-full"><LogOut size={20} /><span className="font-heritage text-lg">Esci</span></button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            </AnimatePresence>
           </AnimatePresence>
         </header>
       </motion.div>
@@ -2038,7 +2064,14 @@ export default function App() {
                 {/* ── SEZIONE 5: LE VOCI DI CASA ── */}
                 <section className="mt-10 md:mt-20 -mx-4 md:-mx-6 px-4 md:px-6 py-10 md:py-16 bg-heritage-cream/60">
                   <div className="max-w-4xl mx-auto">
-                    <span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold block mb-4">I ricordi di famiglia</span>
+                    <div className="flex items-end justify-between mb-4">
+                      <span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold">I ricordi di famiglia</span>
+                      {visibleMemories.length > 0 && (
+                        <button onClick={() => setView('memories-reel-v2')} className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-heritage-ink text-white rounded-full text-[10px] font-bold uppercase tracking-widest">
+                          <BookHeart size={11} className="text-heritage-gold" /> Sfoglia
+                        </button>
+                      )}
+                    </div>
                     <h2 className="text-4xl md:text-5xl text-heritage-ink leading-tight mb-2"><span className="font-serif italic">Le voci </span><span className="font-display font-medium tracking-tight text-heritage-gold not-italic">di casa</span></h2>
                     <div className="w-11 h-px bg-heritage-gold/40 mt-5 mb-12" />
                     {/* Grid 3 colonne — card grande a sx su 2 righe */}
@@ -2809,14 +2842,12 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
                 ⚠️ Token mancante
               </motion.button>
             )}
-            {/* Mini-menu espanso */}
             <AnimatePresence>
               {showNuovoDropdown && (
                 <>
                   <motion.button
                     initial={{ scale: 0, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0, opacity: 0, y: 10 }}
-                    transition={{ delay: 0.05 }}
-                    whileTap={{ scale: 0.92 }}
+                    transition={{ delay: 0.05 }} whileTap={{ scale: 0.92 }}
                     onClick={() => { sessionStorage.setItem('b2026_scroll', String(window.scrollY)); setEditingMemory(null); setIsMemoryModalOpen(true); setShowNuovoDropdown(false); }}
                     className="flex items-center gap-2 px-4 py-3 bg-emerald-950 text-white rounded-full text-[12px] font-bold shadow-lg border border-white/20"
                   >
@@ -2833,10 +2864,9 @@ ${window.location.origin}?item=${currentItem.id}`)}`} target="_blank" rel="noope
                 </>
               )}
             </AnimatePresence>
-            {/* Bottone principale */}
             <motion.button
               whileTap={{ scale: 0.92 }}
-              onClick={() => setShowNuovoDropdown(v => !v)}
+              onClick={() => setShowNuovoDropdown((v: boolean) => !v)}
               className={`w-16 h-16 text-white rounded-full flex items-center justify-center shadow-2xl border border-white/20 transition-colors ${showNuovoDropdown ? 'bg-heritage-ink' : 'bg-heritage-gold'}`}
             >
               <Plus size={28} className={`transition-transform duration-200 ${showNuovoDropdown ? 'rotate-45' : ''}`} />
@@ -3176,369 +3206,203 @@ Rispondi SOLO con il testo del ricordo, nessun'altra parola.`;
       <motion.div key="mem-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="fixed inset-0 z-[300] bg-heritage-ink/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* ── DESKTOP: modale centrata ── */}
-      <motion.div key="mem-desktop"
-        initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        className="hidden md:flex fixed inset-0 z-[301] items-center justify-center p-6 pointer-events-none">
-        <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl pointer-events-auto flex flex-col" style={{ maxHeight: '90vh' }}
-          onClick={e => e.stopPropagation()}>
-          {/* Header desktop */}
-          <div className="px-8 py-5 border-b border-heritage-ink/8 flex items-center justify-between flex-shrink-0">
-                        <div className="flex items-center gap-3">
-              {view === 'form' && (
-                <button onClick={() => setView('list')} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors">
-                  <ArrowLeft size={18} className="text-heritage-ink/60" />
-                </button>
-              )}
-              <h2 className="font-serif italic text-heritage-ink">
-                {view === 'list' ? 'Ricordi di famiglia' : editId ? 'Modifica ricordo' : 'Nuovo ricordo'}
-              </h2>
-            </div>
-            <button onClick={onClose} className="p-2 hover:bg-heritage-cream rounded-full"><X size={20} /></button>
-          </div>
-          <div className="overflow-y-auto flex-1 px-8 py-6">
-                      {view === 'list' ? (
-            <div className="flex flex-col gap-3">
-              <button onClick={openNew} className="flex items-center gap-2 bg-heritage-gold text-white px-4 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-wider w-fit">
-                <Plus size={14} /> Nuovo ricordo
-              </button>
-              {memories.length === 0 && (
-                <p className="text-heritage-ink/40 italic text-sm mt-4">Nessun ricordo ancora. Aggiungine uno!</p>
-              )}
-              {memories.map(m => {
-                const linked = items.find(i => i.id === m.itemId);
-                return (
-                  <div key={m.id} className="bg-white rounded-2xl border border-heritage-ink/8 overflow-hidden">
-                    {m.imageUrl && <img src={m.imageUrl} alt="" className="w-full h-32 object-cover" />}
-                    <div className="p-4">
-                      <p className="text-heritage-ink text-sm leading-relaxed mb-2 line-clamp-3">{m.text}</p>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-heritage-gold text-[11px] font-bold">{m.author}</span>
-                          <span className="text-heritage-ink/30 text-[11px] ml-2">{m.date}</span>
-                          {linked && <span className="text-heritage-ink/40 text-[11px] ml-2">· {linked.name.split(' ').slice(0,3).join(' ')}</span>}
-                          {m.visibility === 'private'
-                            ? <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-ink/8 text-heritage-ink/50 px-1.5 py-0.5 rounded-full">🔒 Famiglia</span>
-                            : <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">🌐 Tutti</span>
-                          }
-                        </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors"><Pencil size={13} className="text-heritage-ink/50" /></button>
-                          <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors"><Trash2 size={13} className="text-red-400/70" /></button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-5">
-              {/* Foto */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Foto (opzionale)</label>
-                <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/20">
-                  {(imageBase64 || form.imageUrl) ? (
-                    <div className="relative h-44">
-                      <img src={imageBase64 || form.imageUrl} alt="" className={`absolute inset-0 w-full h-full object-cover ${isUploading ? 'opacity-50 blur-sm' : ''}`} />
-                      {isUploading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
-                      <button type="button" onClick={() => { setImageBase64(''); setForm(f => ({ ...f, imageUrl: '' })); }} className="absolute top-2 right-2 bg-white/90 text-heritage-ink px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
-                    </div>
-                  ) : (
-                    <div className="h-28 flex flex-col items-center justify-center gap-2 text-heritage-ink/30">
-                      {isUploading
-                        ? <><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40">Elaborazione...</p></>
-                        : <Camera size={28} />}
-                    </div>
-                  )}
-                  {!isUploading && (
-                    <div className="grid grid-cols-2 border-t border-heritage-ink/8">
-                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60">
-                        <Camera size={16} className="text-heritage-gold" />
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">Scatta</span>
-                        <input type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImage} />
-                      </label>
-                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer active:bg-heritage-cream/60">
-                        <ImageIcon size={16} className="text-heritage-gold" />
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">{(imageBase64 || form.imageUrl) ? 'Cambia' : 'Galleria'}</span>
-                        <input ref={fileRef} type="file" className="hidden" accept="image/*" onChange={handleImage} />
-                      </label>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Testo grezzo + AI */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Racconta in parole tue</label>
-                <textarea
-                  value={rawText}
-                  onChange={e => setRawText(e.target.value)}
-                  placeholder="Scrivi qualcosa di grezzo: cosa ricordi, chi c'era, dove, quando..."
-                  className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
-                  style={{ fontSize: '16px', minHeight: '80px' }}
-                />
-                <button
-                  onClick={handleAI}
-                  disabled={!rawText.trim() || isAiLoading}
-                  className="mt-2 flex items-center gap-2 px-4 py-2 bg-emerald-950 text-heritage-gold rounded-full text-[11px] font-bold uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-900"
-                >
-                  {isAiLoading ? <div className="w-3 h-3 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /> : <Sparkles size={13} />}
-                  {isAiLoading ? 'Scrivo...' : '✦ Aiutami a scriverlo'}
-                </button>
-              </div>
-
-              {/* Testo finale */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Ricordo</label>
-                <textarea
-                  value={form.text}
-                  onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
-                  placeholder="Il testo del ricordo..."
-                  className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
-                  style={{ fontSize: '16px', minHeight: '100px' }}
-                />
-              </div>
-
-              {/* Autore + data */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Autore</label>
-                  <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} placeholder="Chi racconta" className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
-                </div>
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Data</label>
-                  <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
-                </div>
-              </div>
-
-              {/* Oggetto collegato */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Collega a un oggetto (opzionale)</label>
-                <select value={form.itemId} onChange={e => setForm(f => ({ ...f, itemId: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }}>
-                  <option value="">— Nessun oggetto —</option>
-                  {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
-                </select>
-              </div>
-
-              {/* Visibilità */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Visibilità</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['public', 'private'] as const).map(v => (
-                    <button key={v} type="button"
-                      onClick={() => setForm(f => ({ ...f, visibility: v }))}
-                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-[12px] font-bold uppercase tracking-wide transition-all ${form.visibility === v ? (v === 'public' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-heritage-ink bg-heritage-ink/5 text-heritage-ink') : 'border-heritage-ink/10 text-heritage-ink/40 hover:border-heritage-ink/25'}`}>
-                      {v === 'public' ? '🌐 Tutti' : '🔒 Solo famiglia'}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[10px] text-heritage-ink/35 italic mt-1.5">
-                  {form.visibility === 'public' ? 'Visibile a tutti i visitatori' : 'Visibile solo agli utenti loggati'}
-                </p>
-              </div>
-
-              {/* Salva */}
-              <button
-                onClick={handleSave}
-                disabled={!form.text.trim() || !form.author.trim() || isUploading}
-                className="w-full py-3 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-950"
-              >
-                {isUploading ? 'Salvataggio...' : editId ? 'Salva modifiche' : 'Aggiungi ricordo'}
-              </button>
-            </div>
-          )}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ── MOBILE: sheet dal basso ── */}
-      <motion.div key="mem-mobile"
-        initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-[301] bg-white rounded-t-[2rem] shadow-2xl flex flex-col pointer-events-auto"
-        style={{ maxHeight: '95svh' }}
+      {/* Sheet — sale dal basso su mobile, centrata su desktop */}
+      <div key="mem-sheet"
+        className="fixed bottom-0 left-0 right-0 z-[301] bg-heritage-cream rounded-t-3xl shadow-2xl flex flex-col overflow-hidden"
+        style={{ maxHeight: '95svh', touchAction: 'pan-y', transform: 'translateZ(0)', animation: 'slideUp 0.3s cubic-bezier(0.22,1,0.36,1) forwards', overflowX: 'hidden' }}
         onClick={e => e.stopPropagation()}>
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
-        </div>
-        {/* Header mobile */}
-        <div className="px-6 py-3 border-b border-heritage-ink/5 flex items-center justify-between flex-shrink-0">
-                      <div className="flex items-center gap-3">
+      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
+          {/* Handle mobile */}
+          <div className="flex justify-center pt-3 pb-1 flex-shrink-0 md:hidden">
+            <div className="w-10 h-1 bg-heritage-ink/15 rounded-full" />
+          </div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-3 md:py-4 border-b border-heritage-ink/8 flex-shrink-0">
+            <div className="flex items-center gap-3">
               {view === 'form' && (
                 <button onClick={() => setView('list')} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors">
                   <ArrowLeft size={18} className="text-heritage-ink/60" />
                 </button>
               )}
-              <h2 className="font-serif italic text-heritage-ink">
+              <h2 className="text-lg font-serif italic text-heritage-ink">
                 {view === 'list' ? 'Ricordi di famiglia' : editId ? 'Modifica ricordo' : 'Nuovo ricordo'}
               </h2>
             </div>
-          <button onClick={onClose} className="p-2 hover:bg-heritage-cream rounded-full"><X size={20} /></button>
-        </div>
-        {/* Scrollable content */}
-        <div className="overflow-y-auto flex-1 px-6 py-5 pb-28">
-                    {view === 'list' ? (
-            <div className="flex flex-col gap-3">
-              <button onClick={openNew} className="flex items-center gap-2 bg-heritage-gold text-white px-4 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-wider w-fit">
-                <Plus size={14} /> Nuovo ricordo
-              </button>
-              {memories.length === 0 && (
-                <p className="text-heritage-ink/40 italic text-sm mt-4">Nessun ricordo ancora. Aggiungine uno!</p>
-              )}
-              {memories.map(m => {
-                const linked = items.find(i => i.id === m.itemId);
-                return (
-                  <div key={m.id} className="bg-white rounded-2xl border border-heritage-ink/8 overflow-hidden">
-                    {m.imageUrl && <img src={m.imageUrl} alt="" className="w-full h-32 object-cover" />}
-                    <div className="p-4">
-                      <p className="text-heritage-ink text-sm leading-relaxed mb-2 line-clamp-3">{m.text}</p>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-heritage-gold text-[11px] font-bold">{m.author}</span>
-                          <span className="text-heritage-ink/30 text-[11px] ml-2">{m.date}</span>
-                          {linked && <span className="text-heritage-ink/40 text-[11px] ml-2">· {linked.name.split(' ').slice(0,3).join(' ')}</span>}
-                          {m.visibility === 'private'
-                            ? <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-ink/8 text-heritage-ink/50 px-1.5 py-0.5 rounded-full">🔒 Famiglia</span>
-                            : <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">🌐 Tutti</span>
-                          }
-                        </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors"><Pencil size={13} className="text-heritage-ink/50" /></button>
-                          <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors"><Trash2 size={13} className="text-red-400/70" /></button>
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center hover:bg-heritage-ink/8 rounded-full transition-colors flex-shrink-0">
+              <X size={18} className="text-heritage-ink/60" />
+            </button>
+          </div>
+          <div className="overflow-y-auto flex-1 p-6 pb-24 md:pb-6 overflow-x-hidden" style={{overflowX:'hidden'}} onTouchMove={e => e.stopPropagation()}>
+            {view === 'list' ? (
+              <div className="flex flex-col gap-3">
+                <button onClick={openNew} className="flex items-center gap-2 bg-heritage-gold text-white px-4 py-2.5 rounded-full text-[12px] font-bold uppercase tracking-wider w-fit">
+                  <Plus size={14} /> Nuovo ricordo
+                </button>
+                {memories.length === 0 && (
+                  <p className="text-heritage-ink/40 italic text-sm mt-4">Nessun ricordo ancora. Aggiungine uno!</p>
+                )}
+                {memories.map(m => {
+                  const linked = items.find(i => i.id === m.itemId);
+                  return (
+                    <div key={m.id} className="bg-white rounded-2xl border border-heritage-ink/8 overflow-hidden">
+                      {m.imageUrl && <img src={m.imageUrl} alt="" className="w-full h-32 object-cover" />}
+                      <div className="p-4">
+                        <p className="text-heritage-ink text-sm leading-relaxed mb-2 line-clamp-3">{m.text}</p>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-heritage-gold text-[11px] font-bold">{m.author}</span>
+                            <span className="text-heritage-ink/30 text-[11px] ml-2">{m.date}</span>
+                            {linked && <span className="text-heritage-ink/40 text-[11px] ml-2">· {linked.name.split(' ').slice(0,3).join(' ')}</span>}
+                            {m.visibility === 'private'
+                              ? <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-heritage-ink/8 text-heritage-ink/50 px-1.5 py-0.5 rounded-full">🔒 Famiglia</span>
+                              : <span className="ml-2 text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full">🌐 Tutti</span>
+                            }
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => openEdit(m)} className="p-1.5 hover:bg-heritage-ink/8 rounded-full transition-colors"><Pencil size={13} className="text-heritage-ink/50" /></button>
+                            <button onClick={() => handleDelete(m.id)} className="p-1.5 hover:bg-red-50 rounded-full transition-colors"><Trash2 size={13} className="text-red-400/70" /></button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-5">
-              {/* Foto */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Foto (opzionale)</label>
-                <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/20">
-                  {(imageBase64 || form.imageUrl) ? (
-                    <div className="relative h-44">
-                      <img src={imageBase64 || form.imageUrl} alt="" className={`absolute inset-0 w-full h-full object-cover ${isUploading ? 'opacity-50 blur-sm' : ''}`} />
-                      {isUploading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
-                      <button type="button" onClick={() => { setImageBase64(''); setForm(f => ({ ...f, imageUrl: '' })); }} className="absolute top-2 right-2 bg-white/90 text-heritage-ink px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
-                    </div>
-                  ) : (
-                    <div className="h-28 flex flex-col items-center justify-center gap-2 text-heritage-ink/30">
-                      {isUploading
-                        ? <><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40">Elaborazione...</p></>
-                        : <Camera size={28} />}
-                    </div>
-                  )}
-                  {!isUploading && (
-                    <div className="grid grid-cols-2 border-t border-heritage-ink/8">
-                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60">
-                        <Camera size={16} className="text-heritage-gold" />
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">Scatta</span>
-                        <input type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImage} />
-                      </label>
-                      <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer active:bg-heritage-cream/60">
-                        <ImageIcon size={16} className="text-heritage-gold" />
-                        <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">{(imageBase64 || form.imageUrl) ? 'Cambia' : 'Galleria'}</span>
-                        <input ref={fileRef} type="file" className="hidden" accept="image/*" onChange={handleImage} />
-                      </label>
-                    </div>
-                  )}
-                </div>
+                  );
+                })}
               </div>
+            ) : (
+              <div className="flex flex-col gap-5">
+                {/* Foto */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Foto (opzionale)</label>
+                  <div className="rounded-2xl border-2 border-dashed border-heritage-ink/10 overflow-hidden bg-heritage-cream/20">
+                    {(imageBase64 || form.imageUrl) ? (
+                      <div className="relative h-44">
+                        <img src={imageBase64 || form.imageUrl} alt="" className={`absolute inset-0 w-full h-full object-cover ${isUploading ? 'opacity-50 blur-sm' : ''}`} />
+                        {isUploading && <div className="absolute inset-0 flex items-center justify-center"><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /></div>}
+                        <button type="button" onClick={() => { setImageBase64(''); setForm(f => ({ ...f, imageUrl: '' })); }} className="absolute top-2 right-2 bg-white/90 text-heritage-ink px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow">Rimuovi</button>
+                      </div>
+                    ) : (
+                      <div className="h-28 flex flex-col items-center justify-center gap-2 text-heritage-ink/30">
+                        {isUploading
+                          ? <><div className="w-7 h-7 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /><p className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/40">Elaborazione...</p></>
+                          : <Camera size={28} />}
+                      </div>
+                    )}
+                    {!isUploading && (
+                      <div className="grid grid-cols-2 border-t border-heritage-ink/8">
+                        <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer border-r border-heritage-ink/8 active:bg-heritage-cream/60">
+                          <Camera size={16} className="text-heritage-gold" />
+                          <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">Scatta</span>
+                          <input type="file" className="hidden" accept="image/*" capture="environment" onChange={handleImage} />
+                        </label>
+                        <label className="flex flex-col items-center gap-1 py-2.5 cursor-pointer active:bg-heritage-cream/60">
+                          <ImageIcon size={16} className="text-heritage-gold" />
+                          <span className="text-[9px] uppercase tracking-widest font-bold text-heritage-ink/50">{(imageBase64 || form.imageUrl) ? 'Cambia' : 'Galleria'}</span>
+                          <input ref={fileRef} type="file" className="hidden" accept="image/*" onChange={handleImage} />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-              {/* Testo grezzo + AI */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Racconta in parole tue</label>
-                <textarea
-                  value={rawText}
-                  onChange={e => setRawText(e.target.value)}
-                  placeholder="Scrivi qualcosa di grezzo: cosa ricordi, chi c'era, dove, quando..."
-                  className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
-                  style={{ fontSize: '16px', minHeight: '80px' }}
-                />
+                {/* Testo grezzo + AI */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Racconta in parole tue</label>
+                  <textarea
+                    value={rawText}
+                    onChange={e => setRawText(e.target.value)}
+                    placeholder="Scrivi qualcosa di grezzo: cosa ricordi, chi c'era, dove, quando..."
+                    className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
+                    style={{ fontSize: '16px', minHeight: '80px' }}
+                  />
+                  <button
+                    onClick={handleAI}
+                    disabled={!rawText.trim() || isAiLoading}
+                    className="mt-2 flex items-center gap-2 px-4 py-2 bg-emerald-950 text-heritage-gold rounded-full text-[11px] font-bold uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-900"
+                  >
+                    {isAiLoading ? <div className="w-3 h-3 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /> : <Sparkles size={13} />}
+                    {isAiLoading ? 'Scrivo...' : '✦ Aiutami a scriverlo'}
+                  </button>
+                </div>
+
+                {/* Testo finale */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Ricordo</label>
+                  <textarea
+                    value={form.text}
+                    onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
+                    placeholder="Il testo del ricordo..."
+                    className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
+                    style={{ fontSize: '16px', minHeight: '100px' }}
+                  />
+                </div>
+
+                {/* Autore + data */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Autore</label>
+                    <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} placeholder="Chi racconta" className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Data</label>
+                    <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
+                  </div>
+                </div>
+
+                {/* Oggetto collegato */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Collega a un oggetto (opzionale)</label>
+                  <select value={form.itemId} onChange={e => setForm(f => ({ ...f, itemId: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }}>
+                    <option value="">— Nessun oggetto —</option>
+                    {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
+                  </select>
+                </div>
+
+                {/* Visibilità */}
+                <div>
+                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Visibilità</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(['public', 'private'] as const).map(v => (
+                      <button key={v} type="button"
+                        onClick={() => setForm(f => ({ ...f, visibility: v }))}
+                        className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-[12px] font-bold uppercase tracking-wide transition-all ${form.visibility === v ? (v === 'public' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-heritage-ink bg-heritage-ink/5 text-heritage-ink') : 'border-heritage-ink/10 text-heritage-ink/40 hover:border-heritage-ink/25'}`}>
+                        {v === 'public' ? '🌐 Tutti' : '🔒 Solo famiglia'}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-heritage-ink/35 italic mt-1.5">
+                    {form.visibility === 'public' ? 'Visibile a tutti i visitatori' : 'Visibile solo agli utenti loggati'}
+                  </p>
+                </div>
+
+                {/* Salva */}
                 <button
-                  onClick={handleAI}
-                  disabled={!rawText.trim() || isAiLoading}
-                  className="mt-2 flex items-center gap-2 px-4 py-2 bg-emerald-950 text-heritage-gold rounded-full text-[11px] font-bold uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-900"
+                  onClick={handleSave}
+                  disabled={!form.text.trim() || !form.author.trim() || isUploading}
+                  className="w-full py-3 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-950"
                 >
-                  {isAiLoading ? <div className="w-3 h-3 border-2 border-heritage-gold border-t-transparent rounded-full animate-spin" /> : <Sparkles size={13} />}
-                  {isAiLoading ? 'Scrivo...' : '✦ Aiutami a scriverlo'}
+                  {isUploading ? 'Salvataggio...' : editId ? 'Salva modifiche' : 'Aggiungi ricordo'}
                 </button>
               </div>
+            )}
+          </div>
+          {/* Bottone chiudi fisso in fondo — mobile only */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 px-6 pb-8 pt-3 bg-heritage-cream border-t border-heritage-ink/8 flex-shrink-0 z-10">
+            <button
+              onClick={onClose}
+              className="w-full py-3.5 bg-heritage-ink text-white rounded-full font-bold text-[12px] uppercase tracking-widest flex items-center justify-center gap-2"
+            >
+              <X size={15} /> Chiudi
+            </button>
+          </div>
 
-              {/* Testo finale */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Ricordo</label>
-                <textarea
-                  value={form.text}
-                  onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
-                  placeholder="Il testo del ricordo..."
-                  className="w-full bg-white border border-heritage-ink/12 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-heritage-gold resize-none"
-                  style={{ fontSize: '16px', minHeight: '100px' }}
-                />
-              </div>
-
-              {/* Autore + data */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Autore</label>
-                  <input value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} placeholder="Chi racconta" className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
-                </div>
-                <div>
-                  <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Data</label>
-                  <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }} />
-                </div>
-              </div>
-
-              {/* Oggetto collegato */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Collega a un oggetto (opzionale)</label>
-                <select value={form.itemId} onChange={e => setForm(f => ({ ...f, itemId: e.target.value }))} className="w-full bg-white border border-heritage-ink/12 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-heritage-gold" style={{ fontSize: '16px' }}>
-                  <option value="">— Nessun oggetto —</option>
-                  {items.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
-                </select>
-              </div>
-
-              {/* Visibilità */}
-              <div>
-                <label className="text-[10px] uppercase tracking-widest font-bold text-heritage-ink/60 block mb-2">Visibilità</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['public', 'private'] as const).map(v => (
-                    <button key={v} type="button"
-                      onClick={() => setForm(f => ({ ...f, visibility: v }))}
-                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border-2 text-[12px] font-bold uppercase tracking-wide transition-all ${form.visibility === v ? (v === 'public' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-heritage-ink bg-heritage-ink/5 text-heritage-ink') : 'border-heritage-ink/10 text-heritage-ink/40 hover:border-heritage-ink/25'}`}>
-                      {v === 'public' ? '🌐 Tutti' : '🔒 Solo famiglia'}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[10px] text-heritage-ink/35 italic mt-1.5">
-                  {form.visibility === 'public' ? 'Visibile a tutti i visitatori' : 'Visibile solo agli utenti loggati'}
-                </p>
-              </div>
-
-              {/* Salva */}
-              <button
-                onClick={handleSave}
-                disabled={!form.text.trim() || !form.author.trim() || isUploading}
-                className="w-full py-3 bg-heritage-ink text-white rounded-full font-bold text-[13px] uppercase tracking-wider disabled:opacity-40 transition-all hover:bg-emerald-950"
-              >
-                {isUploading ? 'Salvataggio...' : editId ? 'Salva modifiche' : 'Aggiungi ricordo'}
-              </button>
-            </div>
-          )}
-        </div>
-        {/* Chiudi fisso in fondo */}
-        <div className="px-6 pb-8 pt-3 bg-white border-t border-heritage-ink/5 flex-shrink-0">
-          <button onClick={onClose}
-            className="w-full py-3.5 bg-heritage-ink text-white rounded-full font-bold text-[12px] uppercase tracking-widest flex items-center justify-center gap-2">
-            <X size={15} /> Chiudi
-          </button>
-        </div>
-      </motion.div>
+          {/* Bottone chiudi fisso in fondo — mobile only */}
+          <div className="md:hidden px-6 pb-8 pt-3 bg-heritage-cream border-t border-heritage-ink/8 flex-shrink-0">
+            <button onClick={onClose}
+              className="w-full py-3.5 bg-heritage-ink text-white rounded-full font-bold text-[12px] uppercase tracking-widest flex items-center justify-center gap-2">
+              <X size={15} /> Chiudi
+            </button>
+          </div>
+      </div>
     </AnimatePresence>
   );
 }
@@ -3940,7 +3804,7 @@ function CatawikiModal({ item, onClose, onSave }: {
 
   const runAI = async () => {
     const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY;
-    if (!apiKey) { alert('Aggiungi VITE_ANTHROPIC_API_KEY nel file .env.local'); return; }
+    if (!apiKey) return;
     setIsAiLoading(true);
     try {
       const prompt = buildCatawikiPrompt(item, catawikiCat);
@@ -4091,7 +3955,7 @@ function CatawikiModal({ item, onClose, onSave }: {
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+        <div className="overflow-y-auto overflow-x-hidden flex-1 px-6 py-5 space-y-5">
 
           {/* ── STEP 1: Categoria ── */}
           {step === 1 && (
@@ -4967,8 +4831,8 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
       <motion.div key="mobile-sheet"
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-[101] bg-white rounded-t-[2rem] shadow-2xl flex flex-col pointer-events-auto"
-        style={{ maxHeight: '95svh' }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-[101] bg-white rounded-t-[2rem] shadow-2xl flex flex-col pointer-events-auto overflow-hidden"
+        style={{ maxHeight: '95svh', overflowX: 'hidden' }}
         onClick={e => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}>
@@ -5003,6 +4867,408 @@ function ItemModal({ isOpen, onClose, onSave, initialData, onDelete, nextOrder }
   );
 }
 
-// build Thu May 21 14:14:48 UTC 2026
+// build Fri May 22 12:06:43 UTC 2026
 
 // deploy 20260520142743
+
+// ─── 🧪 Lab: ReelPhotoCard ──────────────────────────────────────────────────────
+function ReelPhotoCard({ src }: { src: string }) {
+  const [imgH, setImgH] = React.useState(55);
+  const [isLandscape, setIsLandscape] = React.useState(false);
+  const onLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const ratio = img.naturalWidth / img.naturalHeight;
+    const landscape = ratio > 1.3;
+    setIsLandscape(landscape);
+    setImgH(55);
+  };
+  return (
+    <div style={{ height: `${imgH}%`, overflow: 'hidden', flexShrink: 0, position: 'relative', transition: 'height 0.3s ease' }}>
+      <img src={src} alt="" onLoad={onLoad} style={{
+        width: '100%', height: '100%',
+        objectFit: 'cover',
+        objectPosition: 'center top',
+      }} />
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to bottom, transparent 0%, rgba(28,26,22,0.6) 50%, #1C1A16 90%, #1C1A16 100%)' }} />
+    </div>
+  );
+}
+
+// ─── 🧪 Lab: MemoriesReelView ────────────────────────────────────────────────
+const REEL_COLORS: Record<string, string> = { Emanuela: '#8B6914', Aleria: '#2D5016', Olivia: '#1A3A5C' };
+const REEL_AUTHORS = ['Tutti', 'Emanuela', 'Aleria', 'Olivia'];
+
+function MemoriesReelView({ memories, onClose }: { memories: FamilyMemory[]; onClose: () => void }) {
+  const [activeAuthor, setActiveAuthor] = React.useState('Tutti');
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = React.useState(0);
+
+  const filtered = React.useMemo(() =>
+    activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor),
+  [memories, activeAuthor]);
+
+  React.useEffect(() => {
+    setCurrent(0);
+    if (containerRef.current) containerRef.current.scrollTop = 0;
+  }, [activeAuthor]);
+
+  React.useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const handler = () => {
+      const idx = Math.round(el.scrollTop / window.innerHeight);
+      if (idx >= filtered.length) {
+        // Card fantasma raggiunta — jump silenzioso al primo dopo un frame
+        setCurrent(0);
+        requestAnimationFrame(() => {
+          el.style.scrollSnapType = 'none';
+          el.scrollTop = 0;
+          requestAnimationFrame(() => {
+            el.style.scrollSnapType = 'y mandatory';
+          });
+        });
+      } else {
+        setCurrent(idx);
+      }
+    };
+    el.addEventListener('scroll', handler, { passive: true });
+    return () => el.removeEventListener('scroll', handler);
+  }, []);
+
+  const scrollTo = (idx: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.scrollTo({ top: idx * window.innerHeight, behavior: 'smooth' });
+  };
+
+  const color = (author: string) => REEL_COLORS[author] || '#8B6914';
+  const ini = (author: string) => author.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: '#1C1A16' }}>
+
+      {/* Filtri autori */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, padding: '48px 16px 12px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={onClose} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer' }}>
+            ←
+          </button>
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', scrollbarWidth: 'none' }}>
+            {REEL_AUTHORS.map(a => {
+              const active = activeAuthor === a;
+              const c = REEL_COLORS[a];
+              return (
+                <button key={a} onClick={() => setActiveAuthor(a)} style={{
+                  flexShrink: 0, padding: '6px 14px', borderRadius: 100, border: 'none', cursor: 'pointer',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+                  background: active ? (c || 'rgba(255,255,255,0.9)') : 'rgba(255,255,255,0.15)',
+                  color: active ? (c ? 'white' : '#1C1A16') : 'rgba(255,255,255,0.7)',
+                }}>
+                  {a}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Dots */}
+      <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {filtered.map((_, i) => (
+          <div key={i} onClick={() => scrollTo(i)} style={{
+            width: i === current ? 4 : 3,
+            height: i === current ? 28 : 8,
+            borderRadius: 100,
+            background: i === current ? 'white' : 'rgba(255,255,255,0.35)',
+            transition: 'all 0.3s',
+            cursor: 'pointer',
+          }} />
+        ))}
+      </div>
+
+      {/* Contatore + frecce */}
+      <div style={{ position: 'absolute', bottom: 'max(40px, env(safe-area-inset-bottom, 0px) + 28px)', left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button onClick={() => scrollTo(current === 0 ? filtered.length - 1 : current - 1)} style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↑</button>
+        <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', minWidth: 40, textAlign: 'center' as const }}>{current + 1} / {filtered.length}</span>
+        <button onClick={() => scrollTo(current === filtered.length - 1 ? 0 : current + 1)} style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↓</button>
+      </div>
+
+      {/* Scroll container */}
+      <div ref={containerRef} style={{
+        height: '100dvh', overflowY: 'scroll', overflowX: 'hidden',
+        scrollSnapType: 'y mandatory', WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none', overscrollBehavior: 'none',
+      }}>
+        {filtered.length === 0 ? (
+          <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', gap: 16 }}>
+            <p style={{ fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 20 }}>Nessun ricordo</p>
+            <button onClick={onClose} style={{ padding: '12px 24px', background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 100, color: 'white', cursor: 'pointer' }}>Torna indietro</button>
+          </div>
+        ) : filtered.map((mem, i) => {
+          const c = color(mem.author);
+          const av = ini(mem.author);
+          const hasImg = !!mem.imageUrl;
+
+          return (
+            <div key={mem.id} style={{
+              height: '100dvh', width: '100%', flexShrink: 0,
+              scrollSnapAlign: 'start', scrollSnapStop: 'always',
+              display: 'flex', flexDirection: 'column',
+              background: hasImg ? '#1C1A16' : '#F2EDE3',
+              position: 'relative',
+            }}>
+              {hasImg ? (
+                <>
+                  <ReelPhotoCard src={mem.imageUrl || ''} />
+                  <div style={{ flex: 1, padding: '20px 24px 160px', overflowY: 'auto' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                      <div>
+                        <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif' }}>{mem.author}</p>
+                        <p style={{ margin: 0, fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,7)}</p>
+                      </div>
+                    </div>
+                    {/* Anno discreto */}
+                    {mem.date && (
+                      <div style={{ position: 'absolute', top: 12, right: 20, fontSize: 11, fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.25)', fontFamily: 'sans-serif', textTransform: 'uppercase', userSelect: 'none' }}>
+                        {mem.date.slice(0,4)}
+                      </div>
+                    )}
+                    <p style={{ fontSize: mem.text.length > 200 ? 16 : mem.text.length > 120 ? 18 : 20, lineHeight: 1.65, color: 'rgba(255,255,255,0.92)', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>{mem.text}</p>
+                  </div>
+                </>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '100px 32px 120px', position: 'relative', overflow: 'hidden' }}>
+                  {/* Sfondo tenue per autore */}
+                  <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 30% 60%, ${c}08 0%, transparent 70%)` }} />
+                  {/* Virgolettone */}
+                  <div style={{ position: 'absolute', top: 180, left: 16, fontSize: 180, lineHeight: 1, color: c, opacity: 0.06, fontFamily: 'Georgia,serif', userSelect: 'none', pointerEvents: 'none' }}>"</div>
+                  {/* Anno — solo se storico */}
+                  {mem.date && parseInt(mem.date.slice(0,4)) < new Date().getFullYear() && (
+                    <div style={{ position: 'absolute', bottom: 72, right: 24, fontSize: 10, fontWeight: 700, letterSpacing: '0.25em', color: 'rgba(28,26,22,0.15)', fontFamily: 'sans-serif', textTransform: 'uppercase', userSelect: 'none' }}>
+                      {mem.date.slice(0,4)}
+                    </div>
+                  )}
+                  {/* Autore */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, position: 'relative', zIndex: 1 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0, boxShadow: `0 2px 8px ${c}40` }}>{av}</div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: c, fontFamily: 'sans-serif' }}>{mem.author}</p>
+                      {mem.date && parseInt(mem.date.slice(0,4)) < new Date().getFullYear() && (
+                        <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'sans-serif' }}>{mem.date.slice(0,4)}</p>
+                      )}
+                    </div>
+                  </div>
+                  {/* Testo */}
+                  <p style={{ fontSize: mem.text.length > 200 ? 19 : mem.text.length > 120 ? 22 : 27, lineHeight: 1.7, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>{mem.text}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {/* Card fantasma — clone del primo per loop infinito */}
+        {filtered.length > 0 && (() => {
+          const mem = filtered[0];
+          const c = color(mem.author);
+          const av = ini(mem.author);
+          const hasImg = !!mem.imageUrl;
+          return (
+            <div key="loop-clone" style={{
+              height: '100dvh', width: '100%', flexShrink: 0,
+              scrollSnapAlign: 'start', scrollSnapStop: 'always',
+              display: 'flex', flexDirection: 'column',
+              background: hasImg ? '#1C1A16' : '#F2EDE3',
+              position: 'relative',
+            }}>
+              {hasImg ? (
+                <>
+                  <ReelPhotoCard src={mem.imageUrl || ''} />
+                  <div style={{ flex: 1, padding: '20px 24px 160px', overflowY: 'auto' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                      <div>
+                        <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif' }}>{mem.author}</p>
+                        <p style={{ margin: 0, fontSize: 10, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,7)}</p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 18, lineHeight: 1.6, color: 'rgba(255,255,255,0.92)', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: 0 }}>{mem.text}</p>
+                  </div>
+                </>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 28px 160px', position: 'relative' }}>
+                  <div style={{ fontSize: 100, lineHeight: 1, color: c, opacity: 0.08, fontFamily: 'Georgia', position: 'absolute', top: 60, left: 20 }}>"</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, position: 'relative', zIndex: 1 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: c, fontFamily: 'sans-serif' }}>{mem.author}</p>
+                      <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,7)}</p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 21, lineHeight: 1.55, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: 0, position: 'relative', zIndex: 1 }}>{mem.text}</p>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+// ─── 🧪 Lab: ReelV2Photo ────────────────────────────────────────────────────
+function ReelV2Photo({ src, year }: { src: string; year?: string }) {
+  const [isPortrait, setIsPortrait] = React.useState(false);
+  const shortYear = year ? year.slice(0,4) : null;
+  return (
+    <div style={{ width: '100%', borderRadius: 20, overflow: 'hidden', marginBottom: 20, flexShrink: 0, boxShadow: '0 8px 32px rgba(28,26,22,0.12)', border: '1px solid rgba(28,26,22,0.06)', height: isPortrait ? 'auto' : 260, maxHeight: 320, position: 'relative' }}>
+      <img src={src} alt=""
+        onLoad={e => { const img = e.currentTarget; setIsPortrait(img.naturalHeight > img.naturalWidth * 1.1); }}
+        style={{ width: '100%', height: isPortrait ? 'auto' : '100%', display: 'block', objectFit: 'cover', objectPosition: 'center top' }} />
+      {shortYear && (
+        <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 80, fontWeight: 700, lineHeight: 1, color: 'rgba(255,255,255,0.18)', fontFamily: '"Cormorant Garamond", "Cormorant", Georgia, serif', fontStyle: 'italic', letterSpacing: '-0.02em', userSelect: 'none', pointerEvents: 'none' }}>
+          {shortYear}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── 🧪 Lab: MemoriesReelV2 — stile loader ───────────────────────────────────
+function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClose: () => void }) {
+  const [activeAuthor, setActiveAuthor] = React.useState('Tutti');
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = React.useState(0);
+
+  const filtered = React.useMemo(() =>
+    activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor),
+  [memories, activeAuthor]);
+
+  React.useEffect(() => {
+    setCurrent(0);
+    if (containerRef.current) containerRef.current.scrollTop = 0;
+  }, [activeAuthor]);
+
+  React.useEffect(() => {
+    const el = containerRef.current; if (!el) return;
+    const handler = () => {
+      const h = el.clientHeight;
+      const idx = Math.round(el.scrollTop / h);
+      if (idx >= filtered.length) {
+        setCurrent(0);
+        requestAnimationFrame(() => {
+          el.style.scrollSnapType = 'none';
+          el.scrollTop = 0;
+          requestAnimationFrame(() => { el.style.scrollSnapType = 'y mandatory'; });
+        });
+      } else { setCurrent(idx); }
+    };
+    el.addEventListener('scroll', handler, { passive: true });
+    return () => el.removeEventListener('scroll', handler);
+  }, [filtered.length]);
+
+  const scrollTo = (idx: number) => {
+    const el = containerRef.current; if (!el) return;
+    el.scrollTo({ top: idx * el.clientHeight, behavior: 'smooth' });
+  };
+
+  const color = (author: string) => REEL_COLORS[author] || '#8B6914';
+  const ini = (author: string) => author.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: '#F5F0E8', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+      {/* Header filtri — fuori dal flusso dello scroll */}
+      <div style={{ flexShrink: 0, padding: '12px 16px 12px', background: '#F2EDE3', borderBottom: '1px solid rgba(28,26,22,0.06)', zIndex: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={onClose} style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(28,26,22,0.08)', border: 'none', color: '#1C1A16', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', fontSize: 16 }}>←</button>
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', scrollbarWidth: 'none' as const }}>
+            {REEL_AUTHORS.map(a => {
+              const active = activeAuthor === a;
+              const c = REEL_COLORS[a];
+              return (
+                <button key={a} onClick={() => setActiveAuthor(a)} style={{
+                  flexShrink: 0, padding: '6px 14px', borderRadius: 100, border: `1px solid ${active ? (c || '#1C1A16') : 'rgba(28,26,22,0.15)'}`, cursor: 'pointer',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+                  background: active ? (c || '#1C1A16') : 'white',
+                  color: active ? 'white' : 'rgba(28,26,22,0.5)',
+                }}>
+                  {a}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Dots */}
+      <div style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {filtered.map((_, i) => (
+          <div key={i} onClick={() => scrollTo(i)} style={{ width: i === current ? 4 : 3, height: i === current ? 28 : 8, borderRadius: 100, background: i === current ? '#1C1A16' : 'rgba(28,26,22,0.2)', transition: 'all 0.3s', cursor: 'pointer' }} />
+        ))}
+      </div>
+
+      {/* Frecce */}
+      <div style={{ position: 'absolute', bottom: 'max(32px, env(safe-area-inset-bottom, 0px) + 16px)', right: 20, zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <button onClick={() => scrollTo(current === 0 ? filtered.length - 1 : current - 1)} style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(28,26,22,0.07)', border: 'none', color: '#1C1A16', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↑</button>
+        <span style={{ color: 'rgba(28,26,22,0.25)', fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textAlign: 'center' as const }}>{current + 1}/{filtered.length}</span>
+        <button onClick={() => scrollTo(current === filtered.length - 1 ? 0 : current + 1)} style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(28,26,22,0.07)', border: 'none', color: '#1C1A16', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↓</button>
+      </div>
+
+      {/* Scroll container — inizia sotto la barra */}
+      <div ref={containerRef} style={{ flex: 1, minHeight: 0, overflowY: 'scroll', scrollSnapType: 'y mandatory', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' as const, overscrollBehavior: 'none' }}>
+        {filtered.map((mem, i) => {
+          const c = color(mem.author);
+          const av = ini(mem.author);
+          const isHistoric = mem.date && parseInt(mem.date.slice(0,4)) < new Date().getFullYear();
+          return (
+            <div key={mem.id} style={{ height: '100%', width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20, paddingLeft: 24, paddingRight: 24, paddingBottom: 90, boxSizing: 'border-box' as const, background: '#F5F0E8', minHeight: '100%' }}>
+              {/* Foto con bordo arrotondato */}
+              {mem.imageUrl && (
+                <ReelV2Photo src={mem.imageUrl || ''} year={mem.date?.slice(0,4)} />
+              )}
+              {/* Senza foto — virgolettone */}
+              {!mem.imageUrl && (
+                <div style={{ fontSize: 120, lineHeight: 1, color: c, opacity: 0.12, fontFamily: 'Georgia,serif', marginBottom: 8, alignSelf: 'flex-start', marginTop: 60 }}>"</div>
+              )}
+              {/* Testo */}
+              <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', textAlign: 'left' as const, width: '100%' }}>{mem.text}</p>
+              {/* Autore */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'flex-start', borderTop: '1px solid rgba(28,26,22,0.08)', paddingTop: 14, width: '100%', marginTop: 4 }}>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                <div>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>{mem.author}</p>
+                  {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif', letterSpacing: '0.08em' }}>{mem.date?.slice(0,4)}</p>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {/* Clone primo per loop */}
+        {filtered.length > 0 && (() => {
+          const mem = filtered[0];
+          const c = color(mem.author);
+          const av = ini(mem.author);
+          const isHistoric = mem.date && parseInt(mem.date.slice(0,4)) < new Date().getFullYear();
+          return (
+            <div key="v2-clone" style={{ height: '100%', width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20, paddingLeft: 24, paddingRight: 24, paddingBottom: 90, boxSizing: 'border-box' as const, background: '#F5F0E8', minHeight: '100%' }}>
+              {mem.imageUrl && (
+                <div style={{ width: '100%', maxWidth: 340, borderRadius: 20, overflow: 'hidden', marginBottom: 24, flexShrink: 0, boxShadow: '0 8px 32px rgba(28,26,22,0.12)', border: '1px solid rgba(28,26,22,0.06)' }}>
+                  <img src={mem.imageUrl} alt="" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 260, objectFit: 'contain' }} />
+                </div>
+              )}
+              {!mem.imageUrl && <div style={{ fontSize: 120, lineHeight: 1, color: c, opacity: 0.12, fontFamily: 'Georgia,serif', marginBottom: 8, alignSelf: 'flex-start' }}>"</div>}
+              <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', width: '100%' }}>{mem.text}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'flex-start', borderTop: '1px solid rgba(28,26,22,0.08)', paddingTop: 16, width: '100%' }}>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                <div>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>{mem.author}</p>
+                  {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,4)}</p>}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
