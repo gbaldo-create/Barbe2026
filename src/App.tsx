@@ -5329,14 +5329,15 @@ function ReelCover({ memories, onStart }: {
   return (
     <>
       <style>{REEL_COVER_STYLE}</style>
+
       <div style={{
         position: 'fixed', inset: 0, zIndex: 500, background: '#1C1A16', overflow: 'hidden',
         animation: exiting ? 'reelFadeOut 0.95s cubic-bezier(0.25,0.1,0.25,1) forwards' : 'none',
       }}>
-        {/* 4 colonne flex indipendenti — zero buchi */}
-        <div style={{ display: 'flex', width: '100%', height: '100%', gap: 0 }}>
+        {/* Mosaico foto — colonne che coprono l'intera viewport senza sfondo */}
+        <div style={{ display: 'flex', width: '100%', height: '100dvh', gap: 0, position: 'absolute', inset: 0 }}>
           {columns.map((col, ci) => (
-            <div key={ci} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+            <div key={ci} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
               {col.map((cell, ri) => {
                 const key = `${ci}-${ri}`;
                 const vis = visible.has(key);
@@ -5345,17 +5346,17 @@ function ReelCover({ memories, onStart }: {
                     key={key}
                     onClick={() => vis && startWith(cell.mem)}
                     style={{
-                      flex: cell.flex,
-                      overflow: 'hidden', position: 'relative',
-                      opacity: vis ? 1 : 0,
-                      transition: 'opacity 0.7s cubic-bezier(0.25,0.1,0.25,1)',
-                      cursor: vis ? 'pointer' : 'default',
+                      flex: cell.flex, overflow: 'hidden', position: 'relative',
                       minHeight: 0,
+                      cursor: vis ? 'pointer' : 'default',
                     }}
                   >
+                    {/* Foto sempre visibile come sfondo — opacity 0 → 1 senza che si veda il buco */}
                     <img src={cell.mem.imageUrl!} alt="" style={{
                       width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                      opacity: vis ? 1 : 0,
                       filter: vis ? 'grayscale(0%) brightness(1)' : 'grayscale(100%) brightness(0.85)',
+                      transition: 'opacity 0.7s cubic-bezier(0.25,0.1,0.25,1)',
                       animation: vis
                         ? `reelSlowZoom ${10 + ((ci * 3 + ri) % 3) * 5}s ease-in-out infinite alternate, colorize 2.5s cubic-bezier(0.4,0,0.2,1) ${(ci * 2 + ri) * 0.15}s forwards`
                         : 'none',
@@ -5368,10 +5369,10 @@ function ReelCover({ memories, onStart }: {
             </div>
           ))}
         </div>
-
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
         {/* Grain */}
         <div style={{
-          position: 'absolute', inset: '-30%', zIndex: 3, pointerEvents: 'none',
+          position: 'absolute', inset: '-30%', zIndex: 1, pointerEvents: 'none',
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
           backgroundSize: '180px 180px', opacity: 0.045,
           animation: 'reelGrain 0.8s steps(1) infinite', mixBlendMode: 'overlay' as const,
@@ -5379,15 +5380,15 @@ function ReelCover({ memories, onStart }: {
 
         {/* Gradient */}
         <div style={{
-          position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none',
+          position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
           background: 'linear-gradient(to bottom, rgba(28,26,22,0.5) 0%, rgba(28,26,22,0.05) 40%, rgba(28,26,22,0.72) 100%)',
         }} />
 
         {/* Testo + bottone */}
         <div style={{
-          position: 'absolute', inset: 0, zIndex: 10,
+          position: 'absolute', inset: 0, zIndex: 3,
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
-          paddingBottom: 80, gap: 24,
+          paddingBottom: 'max(80px, calc(env(safe-area-inset-bottom, 0px) + 50px))', gap: 24,
           opacity: showButton ? 1 : 0,
           transform: showButton ? 'translateY(0)' : 'translateY(28px)',
           filter: showButton ? 'blur(0px)' : 'blur(6px)',
@@ -5406,6 +5407,7 @@ function ReelCover({ memories, onStart }: {
             cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
           }}>Sfoglia i ricordi</button>
         </div>
+      </div>
       </div>
     </>
   );
@@ -5487,10 +5489,10 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
 
   return (
     <>
-    <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: '#F5F0E8', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
-      {/* Cover mosaico — una volta per sessione */}
+      {/* Cover mosaico — sopra tutto, zIndex 500, fixed inset-0 indipendente */}
       {showCover && window.innerWidth < 1024 && <ReelCover memories={memories} onStart={handleCoverDone} />}
+
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: '-30px', zIndex: 400, background: '#F5F0E8', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
       {/* Header filtri — fuori dal flusso dello scroll */}
       <div style={{ flexShrink: 0, padding: '10px 12px', background: '#F2EDE3', borderBottom: '1px solid rgba(28,26,22,0.06)', zIndex: 10 }}>
@@ -5557,13 +5559,22 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
                   </div>
                 </div>
               )}
-              {/* Senza foto — virgolettone */}
+              {/* Senza foto — card colorata autore */}
               {!mem.imageUrl && (
-                <div style={{ fontSize: 120, lineHeight: 1, color: c, opacity: 0.12, fontFamily: 'Georgia,serif', marginBottom: 8, alignSelf: 'flex-start', marginTop: 60 }}>"</div>
+                <div style={{ width: '100%', background: `${c}12`, border: `1px solid ${c}30`, borderRadius: 20, padding: '28px 22px 22px', position: 'relative' as const }}>
+                  <div style={{ fontSize: 72, lineHeight: 1, color: c, opacity: 0.2, fontFamily: 'Georgia,serif', position: 'absolute' as const, top: 10, left: 16 }}>"</div>
+                  <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '22px 0 18px', textAlign: 'left' as const, width: '100%' }}>{mem.text}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderTop: `1px solid ${c}25`, paddingTop: 14 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>{mem.author}</p>
+                      {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif', letterSpacing: '0.08em' }}>{mem.date?.slice(0,4)}</p>}
+                    </div>
+                  </div>
+                </div>
               )}
-              {/* Testo */}
-              <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', textAlign: 'left' as const, width: '100%' }}>{mem.text}</p>
-              {/* Autore */}
+              {mem.imageUrl && <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', textAlign: 'left' as const, width: '100%' }}>{mem.text}</p>}
+              {mem.imageUrl && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'flex-start', borderTop: '1px solid rgba(28,26,22,0.08)', paddingTop: 14, width: '100%', marginTop: 4 }}>
                 <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
                 <div>
@@ -5571,6 +5582,7 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
                   {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif', letterSpacing: '0.08em' }}>{mem.date?.slice(0,4)}</p>}
                 </div>
               </div>
+              )}
             </div>
           );
         })}
@@ -5592,8 +5604,21 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
                   </div>
                 </div>
               )}
-              {!mem.imageUrl && <div style={{ fontSize: 120, lineHeight: 1, color: c, opacity: 0.12, fontFamily: 'Georgia,serif', marginBottom: 8, alignSelf: 'flex-start' }}>"</div>}
-              <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', width: '100%' }}>{mem.text}</p>
+              {!mem.imageUrl && (
+                <div style={{ width: '100%', background: `${c}12`, border: `1px solid ${c}30`, borderRadius: 20, padding: '28px 22px 22px', position: 'relative' as const }}>
+                  <div style={{ fontSize: 72, lineHeight: 1, color: c, opacity: 0.2, fontFamily: 'Georgia,serif', position: 'absolute' as const, top: 10, left: 16 }}>"</div>
+                  <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '22px 0 18px', width: '100%' }}>{mem.text}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderTop: `1px solid ${c}25`, paddingTop: 14 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
+                    <div>
+                      <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: c, fontFamily: 'sans-serif', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>{mem.author}</p>
+                      {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,4)}</p>}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {mem.imageUrl && <p style={{ fontSize: mem.text.length > 200 ? 17 : mem.text.length > 120 ? 19 : 22, lineHeight: 1.65, color: '#1C1A16', fontFamily: 'Georgia,serif', fontStyle: 'italic', margin: '0 0 20px', width: '100%' }}>{mem.text}</p>}
+              {mem.imageUrl && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, alignSelf: 'flex-start', borderTop: '1px solid rgba(28,26,22,0.08)', paddingTop: 16, width: '100%' }}>
                 <div style={{ width: 30, height: 30, borderRadius: '50%', background: c, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>{av}</div>
                 <div>
@@ -5601,6 +5626,7 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
                   {isHistoric && <p style={{ margin: 0, fontSize: 10, color: 'rgba(28,26,22,0.3)', fontFamily: 'sans-serif' }}>{mem.date?.slice(0,4)}</p>}
                 </div>
               </div>
+              )}
             </div>
           );
         })()}
