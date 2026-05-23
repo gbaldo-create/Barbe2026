@@ -1,12 +1,11 @@
 [
   {
     "id": "mem_legacy_001",
-    "text": "La scrivania di papà era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
+    "text": "La scrivania del babbo era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
     "author": "Emanuela",
     "date": "2015-11-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_002",
