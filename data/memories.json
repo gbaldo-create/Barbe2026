@@ -87,12 +87,11 @@
   },
   {
     "id": "mem_legacy_012",
-    "text": "Il Pontabuchi era il podere di papà. Ci andava spesso, camminava tra gli olivi, controllava tutto. Tornava con le mani sporche di terra e soddisfatto.",
+    "text": "Il Pontabuchi era il podere del babbo e prima del nonno. Ci si andava spesso tutti insieme a camminare tra gli olivi,  giocare con le balle di fieno e far merenda con pane e olio",
     "author": "Aleria",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364500976.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_013",
