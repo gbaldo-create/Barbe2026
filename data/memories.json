@@ -29,7 +29,7 @@
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg",
-    "pinned": false
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_005",
