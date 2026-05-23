@@ -48,12 +48,11 @@
   },
   {
     "id": "mem_legacy_007",
-    "text": "Quando nacque Emma, la quarta nipote, papà la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
+    "text": "Quando nacque Emma, la quarta nipote, il babbo la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
     "author": "Aleria",
     "date": "2009-08-13",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
-    "visibility": "private",
-    "pinned": false
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_008",
@@ -73,10 +72,10 @@
   },
   {
     "id": "mem_legacy_010",
-    "text": "La ciccia bona alla brace era il rito dell'estate. Papà guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
+    "text": "La ciccia bona alla brace era il rito dell'estate. Il babbo guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_011",
@@ -95,12 +94,11 @@
   },
   {
     "id": "mem_legacy_013",
-    "text": "La Futa in auto con papà era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.",
+    "text": "La Futa in auto con il babbo era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.",
     "author": "Emanuela",
     "date": "2011-01-10",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364466814.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_014",
