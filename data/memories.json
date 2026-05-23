@@ -37,7 +37,8 @@
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": true
   },
   {
     "id": "mem_legacy_006",
@@ -59,8 +60,8 @@
     "text": "I pomeriggi nella tranquillità del giardino di casa dondonlandosi sull’amaca all’ombra dei pini…. momenti felici da conservare nel cuore",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg",
-    "visibility": "public"
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779564623485.jpg",
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_009",
@@ -148,7 +149,7 @@
     "date": "2013-08-22",
     "itemId": "mp4j0neptbski",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779481229758.jpg",
-    "visibility": "public"
+    "visibility": "private"
   },
   {
     "id": "mem_1779513254462",
@@ -164,6 +165,14 @@
     "author": "Emanuela",
     "date": "2026-05-23",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779548197620.jpg",
+    "visibility": "public"
+  },
+  {
+    "id": "mem_1779565039461",
+    "text": "La Gina preparava con cura i crostini toscani. Buoni come li faceva lei, non ne abbiamo mai più assaggiati. Oggi sono le nostre  madeleine.\nE quante mattine l’abbiamo osservata preparare gnocchi e tagliatelle sul tavolo della cucina, con quei gesti veloci e sicuri.",
+    "author": "Emanuela",
+    "date": "1984-08-23",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779565038156.jpg",
     "visibility": "public"
   }
 ]
