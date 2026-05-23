@@ -17,11 +17,11 @@
   },
   {
     "id": "mem_legacy_003",
-    "text": "Il lampadario del salone lo accendeva solo nelle grandi occasioni. Quando si illuminava, i cristalli proiettavano riflessi dappertutto — sembrava di stare in un palazzo.",
-    "author": "Olivia",
+    "text": "Il lampadario del salone per me era magia. Quando si illuminava, i cristalli proiettavano riflessi dappertutto, sembrava di stare in un palazzo e io credevo di essere Jane a Thornfield Hall.",
+    "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_004",
