@@ -33,7 +33,7 @@
   },
   {
     "id": "mem_legacy_005",
-    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
+    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Babbo con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
@@ -80,10 +80,10 @@
   },
   {
     "id": "mem_legacy_011",
-    "text": "L'olio buono di Franco — ogni anno ne portavamo qualche bottiglia a Torino. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
+    "text": "L'olio buono di Franco, ogni anno ne portavamo tante bottiglie a Torino, in auto quasi non ci stavamo più…. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_012",
