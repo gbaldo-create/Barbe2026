@@ -34,11 +34,11 @@
   },
   {
     "id": "mem_legacy_005",
-    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà contrattava con il formaggiaio, mamma sceglieva le verdure. Era il rito più bello della settimana.",
+    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
-    "pinned": true
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_006",
@@ -58,20 +58,19 @@
   },
   {
     "id": "mem_legacy_008",
-    "text": "Una mattina di agosto trovammo Macchia e Teresa sotto il fico. Papà disse subito di no. Li tenne entrambi senza discutere.",
-    "author": "Olivia",
+    "text": "I pomeriggi nella tranquillità del giardino di casa dondonlandosi sull’amaca all’ombra dei pini…. momenti felici da conservare nel cuore",
+    "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_009",
-    "text": "Con nonna Lia bastava poco per scoppiare a ridere. Una parola, uno sguardo — e giù. Non sapevamo mai perché, ma non importava.",
+    "text": "Con nonna Rosa bastava poco per scoppiare a ridere. Una parola, uno sguardo — e giù. Non sapevamo mai perché, ma non importava.",
     "author": "Aleria",
     "date": "2009-08-05",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/liaaleria.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_010",
@@ -110,7 +109,8 @@
     "text": "Il cronometro per il tragitto Torino-Barberino era una cosa seria. Tre ore e cinquantotto era il record. Non ricordiamo chi lo batteva, ma ognuna giurava di avercela fatta.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "pinned": false
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779533107498.jpg",
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_015",
@@ -130,12 +130,11 @@
   },
   {
     "id": "mem_1779389953234",
-    "text": "Papà amava intrattenersi con i vecchi amici in piazza, noro un po meno...",
+    "text": "Papà aveva un talento raro: riusciva a trasformare una chiacchierata  in una lectio magistralis senza possibilità di intervento del pubblico…. e i suoi amici, anche se qualche volta alzavano gli occhi al cielo, lo amavano proprio per questo ;)",
     "author": "Emanuela",
     "date": "2026-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779389951486.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_1779398566098",
@@ -154,5 +153,13 @@
     "itemId": "mp4j0neptbski",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779481229758.jpg",
     "visibility": "public"
+  },
+  {
+    "id": "mem_1779513254462",
+    "text": "Tra e pagine ingiallite riaffiora una generazione cresciuta nel rigore del tempo. Una nota di comportamento, nelle prime righe, restituisce all’improvviso mio padre bambino….",
+    "author": "Emanuela",
+    "date": "2026-04-29",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779513252728.jpg",
+    "visibility": "private"
   }
 ]
