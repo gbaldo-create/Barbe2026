@@ -34,11 +34,11 @@
   },
   {
     "id": "mem_legacy_005",
-    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà contrattava con il formaggiaio, mamma sceglieva le verdure. Era il rito più bello della settimana.",
+    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
-    "pinned": true
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_006",
