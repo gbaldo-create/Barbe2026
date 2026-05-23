@@ -5252,73 +5252,84 @@ const REEL_COVER_STYLE = `
     0%   { filter: grayscale(100%) brightness(0.85); }
     100% { filter: grayscale(0%) brightness(1); }
   }
+  @keyframes qfade {
+    0%   { opacity: 0; transform: translateY(5px); }
+    8%   { opacity: 1; transform: translateY(0); }
+    28%  { opacity: 1; transform: translateY(0); }
+    36%  { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 0; }
+  }
+  @keyframes qfade1 {
+    0%   { opacity: 1; transform: translateY(0); }
+    28%  { opacity: 1; transform: translateY(0); }
+    36%  { opacity: 0; transform: translateY(-5px); }
+    100% { opacity: 0; }
+  }
+  .cover-q1 { animation: qfade1 7s ease-in-out infinite 0s; }
+  .cover-q2 { animation: qfade 7s ease-in-out infinite 2.33s; }
+  .cover-q3 { animation: qfade 7s ease-in-out infinite 4.66s; }
+  .cover-cell::after {
+    content: '';
+    position: absolute; inset: 0;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .cover-cell:hover::after { border-color: transparent; }
+  .cover-cell-info {
+    position: absolute; bottom: 7px; left: 8px;
+    z-index: 3; opacity: 0;
+    transform: translateY(3px);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cover-cell:hover .cover-cell-info { opacity: 1; transform: translateY(0); }
 `;
 
-// Genera layout senza buchi garantiti — riempie colonna per colonna
-// con altezze variabili che si sommano sempre a `rows`
-// Genera tiles per CSS Grid — colonna per colonna, sommano sempre a `rows` → zero buchi
 function ReelCover({ memories, onStart }: {
   memories: FamilyMemory[];
   onStart: (mem?: FamilyMemory) => void;
 }) {
   const seed = React.useRef(Date.now()).current;
-  const cols = window.innerWidth >= 1024 ? 4 : 3;
 
-  // 4 colonne indipendenti — ogni colonna è uno stack di segmenti che riempie ESATTAMENTE vh
-  // Nessuna fusione orizzontale → zero buchi possibili
-  const columns: { mem: FamilyMemory; flex: number }[][] = React.useMemo(() => {
+  // Seleziona 8 foto con foto, randomizzate
+  const tiles: FamilyMemory[] = React.useMemo(() => {
     let s = seed;
     const rnd = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return Math.abs(s) / 0x7fffffff; };
-
     const withPhoto = memories.filter(m => m.imageUrl);
-    const shuffled = [...withPhoto].sort(() => rnd() - 0.5);
-    let pi = 0;
+    return [...withPhoto].sort(() => rnd() - 0.5).slice(0, 9);
+  }, [memories, seed]);
 
-    return Array.from({ length: cols }, () => {
-      // Ogni colonna: 2-3 celle con flex random (grande/piccola)
-      const count = rnd() > 0.5 ? 3 : 2;
-      // flex values: alcune grandi (2), alcune normali (1)
-      const flexes = Array.from({ length: count }, (_, i) =>
-        i === Math.floor(rnd() * count) ? 2 : 1  // una cella grande per colonna
-      );
-      return flexes.map(flex => ({
-        flex,
-        mem: shuffled[pi++ % shuffled.length],
-      }));
-    });
-  }, [memories, seed, cols]);
+  // Frasi casuali dai ricordi con testo
+  const quotes = React.useMemo(() => {
+    const withText = memories.filter(m => m.text && m.text.length > 20 && m.text.length < 120);
+    let s = seed ^ 0xbeef;
+    const rnd = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return Math.abs(s) / 0x7fffffff; };
+    const shuffled = [...withText].sort(() => rnd() - 0.5);
+    return shuffled.slice(0, 3);
+  }, [memories, seed]);
 
-  // Lista piatta di tutte le celle con colonna e indice per l'animazione
-  const allCells = React.useMemo(() =>
-    columns.flatMap((col, ci) => col.map((cell, ri) => ({ ...cell, ci, ri, key: `${ci}-${ri}` }))),
-  [columns]);
+  // Layout fisso: 3 righe asimmetriche
+  // Riga 1: [0 span2] [1]
+  // Riga 2: [2] [3 span2]
+  // Riga 3: [4] [5] [6]
+  const LAYOUT: { idx: number; span2: boolean }[][] = [
+    [{ idx: 0, span2: true }, { idx: 1, span2: false }],
+    [{ idx: 2, span2: false }, { idx: 3, span2: true }],
+    [{ idx: 4, span2: false }, { idx: 5, span2: false }, { idx: 6, span2: false }],
+  ];
 
-  // Ordine apparizione casuale
-  const order = React.useMemo(() => {
-    let s = seed ^ 0xcafe;
-    const a = allCells.map((_, i) => i);
-    for (let i = a.length - 1; i > 0; i--) {
-      s = (s * 1664525 + 1013904223) & 0xffffffff;
-      const j = Math.abs(s) % (i + 1);
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }, [allCells]);
-
-  const [visible, setVisible]       = React.useState<Set<string>>(new Set());
+  const [visible, setVisible] = React.useState<Set<number>>(new Set());
   const [showButton, setShowButton] = React.useState(false);
-  const [exiting, setExiting]       = React.useState(false);
+  const [exiting, setExiting] = React.useState(false);
 
+  // Mostra il bottone quando almeno 5 foto sono caricate
   React.useEffect(() => {
-    let i = 0;
-    const iv = setInterval(() => {
-      if (i >= order.length) { clearInterval(iv); setTimeout(() => setShowButton(true), 600); return; }
-      const cell = allCells[order[i]];
-      setVisible(prev => new Set([...prev, cell.key]));
-      i++;
-    }, 200);
-    return () => clearInterval(iv);
-  }, []);
+    if (visible.size >= Math.min(5, tiles.length)) {
+      const t = setTimeout(() => setShowButton(true), 400);
+      return () => clearTimeout(t);
+    }
+  }, [visible.size, tiles.length]);
 
   const startWith = (mem?: FamilyMemory) => {
     setShowButton(false);
@@ -5329,85 +5340,116 @@ function ReelCover({ memories, onStart }: {
   return (
     <>
       <style>{REEL_COVER_STYLE}</style>
-
       <div style={{
         position: 'fixed', inset: 0, zIndex: 500, background: '#1C1A16', overflow: 'hidden',
         animation: exiting ? 'reelFadeOut 0.95s cubic-bezier(0.25,0.1,0.25,1) forwards' : 'none',
       }}>
-        {/* Mosaico foto — colonne che coprono l'intera viewport senza sfondo */}
-        <div style={{ display: 'flex', width: '100%', height: '100dvh', gap: 0, position: 'absolute', inset: 0 }}>
-          {columns.map((col, ci) => (
-            <div key={ci} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
-              {col.map((cell, ri) => {
-                const key = `${ci}-${ri}`;
-                const vis = visible.has(key);
+
+        {/* ── MOSAICO ASIMMETRICO — layout esplicito senza buchi ── */}
+        {(() => {
+          const CELLS: { idx: number; col: string; row: string }[] = [
+            { idx: 0, col: '1 / 3', row: '1 / 2' },
+            { idx: 1, col: '3 / 4', row: '1 / 2' },
+            { idx: 2, col: '1 / 2', row: '2 / 3' },
+            { idx: 3, col: '2 / 4', row: '2 / 3' },
+            { idx: 4, col: '1 / 2', row: '3 / 4' },
+            { idx: 5, col: '2 / 3', row: '3 / 4' },
+            { idx: 6, col: '3 / 4', row: '3 / 4' },
+          ];
+          return (
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gridTemplateRows: '1fr 1fr 1fr',
+              gap: 0,
+              background: '#3A2E22',
+            }}>
+              {CELLS.map(({ idx, col, row }) => {
+                const mem = tiles[idx % tiles.length];
+                if (!mem) return null;
+                const vis = visible.has(idx);
                 return (
                   <div
-                    key={key}
-                    onClick={() => vis && startWith(cell.mem)}
+                    key={idx}
+                    className="cover-cell"
+                    onClick={() => vis && startWith(mem)}
                     style={{
-                      flex: cell.flex, overflow: 'hidden', position: 'relative',
-                      minHeight: 0,
+                      gridColumn: col, gridRow: row,
+                      position: 'relative', overflow: 'hidden',
                       cursor: vis ? 'pointer' : 'default',
                     }}
                   >
-                    {/* Foto sempre visibile come sfondo — opacity 0 → 1 senza che si veda il buco */}
-                    <img src={cell.mem.imageUrl!} alt="" style={{
-                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                      opacity: vis ? 1 : 0,
-                      filter: vis ? 'grayscale(0%) brightness(1)' : 'grayscale(100%) brightness(0.85)',
-                      transition: 'opacity 0.7s cubic-bezier(0.25,0.1,0.25,1)',
-                      animation: vis
-                        ? `reelSlowZoom ${10 + ((ci * 3 + ri) % 3) * 5}s ease-in-out infinite alternate, colorize 2.5s cubic-bezier(0.4,0,0.2,1) ${(ci * 2 + ri) * 0.15}s forwards`
-                        : 'none',
-                      transformOrigin: 'center center',
-                    }} />
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(28,26,22,0.18)', pointerEvents: 'none' }} />
+                    <img
+                      src={mem.imageUrl!}
+                      alt=""
+                      onLoad={() => setVisible(prev => new Set([...prev, idx]))}
+                      style={{
+                        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                        opacity: vis ? 1 : 0,
+                        transition: 'opacity 0.65s cubic-bezier(0.25,0.1,0.25,1)',
+                        animation: vis ? `reelSlowZoom ${12 + (idx % 3) * 4}s ease-in-out infinite alternate, colorize 2.5s cubic-bezier(0.4,0,0.2,1) ${idx * 0.12}s forwards` : 'none',
+                        transformOrigin: 'center center',
+                      }}
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(28,26,22,0.15)', pointerEvents: 'none' }} />
+                    <div className="cover-cell-info">
+                      <span style={{ fontSize: 10, letterSpacing: '0.1em', color: 'white', fontFamily: 'sans-serif', fontWeight: 700, textTransform: 'uppercase', display: 'block', textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>{mem.author}</span>
+                      {mem.date && <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', fontFamily: 'sans-serif', display: 'block', textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>{mem.date.slice(0,4)}</span>}
+                    </div>
                   </div>
                 );
               })}
             </div>
-          ))}
-        </div>
-      <div style={{ position: 'absolute', inset: 0, zIndex: 2 }}>
-        {/* Grain */}
+          );
+        })()}
+
+        {/* ── GRADIENTE SUPERIORE — sfuma verso le frasi ── */}
         <div style={{
-          position: 'absolute', inset: '-30%', zIndex: 1, pointerEvents: 'none',
+          position: 'absolute', top: 0, left: 0, right: 0, height: '28%',
+          background: 'linear-gradient(to bottom, rgba(28,26,22,0.78) 0%, rgba(28,26,22,0.25) 50%, rgba(28,26,22,0) 100%)',
+          zIndex: 3, pointerEvents: 'none',
+        }} />
+
+        {/* ── GRADIENTE INFERIORE — sfuma verso titolo ── */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: '26%',
+          background: 'linear-gradient(to top, rgba(28,26,22,1) 0%, rgba(28,26,22,0.65) 55%, rgba(28,26,22,0) 100%)',
+          zIndex: 3, pointerEvents: 'none',
+        }} />
+
+        {/* ── GRAIN ── */}
+        <div style={{
+          position: 'absolute', inset: '-30%', zIndex: 4, pointerEvents: 'none',
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundSize: '180px 180px', opacity: 0.045,
+          backgroundSize: '180px 180px', opacity: 0.04,
           animation: 'reelGrain 0.8s steps(1) infinite', mixBlendMode: 'overlay' as const,
         }} />
 
-        {/* Gradient */}
+        {/* ── TITOLO + BOTTONE ── */}
         <div style={{
-          position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, rgba(28,26,22,0.5) 0%, rgba(28,26,22,0.05) 40%, rgba(28,26,22,0.72) 100%)',
-        }} />
-
-        {/* Testo + bottone */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 3,
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
-          paddingBottom: 'max(80px, calc(env(safe-area-inset-bottom, 0px) + 50px))', gap: 24,
+          position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 5,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          padding: '0 24px', paddingBottom: 'max(80px, calc(env(safe-area-inset-bottom, 0px) + 64px))',
+          gap: 14,
           opacity: showButton ? 1 : 0,
-          transform: showButton ? 'translateY(0)' : 'translateY(28px)',
+          transform: showButton ? 'translateY(0)' : 'translateY(24px)',
           filter: showButton ? 'blur(0px)' : 'blur(6px)',
           transition: 'opacity 1.1s cubic-bezier(0.25,0.1,0.25,1), transform 1.1s cubic-bezier(0.25,0.1,0.25,1), filter 1.1s cubic-bezier(0.25,0.1,0.25,1)',
           pointerEvents: showButton ? 'auto' : 'none',
+          textAlign: 'center',
         }}>
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ margin: '0 0 12px', fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.2em', textTransform: 'uppercase' as const }}>Barberino · 2026</p>
-            <p style={{ margin: 0, fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 36, color: 'white', lineHeight: 1.25, textShadow: '0 4px 32px rgba(0,0,0,0.5)' }}>Le voci di casa</p>
-          </div>
+          <p style={{ margin: '0 0 2px', fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.75)', letterSpacing: '0.2em', textTransform: 'uppercase' as const }}>Barberino · 2026</p>
+          <p style={{ margin: 0, fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 48, color: 'white', lineHeight: 1.15, textShadow: '0 4px 32px rgba(0,0,0,0.5)' }}>Le voci di casa</p>
           <button onClick={() => startWith()} style={{
             padding: '16px 44px', borderRadius: 100,
-            border: '1px solid rgba(197,160,89,0.55)', background: 'rgba(197,160,89,0.35)',
-            backdropFilter: 'blur(12px)', color: '#C5A059', fontFamily: 'sans-serif',
+            border: '1px solid rgba(197,160,89,0.55)', background: 'rgba(197,160,89,0.32)',
+            backdropFilter: 'blur(12px)', color: 'rgba(255,255,255,0.9)', fontFamily: 'sans-serif',
             fontSize: 13, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' as const,
-            cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+            cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
           }}>Sfoglia i ricordi</button>
         </div>
-      </div>
+
       </div>
     </>
   );
