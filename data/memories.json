@@ -29,7 +29,7 @@
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg",
-    "visibility": "private"
+    "pinned": false
   },
   {
     "id": "mem_legacy_005",
@@ -37,8 +37,7 @@
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
-    "visibility": "public",
-    "pinned": true
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_006",
@@ -59,9 +58,9 @@
     "id": "mem_legacy_008",
     "text": "I pomeriggi nella tranquillità del giardino di casa dondonlandosi sull’amaca all’ombra dei pini…. momenti felici da conservare nel cuore",
     "author": "Emanuela",
-    "date": "2014-08-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779562822967.jpg",
-    "visibility": "private"
+    "date": "2026-01-01",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/bimbi.jpg",
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_009",
@@ -119,7 +118,7 @@
   },
   {
     "id": "mem_1779364718193",
-    "text": "\"Mi viene spesso in mente quando mia nonna tirava fuori il vecchio quadro con l'albero genealogico disegnato a mano. La storia della famiglia Manescalchi e Giorgi viene da molto lontano, da paesi che ora conosco solo dai nomi sul disegno che papà teneva nello studio e che ho portato con me nella mia casa...\"",
+    "text": "\"Mi viene spesso in mente quando mia nonna tirava fuori il vecchio quadro con l'albero genealogico disegnato a mano. La storia della famiglia Manescalchi e Giorgi viene da molto lontano, da paesi che ora conosco solo dai nomi sul disegno che papà teneva nello studio e che ho portato con nella mia casa...\"",
     "author": "Aleria",
     "date": "2005-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364716343.jpg",
@@ -149,7 +148,7 @@
     "date": "2013-08-22",
     "itemId": "mp4j0neptbski",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779481229758.jpg",
-    "visibility": "public"
+    "visibility": "private"
   },
   {
     "id": "mem_1779513254462",
@@ -165,14 +164,6 @@
     "author": "Emanuela",
     "date": "2026-05-23",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779548197620.jpg",
-    "visibility": "public"
-  },
-  {
-    "id": "mem_1779563599282",
-    "text": "Quando andiamo in Toscana, si mangio spesso i crostini. Ma, ogni volta penso a quelli che preparava la Gina: li insaporiva con quel suo tocco unico che non so spiegare…",
-    "author": "Emanuela",
-    "date": "2010-07-23",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779563597942.jpg",
     "visibility": "public"
   }
 ]
