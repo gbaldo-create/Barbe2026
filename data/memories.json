@@ -1,28 +1,27 @@
 [
   {
     "id": "mem_legacy_001",
-    "text": "La scrivania di papà era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
+    "text": "La scrivania del babbo era il suo mondo. Ci passava le sere dopo cena, tra carte e libri. Sul piano i segni di una vita di lavoro — cerchi di tazzine, appunti.",
     "author": "Emanuela",
     "date": "2015-11-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778774757543-IMG-1369--1-.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_002",
-    "text": "Il cassone all'ingresso era il primo mobile che vedevi entrando in casa. Papà ci teneva le coperte buone. Noi ci nascondevamo dentro da piccole, e lui faceva finta di non trovarci.",
+    "text": "Il cassone all'ingresso era il primo mobile che vedevi entrando in casa. La nonna ci teneva le coperte buone. Noi pensavamo contenesse tesori di terre lontane.",
     "author": "Aleria",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778838591027-IMG-1501-2--1-.jpg",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_003",
-    "text": "Il lampadario del salone lo accendeva solo nelle grandi occasioni. Quando si illuminava, i cristalli proiettavano riflessi dappertutto — sembrava di stare in un palazzo.",
-    "author": "Olivia",
+    "text": "Il lampadario del salone per me era magia. Quando si illuminava, i cristalli proiettavano riflessi dappertutto, sembrava di stare in un palazzo e io credevo di essere Jane a Thornfield Hall.",
+    "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/1778772692079-IMG-1267.jpg",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_004",
@@ -34,7 +33,7 @@
   },
   {
     "id": "mem_legacy_005",
-    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Papà con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
+    "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Babbo con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
     "author": "Emanuela",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
@@ -42,19 +41,18 @@
   },
   {
     "id": "mem_legacy_006",
-    "text": "La grande cucina aveva il camino sempre acceso d'inverno. Ci si sedeva intorno dopo cena, e il tempo sembrava fermarsi.",
-    "author": "Olivia",
+    "text": "Mi vedo ancora lì, nella cucina di casa, a pedalare intorno a quel tavolo gigantesco che sembrava non finire mai. Le ruote della mia piccola bici facevano scricchiolii sul pavimento mentre cercavo di stare dietro alle mie sorella, il fiato che mi mancava ma senza fermarmi. Accanto a noi il camino di pietra stava lì come quel grande lavabo dove vedevamo la Gina intenta a lavare le stoviglie del pranzo.",
+    "author": "Emanuela",
     "date": "2026-01-01",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_007",
-    "text": "Quando nacque Emma, la quarta nipote, papà la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
+    "text": "Quando nacque Emma, la quarta nipote, il babbo la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
     "author": "Aleria",
     "date": "2009-08-13",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
-    "visibility": "private",
-    "pinned": false
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_008",
@@ -74,35 +72,33 @@
   },
   {
     "id": "mem_legacy_010",
-    "text": "La ciccia bona alla brace era il rito dell'estate. Papà guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
+    "text": "La ciccia bona alla brace era il rito dell'estate. Il babbo guardava il fuoco, la carne arrivava in tavola tardi, ma nessuno si lamentava mai.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_011",
-    "text": "L'olio buono di Franco — ogni anno ne portavamo qualche bottiglia a Torino. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
+    "text": "L'olio buono di Franco, ogni anno ne portavamo tante bottiglie a Torino, in auto quasi non ci stavamo più…. Non bastava mai, ma era un modo di portarsi un pezzo di casa.",
     "author": "Olivia",
     "date": "2026-01-01",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_012",
-    "text": "Il Pontabuchi era il podere di papà. Ci andava spesso, camminava tra gli olivi, controllava tutto. Tornava con le mani sporche di terra e soddisfatto.",
+    "text": "Il Pontabuchi era il podere del babbo e prima del nonno. Ci si andava spesso tutti insieme a camminare tra gli olivi,  giocare con le balle di fieno e far merenda con pane e olio",
     "author": "Aleria",
     "date": "2026-01-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364500976.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_013",
-    "text": "La Futa in auto con papà era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.",
+    "text": "La Futa in auto con il babbo era una gara. Curve strette, finestrino aperto, Franco che non rallentava mai. Arrivavamo in cima con il cuore in gola e lui soddisfatto.",
     "author": "Emanuela",
     "date": "2011-01-10",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779364466814.jpg",
-    "visibility": "public",
-    "pinned": false
+    "visibility": "public"
   },
   {
     "id": "mem_legacy_014",
@@ -130,7 +126,7 @@
   },
   {
     "id": "mem_1779389953234",
-    "text": "Papà aveva un talento raro: riusciva a trasformare una chiacchierata  in una lectio magistralis senza possibilità di intervento del pubblico…. e i suoi amici, anche se qualche volta alzavano gli occhi al cielo, lo amavano proprio per questo ;)",
+    "text": "Il babbo aveva un talento raro: riusciva a trasformare una chiacchierata  in una lectio magistralis senza possibilità di intervento del pubblico…. e i suoi amici, anche se qualche volta alzavano gli occhi al cielo, lo amavano proprio per questo ;)",
     "author": "Emanuela",
     "date": "2026-05-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779389951486.jpg",
@@ -161,5 +157,13 @@
     "date": "2026-04-29",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779513252728.jpg",
     "visibility": "private"
+  },
+  {
+    "id": "mem_1779548199241",
+    "text": "Finita la cena, non stavo nella pelle di salire in sala. Era lì che nonna occupava il suo posto sul divano, Gina seduta sulla sedia quadrata accanto a lei, e noi intorno tutti davanti alla tv. Negli anni, anche dopo che nonna non c'era più, continuavo ad avere quella stessa fretta di finire di mangiare per raggiungerla, con mamma. Quanti film abbiamo visto insieme, sedute una accanto all'altra a ridere forte come solo con mamma riuscivo a fare",
+    "author": "Emanuela",
+    "date": "2026-05-23",
+    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779548197620.jpg",
+    "visibility": "public"
   }
 ]
