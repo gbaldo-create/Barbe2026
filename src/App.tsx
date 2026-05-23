@@ -7,7 +7,7 @@ import {
   ArrowLeft, ArrowRight, ExternalLink, Sparkles, Heart, Handshake,
   Camera, User, Upload, LogOut, Edit, Trash2, Image as ImageIcon, Check, Download,
   LayoutGrid, Lamp, Sofa, BookOpen, Armchair, Star, BookHeart, Pencil,
-  ChevronUp, ChevronDown, Bookmark, PenLine,
+  ChevronUp, ChevronDown, Bookmark, PenLine, Maximize2,
 } from 'lucide-react';
 import { HeritageItem, Memory, ViewType } from './types.ts';
 import ITEMS_DATA from '../data/items.json';
@@ -1200,6 +1200,8 @@ function ScrollReveal({ children, className, delay = 0, y = 24 }: { children: Re
 
 export default function App() {
   const [view, setView] = useState<ViewType>(() => (sessionStorage.getItem('b2026_view') as ViewType) || 'home');
+  const viewRef = useRef(view);
+  useEffect(() => { viewRef.current = view; }, [view]);
   const { scrollY } = useScroll();
   // Parallax hero: su mobile ridotto (max 40px), su desktop fino a 100px
   const heroParallax = useTransform(scrollY, [0, 600], [0, typeof window !== "undefined" && window.innerWidth < 768 ? 40 : 100]);
@@ -1213,6 +1215,9 @@ export default function App() {
   const [loaderQuote, setLoaderQuote] = useState<{ text: string; author: string } | null>(null);
   const [loaderIndex, setLoaderIndex] = useState(0);
   const [loaderFromMenu, setLoaderFromMenu] = useState(false);
+  const loaderFromMenuRef = useRef(false);
+  const [showLoaderCover, setShowLoaderCover] = useState(false);
+  useEffect(() => { loaderFromMenuRef.current = loaderFromMenu; }, [loaderFromMenu]);
   const [selectedItem, setSelectedItem] = useState<HeritageItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('Tutti');
   const [selectedStatus, setSelectedStatus] = useState('Tutti');
@@ -1328,6 +1333,18 @@ export default function App() {
   // Browser back/forward support
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
+      // Loader aperto da menu — torna alla home
+      if (viewRef.current !== 'memories-reel-v2' && loaderFromMenuRef.current) {
+        setDismissed(true);
+        setLoaderFromMenu(false);
+        setShowLoaderCover(false);
+        return;
+      }
+      // Se il reel era aperto, torna alla home senza uscire dal sito
+      if (viewRef.current === 'memories-reel-v2') {
+        setView('home');
+        return;
+      }
       // Controlla anche URL params
       const p = new URLSearchParams(window.location.search);
       const urlId = p.get('item');
@@ -1661,6 +1678,13 @@ export default function App() {
       <AnimatePresence>
         {(isLoading || !dismissed) && (
           <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-heritage-cream px-6">
+            {/* Cover mosaico — solo quando aperto da menu/hero su desktop */}
+            {showLoaderCover && loaderFromMenu && (
+              <ReelCover
+                memories={shuffledMemories}
+                onStart={() => setShowLoaderCover(false)}
+              />
+            )}
             {/* Spinner — solo al caricamento normale */}
             {isLoading && !loaderFromMenu && (
               <div className="w-16 h-16 border-4 border-heritage-gold border-t-transparent rounded-full animate-spin mb-8" />
@@ -1703,7 +1727,7 @@ export default function App() {
             </AnimatePresence>
             <div className="mt-8 h-14 flex items-center justify-center">
               {(!isLoading || loaderFromMenu) && (
-                <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { if (!loaderFromMenu) sessionStorage.setItem('b2026_loader_seen', '1'); setDismissed(true); setLoaderFromMenu(false); }} className="px-10 py-4 bg-heritage-ink text-heritage-cream rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-heritage-olive transition-colors flex items-center gap-3">
+                <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { if (!loaderFromMenu) sessionStorage.setItem('b2026_loader_seen', '1'); setDismissed(true); setLoaderFromMenu(false); setShowLoaderCover(false); }} className="px-10 py-4 bg-heritage-ink text-heritage-cream rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-heritage-olive transition-colors flex items-center gap-3">
                   {loaderFromMenu ? 'Chiudi' : 'Entra'} <ArrowRight size={16} />
                 </motion.button>
               )}
@@ -1828,7 +1852,7 @@ export default function App() {
                 <div className="flex flex-col p-6 gap-4">
                   <button onClick={() => { handleBackToCatalog('catalog'); window.scrollTo({ top: 0, behavior: 'smooth' }); setExplorePanelMode('discover'); setIsMobileMenuOpen(false); setTimeout(() => setIsExplorePanelOpen(true), view === 'catalog' ? 0 : 300); }} className={`flex items-center gap-3 p-3 rounded-xl ${view === 'catalog' ? 'bg-white/10 text-white' : 'text-white/60'}`}><Archive size={20} /><span className="font-heritage text-lg">Gli Oggetti di Casa</span></button>
                   <button onClick={() => { setIsMobileMenuOpen(false); scrollToSection('how-it-works', view); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Handshake size={20} /><span className="font-heritage text-lg">Vendita / Adozione</span></button>
-                  <button onClick={() => { setIsMobileMenuOpen(false); setView('memories-reel-v2'); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
+                  <button onClick={() => { setIsMobileMenuOpen(false); setView('memories-reel-v2'); history.pushState({ reelOpen: true, prevView: 'home' }, ''); }} className="flex items-center gap-3 p-3 rounded-xl text-white/60"><Heart size={20} /><span className="font-heritage text-lg">Ricordi</span></button>
                 </div>
               </motion.div>
             )}
@@ -1869,7 +1893,7 @@ export default function App() {
                         </span>
                       </div>
                       {labFeatures['memories-reel-v2'] && (
-                        <button onClick={() => { setView('memories-reel-v2'); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-heritage-gold hover:bg-white/10 transition-colors w-full mt-1">
+                        <button onClick={() => { setView('memories-reel-v2'); history.pushState({ reelOpen: true, prevView: 'home' }, ''); setShowAdminDropdown(false); }} className="flex items-center gap-3 p-3 rounded-xl text-heritage-gold hover:bg-white/10 transition-colors w-full mt-1">
                           <span className="font-heritage text-lg">▶ Apri Reel v2</span>
                         </button>
                       )}
@@ -1909,12 +1933,15 @@ export default function App() {
                   <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-md md:max-w-xl lg:max-w-[60%] xl:max-w-[70%] p-6 md:py-6 md:px-0 space-y-3 md:space-y-4">
                     <div>
                       <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }} className="text-heritage-gold text-[11px] uppercase tracking-[0.35em] font-bold mb-1 block">1 Corso Corsini</motion.span>
-                      <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] leading-[1.02] font-serif text-white italic"><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="block">Una casa che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">cambia,</span></motion.span><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="block">ricordi che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">restano.</span></motion.span></h2>
+                      <h2 className="text-5xl md:text-6xl lg:text-[4.5rem] xl:text-[5.5rem] leading-[1.02] font-serif text-white italic"><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.25 }} className="block">Una casa che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">cambia,</span></motion.span><motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="block">memorie che <span className="text-heritage-gold not-italic font-display font-bold tracking-tight">restano.</span></motion.span></h2>
                     </div>
                     <p className="text-base md:text-lg text-white/75 leading-snug font-heritage italic">"Ogni oggetto che parte porta con sé un frammento di noi. Lo affidiamo a chi saprà amarlo."</p>
-                    <div className="pt-1">
-                      <button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="px-7 py-3.5 bg-heritage-gold text-white rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white hover:text-heritage-ink transition-all shadow-xl group flex items-center gap-3">
+                    <div className="pt-1 flex flex-wrap items-center gap-3">
+                      <button onClick={() => { setExplorePanelMode('discover'); setIsExplorePanelOpen(true); }} className="min-w-[200px] px-7 py-3.5 bg-heritage-gold text-white rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white hover:text-heritage-ink transition-all shadow-xl group flex items-center justify-center gap-3">
                         Entra in Casa <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      </button>
+                      <button onClick={() => { if (window.innerWidth < 1024) { setView('memories-reel-v2'); history.pushState({ reelOpen: true, prevView: 'home' }, ''); } else { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); setShowLoaderCover(true); history.pushState({ loaderOpen: true }, ""); } }} className="min-w-[200px] px-7 py-3.5 bg-white/10 backdrop-blur-sm text-white border border-white/25 rounded-full font-bold uppercase tracking-widest text-[11px] md:text-[12px] hover:bg-white/20 transition-all group flex items-center justify-center gap-3">
+                        Rivivi la storia <Heart size={13} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                       </button>
                     </div>
                   </motion.div>
@@ -2105,7 +2132,7 @@ export default function App() {
                     <div className="flex items-end justify-between mb-4">
                       <span className="text-[12px] tracking-[0.35em] uppercase font-bold text-heritage-gold">I ricordi di famiglia</span>
                       {visibleMemories.length > 0 && (
-                        <button onClick={() => setView('memories-reel-v2')} className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-heritage-ink text-white rounded-full text-[10px] font-bold uppercase tracking-widest">
+                        <button onClick={() => { setView('memories-reel-v2'); history.pushState({ reelOpen: true, prevView: 'home' }, ''); }} className="md:hidden flex items-center gap-1.5 px-3 py-1.5 bg-heritage-ink text-white rounded-full text-[10px] font-bold uppercase tracking-widest">
                           <BookHeart size={11} className="text-heritage-gold" /> Sfoglia
                         </button>
                       )}
@@ -2165,7 +2192,7 @@ export default function App() {
                     </>)}
                     {/* Link vedi tutti */}
                     <div className="flex justify-center mt-10">
-                      <button onClick={() => { if (window.innerWidth < 1024) { setView('memories-reel-v2'); } else { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); } }} className="group flex items-center gap-3 px-8 py-4 bg-heritage-ink text-heritage-cream rounded-full text-[12px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-all shadow-lg">
+                      <button onClick={() => { if (window.innerWidth < 1024) { setView('memories-reel-v2'); history.pushState({ reelOpen: true, prevView: 'home' }, ''); } else { setLoaderIndex(0); setLoaderFromMenu(true); setDismissed(false); setShowLoaderCover(true); history.pushState({ loaderOpen: true }, ""); } }} className="group flex items-center gap-3 px-8 py-4 bg-heritage-ink text-heritage-cream rounded-full text-[12px] font-bold uppercase tracking-widest hover:bg-heritage-olive transition-all shadow-lg">
                         Leggi tutti i ricordi <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
@@ -5198,11 +5225,202 @@ function ReelV2Photo({ src, year }: { src: string; year?: string }) {
 }
 
 // ─── 🧪 Lab: MemoriesReelV2 — stile loader ───────────────────────────────────
+// ─── Reel Cover — mosaico animato, una volta per sessione ───────────────────
+
+const REEL_COVER_STYLE = `
+  @keyframes reelSlowZoom {
+    from { transform: scale(1); }
+    to   { transform: scale(1.06); }
+  }
+  @keyframes reelGrain {
+    0%,100% { transform: translate(0,0); }
+    10%  { transform: translate(-2%,-3%); }
+    30%  { transform: translate(3%,2%); }
+    50%  { transform: translate(-1%,4%); }
+    70%  { transform: translate(4%,-1%); }
+    90%  { transform: translate(-3%,3%); }
+  }
+  @keyframes reelFadeOut {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.04); }
+  }
+  @keyframes lightboxIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes colorize {
+    0%   { filter: grayscale(100%) brightness(0.85); }
+    100% { filter: grayscale(0%) brightness(1); }
+  }
+`;
+
+// Genera layout senza buchi garantiti — riempie colonna per colonna
+// con altezze variabili che si sommano sempre a `rows`
+// Genera tiles per CSS Grid — colonna per colonna, sommano sempre a `rows` → zero buchi
+function ReelCover({ memories, onStart }: {
+  memories: FamilyMemory[];
+  onStart: (mem?: FamilyMemory) => void;
+}) {
+  const seed = React.useRef(Date.now()).current;
+  const cols = window.innerWidth >= 1024 ? 4 : 3;
+
+  // 4 colonne indipendenti — ogni colonna è uno stack di segmenti che riempie ESATTAMENTE vh
+  // Nessuna fusione orizzontale → zero buchi possibili
+  const columns: { mem: FamilyMemory; flex: number }[][] = React.useMemo(() => {
+    let s = seed;
+    const rnd = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return Math.abs(s) / 0x7fffffff; };
+
+    const withPhoto = memories.filter(m => m.imageUrl);
+    const shuffled = [...withPhoto].sort(() => rnd() - 0.5);
+    let pi = 0;
+
+    return Array.from({ length: cols }, () => {
+      // Ogni colonna: 2-3 celle con flex random (grande/piccola)
+      const count = rnd() > 0.5 ? 3 : 2;
+      // flex values: alcune grandi (2), alcune normali (1)
+      const flexes = Array.from({ length: count }, (_, i) =>
+        i === Math.floor(rnd() * count) ? 2 : 1  // una cella grande per colonna
+      );
+      return flexes.map(flex => ({
+        flex,
+        mem: shuffled[pi++ % shuffled.length],
+      }));
+    });
+  }, [memories, seed, cols]);
+
+  // Lista piatta di tutte le celle con colonna e indice per l'animazione
+  const allCells = React.useMemo(() =>
+    columns.flatMap((col, ci) => col.map((cell, ri) => ({ ...cell, ci, ri, key: `${ci}-${ri}` }))),
+  [columns]);
+
+  // Ordine apparizione casuale
+  const order = React.useMemo(() => {
+    let s = seed ^ 0xcafe;
+    const a = allCells.map((_, i) => i);
+    for (let i = a.length - 1; i > 0; i--) {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      const j = Math.abs(s) % (i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }, [allCells]);
+
+  const [visible, setVisible]       = React.useState<Set<string>>(new Set());
+  const [showButton, setShowButton] = React.useState(false);
+  const [exiting, setExiting]       = React.useState(false);
+
+  React.useEffect(() => {
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i >= order.length) { clearInterval(iv); setTimeout(() => setShowButton(true), 600); return; }
+      const cell = allCells[order[i]];
+      setVisible(prev => new Set([...prev, cell.key]));
+      i++;
+    }, 200);
+    return () => clearInterval(iv);
+  }, []);
+
+  const startWith = (mem?: FamilyMemory) => {
+    setShowButton(false);
+    setExiting(true);
+    setTimeout(() => onStart(mem), 950);
+  };
+
+  return (
+    <>
+      <style>{REEL_COVER_STYLE}</style>
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 500, background: '#1C1A16', overflow: 'hidden',
+        animation: exiting ? 'reelFadeOut 0.95s cubic-bezier(0.25,0.1,0.25,1) forwards' : 'none',
+      }}>
+        {/* 4 colonne flex indipendenti — zero buchi */}
+        <div style={{ display: 'flex', width: '100%', height: '100%', gap: 0 }}>
+          {columns.map((col, ci) => (
+            <div key={ci} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {col.map((cell, ri) => {
+                const key = `${ci}-${ri}`;
+                const vis = visible.has(key);
+                return (
+                  <div
+                    key={key}
+                    onClick={() => vis && startWith(cell.mem)}
+                    style={{
+                      flex: cell.flex,
+                      overflow: 'hidden', position: 'relative',
+                      opacity: vis ? 1 : 0,
+                      transition: 'opacity 0.7s cubic-bezier(0.25,0.1,0.25,1)',
+                      cursor: vis ? 'pointer' : 'default',
+                      minHeight: 0,
+                    }}
+                  >
+                    <img src={cell.mem.imageUrl!} alt="" style={{
+                      width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                      filter: vis ? 'grayscale(0%) brightness(1)' : 'grayscale(100%) brightness(0.85)',
+                      animation: vis
+                        ? `reelSlowZoom ${10 + ((ci * 3 + ri) % 3) * 5}s ease-in-out infinite alternate, colorize 2.5s cubic-bezier(0.4,0,0.2,1) ${(ci * 2 + ri) * 0.15}s forwards`
+                        : 'none',
+                      transformOrigin: 'center center',
+                    }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(28,26,22,0.18)', pointerEvents: 'none' }} />
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        {/* Grain */}
+        <div style={{
+          position: 'absolute', inset: '-30%', zIndex: 3, pointerEvents: 'none',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundSize: '180px 180px', opacity: 0.045,
+          animation: 'reelGrain 0.8s steps(1) infinite', mixBlendMode: 'overlay' as const,
+        }} />
+
+        {/* Gradient */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none',
+          background: 'linear-gradient(to bottom, rgba(28,26,22,0.5) 0%, rgba(28,26,22,0.05) 40%, rgba(28,26,22,0.72) 100%)',
+        }} />
+
+        {/* Testo + bottone */}
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 10,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
+          paddingBottom: 80, gap: 24,
+          opacity: showButton ? 1 : 0,
+          transform: showButton ? 'translateY(0)' : 'translateY(28px)',
+          filter: showButton ? 'blur(0px)' : 'blur(6px)',
+          transition: 'opacity 1.1s cubic-bezier(0.25,0.1,0.25,1), transform 1.1s cubic-bezier(0.25,0.1,0.25,1), filter 1.1s cubic-bezier(0.25,0.1,0.25,1)',
+          pointerEvents: showButton ? 'auto' : 'none',
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ margin: '0 0 12px', fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 14, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.2em', textTransform: 'uppercase' as const }}>Barberino · 2026</p>
+            <p style={{ margin: 0, fontFamily: 'Georgia,serif', fontStyle: 'italic', fontSize: 36, color: 'white', lineHeight: 1.25, textShadow: '0 4px 32px rgba(0,0,0,0.5)' }}>Le voci di casa</p>
+          </div>
+          <button onClick={() => startWith()} style={{
+            padding: '16px 44px', borderRadius: 100,
+            border: '1px solid rgba(197,160,89,0.55)', background: 'rgba(197,160,89,0.35)',
+            backdropFilter: 'blur(12px)', color: '#C5A059', fontFamily: 'sans-serif',
+            fontSize: 13, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase' as const,
+            cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+          }}>Sfoglia i ricordi</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClose: () => void }) {
   const [activeAuthor, setActiveAuthor] = React.useState('Tutti');
   const [sortOrder, setSortOrder] = React.useState<'default' | 'asc' | 'desc'>('default');
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [current, setCurrent] = React.useState(0);
+  const [lightboxUrl, setLightboxUrl] = React.useState<string | null>(null);
+
+  // Cover mosaico — sempre all'apertura
+  const [showCover, setShowCover] = React.useState(true);
+  const pendingMemId = React.useRef<string | null>(null);
 
   const filtered = React.useMemo(() => {
     const base = activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor);
@@ -5210,6 +5428,31 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
     if (sortOrder === 'desc') return [...base].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     return base;
   }, [memories, activeAuthor, sortOrder]);
+
+  const handleCoverDone = (mem?: FamilyMemory) => {
+    if (mem) pendingMemId.current = mem.id;
+    setShowCover(false);
+  };
+
+  // Quando cover sparisce, scorri al ricordo tappato
+  React.useEffect(() => {
+    if (showCover) return;
+    const id = pendingMemId.current;
+    if (!id) return;
+    pendingMemId.current = null;
+    const pos = filtered.findIndex(m => m.id === id);
+    if (pos < 0) return;
+    setCurrent(pos);
+    // Aspetta che il container sia visibile e rendered
+    setTimeout(() => {
+      const el = containerRef.current;
+      if (!el) return;
+      el.style.scrollSnapType = 'none';
+      el.scrollTop = pos * el.clientHeight;
+      requestAnimationFrame(() => { el.style.scrollSnapType = 'y mandatory'; });
+    }, 100);
+  }, [showCover]);
+
 
   React.useEffect(() => {
     setCurrent(0);
@@ -5243,7 +5486,11 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
   const ini = (author: string) => author.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase();
 
   return (
+    <>
     <div style={{ position: 'fixed', inset: 0, zIndex: 400, background: '#F5F0E8', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+      {/* Cover mosaico — una volta per sessione */}
+      {showCover && window.innerWidth < 1024 && <ReelCover memories={memories} onStart={handleCoverDone} />}
 
       {/* Header filtri — fuori dal flusso dello scroll */}
       <div style={{ flexShrink: 0, padding: '10px 12px', background: '#F2EDE3', borderBottom: '1px solid rgba(28,26,22,0.06)', zIndex: 10 }}>
@@ -5301,9 +5548,14 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
           const isHistoric = mem.date && parseInt(mem.date.slice(0,4)) < new Date().getFullYear();
           return (
             <div key={mem.id} style={{ height: '100%', width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20, paddingLeft: 24, paddingRight: 24, paddingBottom: 90, boxSizing: 'border-box' as const, background: '#F5F0E8', minHeight: '100%' }}>
-              {/* Foto con bordo arrotondato */}
+              {/* Foto con tap per fullscreen */}
               {mem.imageUrl && (
-                <ReelV2Photo src={mem.imageUrl || ''} year={mem.date?.slice(0,4)} />
+                <div onClick={() => setLightboxUrl(mem.imageUrl!)} style={{ cursor: 'zoom-in', position: 'relative' as const }}>
+                  <ReelV2Photo src={mem.imageUrl || ''} year={mem.date?.slice(0,4)} />
+                  <div style={{ position: 'absolute' as const, bottom: 10, right: 10, background: 'rgba(28,26,22,0.5)', borderRadius: 8, padding: '5px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' as const }}>
+                    <Maximize2 size={13} color="#C5A059" strokeWidth={2} />
+                  </div>
+                </div>
               )}
               {/* Senza foto — virgolettone */}
               {!mem.imageUrl && (
@@ -5331,8 +5583,13 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
           return (
             <div key="v2-clone" style={{ height: '100%', width: '100%', flexShrink: 0, scrollSnapAlign: 'start', scrollSnapStop: 'always', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20, paddingLeft: 24, paddingRight: 24, paddingBottom: 90, boxSizing: 'border-box' as const, background: '#F5F0E8', minHeight: '100%' }}>
               {mem.imageUrl && (
-                <div style={{ width: '100%', maxWidth: 340, borderRadius: 20, overflow: 'hidden', marginBottom: 24, flexShrink: 0, boxShadow: '0 8px 32px rgba(28,26,22,0.12)', border: '1px solid rgba(28,26,22,0.06)' }}>
-                  <img src={mem.imageUrl} alt="" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 260, objectFit: 'contain' }} />
+                <div onClick={() => setLightboxUrl(mem.imageUrl!)} style={{ cursor: 'zoom-in', position: 'relative' as const }}>
+                  <div style={{ width: '100%', maxWidth: 340, borderRadius: 20, overflow: 'hidden', marginBottom: 24, flexShrink: 0, boxShadow: '0 8px 32px rgba(28,26,22,0.12)', border: '1px solid rgba(28,26,22,0.06)' }}>
+                    <img src={mem.imageUrl} alt="" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 260, objectFit: 'contain' }} />
+                  </div>
+                  <div style={{ position: 'absolute' as const, bottom: 34, right: 10, background: 'rgba(28,26,22,0.5)', borderRadius: 8, padding: '5px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' as const }}>
+                    <Maximize2 size={13} color="#C5A059" strokeWidth={2} />
+                  </div>
                 </div>
               )}
               {!mem.imageUrl && <div style={{ fontSize: 120, lineHeight: 1, color: c, opacity: 0.12, fontFamily: 'Georgia,serif', marginBottom: 8, alignSelf: 'flex-start' }}>"</div>}
@@ -5349,6 +5606,45 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
         })()}
       </div>
     </div>
+
+    {/* Lightbox fullscreen */}
+    {lightboxUrl && (
+      <div
+        onClick={() => setLightboxUrl(null)}
+        style={{
+          position: 'fixed' as const, inset: 0, zIndex: 9999,
+          background: 'rgba(28,26,22,0.95)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 16,
+          animation: 'lightboxIn 0.4s cubic-bezier(0.25,0.1,0.25,1)',
+        }}
+      >
+        <button
+          onClick={() => setLightboxUrl(null)}
+          style={{
+            position: 'absolute' as const, top: 20, right: 20,
+            width: 40, height: 40, borderRadius: '50%',
+            background: 'rgba(197,160,89,0.15)',
+            border: '1px solid rgba(197,160,89,0.3)',
+            color: '#C5A059', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <X size={18} strokeWidth={2} />
+        </button>
+        <img
+          src={lightboxUrl}
+          alt=""
+          onClick={e => e.stopPropagation()}
+          style={{
+            maxWidth: '100%', maxHeight: '90vh',
+            borderRadius: 12, objectFit: 'contain',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}
+        />
+      </div>
+    )}
+    </>
   );
 }
 
