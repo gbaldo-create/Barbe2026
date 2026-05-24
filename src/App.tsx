@@ -1354,7 +1354,7 @@ export default function App() {
   // Al primo caricamento scegli un ricordo pubblico random
   useEffect(() => {
     if (shuffledMemories.length > 0) {
-      const publicMems = shuffledMemories.filter(m => !m.private);
+      const publicMems = shuffledMemories.filter(m => m.visibility !== 'private');
       const pool = publicMems.length > 0 ? publicMems : shuffledMemories;
       const randomIdx = shuffledMemories.indexOf(pool[Math.floor(Math.random() * pool.length)]);
       setLoaderIndex(randomIdx >= 0 ? randomIdx : 0);
