@@ -1777,8 +1777,8 @@ export default function App() {
                       const x1 = 50+Math.sin(angle)*r1, y1 = 50-Math.cos(angle)*r1;
                       const x2 = 50+Math.sin(angle)*r2, y2 = 50-Math.cos(angle)*r2;
                       const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-                      line.setAttribute('x1',x1); line.setAttribute('y1',y1);
-                      line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+                      line.setAttribute('x1',String(x1)); line.setAttribute('y1',String(y1));
+                      line.setAttribute('x2',String(x2)); line.setAttribute('y2',String(y2));
                       line.setAttribute('stroke', isHour ? 'rgba(107,79,34,0.55)' : 'rgba(107,79,34,0.2)');
                       line.setAttribute('stroke-width', isHour ? '1.5' : '0.6');
                       line.setAttribute('stroke-linecap','round');
