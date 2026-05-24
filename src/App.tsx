@@ -5641,9 +5641,7 @@ function MemoriesReelV2({ memories, onClose }: { memories: FamilyMemory[]; onClo
               {mem.imageUrl && (
                 <div onClick={() => setLightboxUrl(mem.imageUrl!)} style={{ cursor: 'zoom-in', position: 'relative' as const }}>
                   <ReelV2Photo src={mem.imageUrl || ''} year={mem.date?.slice(0,4)} />
-                  <div style={{ position: 'absolute' as const, bottom: 10, right: 10, background: 'rgba(28,26,22,0.5)', borderRadius: 8, padding: '5px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' as const }}>
-                    <Maximize2 size={13} color="#C5A059" strokeWidth={2} />
-                  </div>
+
                 </div>
               )}
               {/* Senza foto — card colorata autore */}
