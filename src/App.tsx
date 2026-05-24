@@ -1267,7 +1267,8 @@ export default function App() {
     try { const c = localStorage.getItem('b2026_items'); return c ? JSON.parse(c) : INITIAL_ITEMS; }
     catch { return INITIAL_ITEMS; }
   });
-  const alreadySeen = sessionStorage.getItem('b2026_loader_seen') === '1';
+  const hasItemParam = new URLSearchParams(window.location.search).has('item');
+  const alreadySeen = sessionStorage.getItem('b2026_loader_seen') === '1' || hasItemParam;
   const [isLoading, setIsLoading] = useState(!alreadySeen);
   const [dismissed, setDismissed] = useState(alreadySeen);
   const [loaderQuote, setLoaderQuote] = useState<{ text: string; author: string } | null>(null);
