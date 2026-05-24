@@ -1198,6 +1198,64 @@ function ScrollReveal({ children, className, delay = 0, y = 24 }: { children: Re
 }
 
 
+const AUTHOR_COLORS: Record<string,string> = { Emanuela: '#C5A059', Olivia: '#4A8B6B', Aleria: '#7B6B9A', Gianmaria: '#6B4A8B' };
+
+function DesktopMemoriesView({ memories, loaderIndex, setLoaderIndex }: {
+  memories: FamilyMemory[];
+  loaderIndex: number;
+  setLoaderIndex: React.Dispatch<React.SetStateAction<number>>;
+}) {
+  const [activeAuthor, setActiveAuthor] = React.useState('Tutti');
+  const [lightboxUrl, setLightboxUrl] = React.useState<string | null>(null);
+  const authors = ['Tutti', ...Array.from(new Set(memories.map(m => m.author).filter(Boolean)))];
+  const filtered = activeAuthor === 'Tutti' ? memories : memories.filter(m => m.author === activeAuthor);
+  const safeIdx = loaderIndex % Math.max(filtered.length, 1);
+  const mem = filtered[safeIdx];
+
+  return (
+    <div className="flex flex-col items-center w-full max-w-sm gap-5">
+      <div className="flex flex-wrap justify-center gap-2">
+        {authors.map(a => (
+          <button key={a} onClick={() => { setActiveAuthor(a); setLoaderIndex(0); }}
+            style={{ borderColor: activeAuthor === a ? (AUTHOR_COLORS[a] || '#1C1A16') : 'rgba(28,26,22,0.12)', background: activeAuthor === a ? (AUTHOR_COLORS[a] || '#1C1A16') : 'transparent', color: activeAuthor === a ? 'white' : 'rgba(28,26,22,0.5)' }}
+            className="px-4 py-1.5 rounded-full border text-[11px] font-bold uppercase tracking-[0.14em] transition-all"
+          >{a}</button>
+        ))}
+      </div>
+      {/* Lightbox */}
+      {lightboxUrl && (
+        <div onClick={() => setLightboxUrl(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}>
+          <img src={lightboxUrl} alt="" style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8 }} />
+          <button onClick={() => setLightboxUrl(null)} style={{ position: 'absolute', top: 20, right: 24, background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', fontSize: 28, cursor: 'pointer', borderRadius: '50%', width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+        </div>
+      )}
+      <AnimatePresence mode="wait">
+        <motion.div key={`${activeAuthor}-${safeIdx}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3 }} className="flex flex-col items-center w-full gap-4">
+          {mem?.imageUrl && (
+            <div className="w-full rounded-2xl overflow-hidden border border-heritage-ink/10 cursor-zoom-in" style={{aspectRatio: '4/3'}} onClick={() => setLightboxUrl(mem.imageUrl!)}>
+              <img src={mem.imageUrl} alt={mem.author || ""} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <p className="text-heritage-ink/90 text-lg font-heritage italic leading-relaxed text-center">"{mem?.text || ""}"</p>
+          <div className="flex flex-col items-center gap-0.5">
+            <p className="font-bold uppercase tracking-[0.2em] text-[12px]" style={{ color: AUTHOR_COLORS[mem?.author || ''] || '#C5A059' }}>— {mem?.author || ""}</p>
+            {mem?.date && <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{mem.date}</p>}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex items-center gap-6">
+        <button onClick={() => setLoaderIndex(i => (i - 1 + Math.max(filtered.length, 1)) % Math.max(filtered.length, 1))} className="w-10 h-10 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors">
+          <ChevronLeft size={18} className="text-heritage-ink/60" />
+        </button>
+        <span className="text-[11px] text-heritage-ink/30 font-sans tracking-widest">{safeIdx + 1} / {filtered.length}</span>
+        <button onClick={() => setLoaderIndex(i => (i + 1) % Math.max(filtered.length, 1))} className="w-10 h-10 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors">
+          <ChevronRight size={18} className="text-heritage-ink/60" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [view, setView] = useState<ViewType>(() => (sessionStorage.getItem('b2026_view') as ViewType) || 'home');
   const viewRef = useRef(view);
@@ -1213,7 +1271,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(!alreadySeen);
   const [dismissed, setDismissed] = useState(alreadySeen);
   const [loaderQuote, setLoaderQuote] = useState<{ text: string; author: string } | null>(null);
-  const [loaderIndex, setLoaderIndex] = useState(0);
+  const [loaderIndex, setLoaderIndex] = useState(() => 0); // verrà aggiornato al primo caricamento
   const [loaderFromMenu, setLoaderFromMenu] = useState(false);
   const loaderFromMenuRef = useRef(false);
   const [showLoaderCover, setShowLoaderCover] = useState(false);
@@ -1293,12 +1351,16 @@ export default function App() {
     setTimeout(() => setIsLoading(false), 1100);
   }, []);
 
-  // Sync loaderQuote when memories load from GitHub
+  // Al primo caricamento scegli un ricordo pubblico random
   useEffect(() => {
-    if (shuffledMemories.length > 0 && loaderIndex < shuffledMemories.length) {
-      setLoaderQuote({ text: shuffledMemories[loaderIndex]?.text || '', author: shuffledMemories[loaderIndex]?.author || '' });
+    if (shuffledMemories.length > 0) {
+      const publicMems = shuffledMemories.filter(m => !m.private);
+      const pool = publicMems.length > 0 ? publicMems : shuffledMemories;
+      const randomIdx = shuffledMemories.indexOf(pool[Math.floor(Math.random() * pool.length)]);
+      setLoaderIndex(randomIdx >= 0 ? randomIdx : 0);
+      setLoaderQuote({ text: shuffledMemories[randomIdx]?.text || '', author: shuffledMemories[randomIdx]?.author || '' });
     }
-  }, [shuffledMemories, loaderIndex]);
+  }, [shuffledMemories.length]); // solo al primo caricamento
 
   useEffect(() => {
     sessionStorage.setItem('b2026_view', view);
@@ -1691,60 +1753,31 @@ export default function App() {
             )}
             <AnimatePresence mode="wait">
               {loaderFromMenu ? (
-                <motion.div key={loaderIndex} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.35 }} className="flex flex-col items-center w-full max-w-sm gap-5">
-
-                  {/* Foto */}
-                  {shuffledMemories[loaderIndex]?.imageUrl && (
-                    <div className="w-full rounded-2xl overflow-hidden border border-heritage-ink/10" style={{aspectRatio: '4/3'}}>
-                      <img src={shuffledMemories[loaderIndex]?.imageUrl} alt={shuffledMemories[loaderIndex]?.author || ""} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  {/* Testo */}
-                  <p className="text-heritage-ink/90 text-lg font-heritage italic leading-relaxed text-center">"{shuffledMemories[loaderIndex]?.text || ""}"</p>
-                  <div className="flex flex-col items-center gap-0.5">
-                    <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px]">— {shuffledMemories[loaderIndex]?.author || ""}</p>
-                    <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{shuffledMemories[loaderIndex]?.date || ""}</p>
-                  </div>
-
-                  {/* Frecce */}
-                  <div className="flex items-center gap-4">
-                    <button onClick={() => setLoaderIndex(i => (i - 1 + Math.max(shuffledMemories.length, 1)) % Math.max(shuffledMemories.length, 1))} className="w-11 h-11 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"><ChevronLeft size={20} className="text-heritage-ink" /></button>
-                    <button onClick={() => setLoaderIndex(i => (i + 1) % Math.max(shuffledMemories.length, 1))} className="w-11 h-11 rounded-full bg-heritage-gold border-none flex items-center justify-center transition-colors"><ChevronRight size={20} className="text-white" /></button>
-                  </div>
-                </motion.div>
+                <DesktopMemoriesView memories={shuffledMemories} loaderIndex={loaderIndex} setLoaderIndex={setLoaderIndex} />
               ) : (
-                <motion.div key={loaderIndex} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center max-w-lg w-full">
-                  <h2 className="text-3xl font-serif mb-6 italic text-center">Raccogliendo i Ricordi...</h2>
+                <motion.div key="loader-single" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }} className="flex flex-col items-center max-w-lg w-full gap-5">
+                  <h2 className="text-3xl font-serif italic text-center">Raccogliendo i Ricordi...</h2>
                   {shuffledMemories[loaderIndex]?.imageUrl && (
-                    <div className="w-full max-w-xs rounded-2xl overflow-hidden border border-heritage-ink/10 mb-4" style={{aspectRatio:'4/3'}}>
+                    <div className="w-full max-w-xs rounded-2xl overflow-hidden border border-heritage-ink/10" style={{aspectRatio:'4/3'}}>
                       <img src={shuffledMemories[loaderIndex]?.imageUrl} alt="" className="w-full h-full object-cover" />
                     </div>
                   )}
                   <p className="text-heritage-ink/90 text-xl font-heritage italic leading-relaxed text-center">"{shuffledMemories[loaderIndex]?.text || ""}"</p>
-                  <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px] mt-3">— {shuffledMemories[loaderIndex]?.author || ""}</p>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px]">— {shuffledMemories[loaderIndex]?.author || ""}</p>
+                    {shuffledMemories[loaderIndex]?.date && <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{shuffledMemories[loaderIndex]?.date}</p>}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
             <div className="mt-8 h-14 flex items-center justify-center">
               {(!isLoading || loaderFromMenu) && (
                 <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { if (!loaderFromMenu) sessionStorage.setItem('b2026_loader_seen', '1'); setDismissed(true); setLoaderFromMenu(false); setShowLoaderCover(false); }} className="px-10 py-4 bg-heritage-ink text-heritage-cream rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-heritage-olive transition-colors flex items-center gap-3">
-                  {loaderFromMenu ? 'Chiudi' : 'Entra'} <ArrowRight size={16} />
+                  {loaderFromMenu ? 'Rientra' : 'Entra'} <ArrowRight size={16} />
                 </motion.button>
               )}
             </div>
-            {/* Frecce navigazione ricordi — sempre visibili in basso */}
-            {!loaderFromMenu && (
-              <div className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-6">
-                <button
-                  onClick={() => setLoaderIndex(i => (i - 1 + Math.max(shuffledMemories.length, 1)) % Math.max(shuffledMemories.length, 1))}
-                  className="w-9 h-9 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"
-                ><ChevronLeft size={16} className="text-heritage-ink/50" /></button>
-                <button
-                  onClick={() => setLoaderIndex(i => (i + 1) % Math.max(shuffledMemories.length, 1))}
-                  className="w-9 h-9 rounded-full border border-heritage-ink/15 flex items-center justify-center hover:bg-heritage-ink/5 transition-colors"
-                ><ChevronRight size={16} className="text-heritage-ink/50" /></button>
-              </div>
-            )}
+
           </motion.div>
         )}
       </AnimatePresence>
@@ -5337,13 +5370,25 @@ function ReelCover({ memories, onStart }: {
     setTimeout(() => onStart(mem), 950);
   };
 
+  // Swipe verso l'alto su tutta la cover
+  const touchStartY = React.useRef<number>(0);
+  const onTouchStart = (e: React.TouchEvent) => { touchStartY.current = e.touches[0].clientY; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const dy = touchStartY.current - e.changedTouches[0].clientY;
+    if (dy > 60) startWith(); // swipe up > 60px
+  };
+
   return (
     <>
       <style>{REEL_COVER_STYLE}</style>
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 500, background: '#1C1A16', overflow: 'hidden',
-        animation: exiting ? 'reelFadeOut 0.95s cubic-bezier(0.25,0.1,0.25,1) forwards' : 'none',
-      }}>
+      <div
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 500, background: '#1C1A16', overflow: 'hidden',
+          animation: exiting ? 'reelFadeOut 0.95s cubic-bezier(0.25,0.1,0.25,1) forwards' : 'none',
+        }}
+      >
 
         {/* ── MOSAICO ASIMMETRICO — layout esplicito senza buchi ── */}
         {(() => {
