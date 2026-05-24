@@ -25,11 +25,11 @@
   },
   {
     "id": "mem_legacy_004",
-    "text": "Franco non era un uomo di molte parole, ma ogni gesto parlava per lui. La casa di Barberino era il suo modo di tenerci tutte insieme. Continua a farlo, anche adesso.",
+    "text": "Il babbo diventó piano piano un uomo di poche parole, ma ogni gesto parlava per lui. La casa di Barberino era il suo modo di tenerci tutte insieme. Continua a farlo, anche adesso.",
     "author": "Emanuela",
-    "date": "2026-01-01",
+    "date": "2009-07-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg",
-    "pinned": false
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_005",
