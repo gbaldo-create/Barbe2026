@@ -37,14 +37,15 @@
     "author": "Emanuela",
     "date": "1990-04-01",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
-    "visibility": "public"
+    "visibility": "public",
+    "pinned": true
   },
   {
     "id": "mem_legacy_006",
     "text": "Mi vedo ancora lì, nella cucina di casa, a pedalare intorno a quel tavolo gigantesco che sembrava non finire mai. Le ruote della mia piccola bici facevano scricchiolii sul pavimento mentre cercavo di stare dietro alle mie sorella, il fiato che mi mancava ma senza fermarmi. Accanto a noi il camino di pietra stava lì come quel grande lavabo dove vedevamo la Gina intenta a lavare le stoviglie del pranzo.",
     "author": "Emanuela",
     "date": "2026-01-01",
-    "visibility": "public"
+    "visibility": "private"
   },
   {
     "id": "mem_legacy_007",
