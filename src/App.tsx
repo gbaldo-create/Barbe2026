@@ -1349,7 +1349,12 @@ export default function App() {
 
   useEffect(() => {
     if (alreadySeen) return;
-    setTimeout(() => setIsLoading(false), 3000);
+    setTimeout(() => {
+      setIsLoading(false);
+      sessionStorage.setItem('b2026_loader_seen', '1');
+      setDismissed(true);
+      setShowLoaderCover(false);
+    }, 3000);
   }, []);
 
   // Al primo caricamento scegli un ricordo pubblico random + precarica le foto
@@ -1751,7 +1756,7 @@ export default function App() {
       {/* Loader */}
       <AnimatePresence>
         {(isLoading || !dismissed) && (
-          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-heritage-cream px-6">
+          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8, ease: [0.22,1,0.36,1] }} className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-heritage-cream px-6">
             {/* Cover mosaico — solo quando aperto da menu/hero su desktop */}
             {showLoaderCover && loaderFromMenu && (
               <ReelCover
@@ -1762,14 +1767,12 @@ export default function App() {
             <AnimatePresence mode="wait">
               {loaderFromMenu ? (
                 <DesktopMemoriesView memories={shuffledMemories} loaderIndex={loaderIndex} setLoaderIndex={setLoaderIndex} />
-              ) : isLoading ? (
-                /* Orologio a ritroso — stato di caricamento */
-                <motion.div key="loader-clock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.85 }} transition={{ duration: 0.5 }} className="flex flex-col items-center gap-6">
-                  <p className="text-heritage-ink/30 text-[11px] uppercase tracking-[0.22em] font-sans">BARBERINO …./2026</p>
+              ) : (
+                <motion.div key="loader-clock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.5 }} className="flex flex-col items-center gap-8">
+                  <p className="text-heritage-ink/35 text-[11px] uppercase tracking-[0.22em] font-sans">BARBERINO …./2026</p>
                   <svg ref={(el) => {
                     if (!el || el.dataset.ticks) return;
                     el.dataset.ticks = '1';
-                    const svg = el.getElementById ? el : el;
                     const g = document.createElementNS('http://www.w3.org/2000/svg','g');
                     for (let i = 0; i < 60; i++) {
                       const angle = (i/60)*Math.PI*2;
@@ -1786,7 +1789,7 @@ export default function App() {
                       g.appendChild(line);
                     }
                     el.insertBefore(g, el.firstChild.nextSibling);
-                  }} width="100" height="100" viewBox="0 0 100 100">
+                  }} width="120" height="120" viewBox="0 0 100 100">
                     <style>{`
                       @keyframes clockBack { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
                       @keyframes clockBackSlow { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
@@ -1815,37 +1818,22 @@ export default function App() {
                       if (p >= 1) { p = 0; from = to; to = randYear(); }
                       const t = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
                       ctx.clearRect(0,0,W,H);
-                      ctx.font = 'italic 38px Georgia, serif';
+                      ctx.font = 'italic 48px Georgia, serif';
                       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                       ctx.save(); ctx.globalAlpha=1-t; ctx.filter=`blur(${(t*5).toFixed(1)}px)`; ctx.fillStyle='#1C1A16'; ctx.fillText(from,W/2,H/2); ctx.restore();
                       ctx.save(); ctx.globalAlpha=t; ctx.filter=`blur(${((1-t)*5).toFixed(1)}px)`; ctx.fillStyle='#1C1A16'; ctx.fillText(to,W/2,H/2); ctx.restore();
                       requestAnimationFrame(loop);
                     };
                     loop();
-                  }} width={160} height={52} style={{display:'block'}} />
-                  <p className="text-heritage-ink/35 text-sm font-heritage italic">Raccogliendo memorie e oggetti…</p>
-                </motion.div>
-              ) : (
-                /* Ricordo pronto — orologio sparisce, contenuto appare */
-                <motion.div key="loader-single" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.5 }} className="flex flex-col items-center max-w-lg w-full gap-5">
-                  <p className="text-heritage-ink/30 text-[11px] uppercase tracking-[0.22em] font-sans">BARBERINO …./2026</p>
-                  {shuffledMemories[loaderIndex]?.imageUrl && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.9, ease: [0.22,1,0.36,1] }} className="w-full max-w-xs rounded-2xl overflow-hidden border border-heritage-ink/10" style={{aspectRatio:'4/3'}}>
-                      <img src={shuffledMemories[loaderIndex]?.imageUrl} alt="" className="w-full h-full object-cover" />
-                    </motion.div>
-                  )}
-                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.8 }} className="text-heritage-ink/90 text-xl font-heritage italic leading-relaxed text-center">"{shuffledMemories[loaderIndex]?.text || ""}"</motion.p>
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9, duration: 0.7 }} className="flex flex-col items-center gap-0.5">
-                    <p className="text-heritage-gold font-bold uppercase tracking-[0.2em] text-[12px]">— {shuffledMemories[loaderIndex]?.author || ""}</p>
-                    {shuffledMemories[loaderIndex]?.date && <p className="text-heritage-ink/40 text-[11px] uppercase tracking-widest">{shuffledMemories[loaderIndex]?.date}</p>}
-                  </motion.div>
+                  }} width={180} height={64} style={{display:'block'}} />
+                  <p className="text-heritage-ink/45 text-xl font-heritage italic tracking-wide">Sto raccogliendo memorie e oggetti...</p>
                 </motion.div>
               )}
             </AnimatePresence>
             <div className="mt-8 h-14 flex items-center justify-center">
-              {(!isLoading || loaderFromMenu) && (
-                <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.8, duration: 0.6 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { if (!loaderFromMenu) sessionStorage.setItem('b2026_loader_seen', '1'); setDismissed(true); setLoaderFromMenu(false); setShowLoaderCover(false); }} className="px-10 py-4 bg-heritage-ink text-heritage-cream rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-heritage-olive transition-colors flex items-center gap-3">
-                  {loaderFromMenu ? 'Rientra' : 'Entra'} <ArrowRight size={16} />
+              {loaderFromMenu && (
+                <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 0.5 }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => { setDismissed(true); setLoaderFromMenu(false); setShowLoaderCover(false); }} className="px-10 py-4 bg-heritage-ink text-heritage-cream rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-heritage-olive transition-colors flex items-center gap-3">
+                  Rientra <ArrowRight size={16} />
                 </motion.button>
               )}
             </div>
