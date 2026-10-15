@@ -1,3 +1,15 @@
 node_modules/
 dist/
 .DS_Store
+
+# segreti locali: non vanno mai su GitHub
+.env
+.env.local
+.env.*.local
+.vercel
+
+# dati di prova del sito locale (npm run dev)
+.local-data/
+
+# file tolti dal sito ma conservati sul Mac (foto non usate, vecchie copie)
+_archivio-locale/
