@@ -1,0 +1,8 @@
+{
+  "v": 1,
+  "alg": "aes-256-gcm",
+  "note": "Utenti e consumi AI, cifrati: leggibili solo dal server con USERS_KEY.",
+  "iv": "Zg024nytoSUfHovj",
+  "tag": "p5jxTvlitIGOTnGkRKvKbQ==",
+  "data": "iB4aAeMPim5M20T9708pfTEQhTdpLGkxY5u0TdQ2ficsuvlJMMqIOW2zspfNnzlYp+oUSVhyvISiBxHITDpAUGnDQqBat9xMqwrlVnGuolKbfTzxv5x1+v9PR2w6i8R9r5tUeXI2gNk/vxc78WIt4dgTcc/evk6EZ6FiOx3BniBNhnZZLmXU27AQiN760quhLeYVXog9aD5GlUlP/xPsS43vFMyPmdqP59Mne5CsvbbWynajhlcdURNT20nLiaBS1IHxWYAtJmFpI/+JVW6ur0oNut5xAmuL0NkKVkqkKP64VHJLaKBM9UFdaAVdyE+rCLZa2u2xIIbUTv4Ilpwp9CtAWeQ2dhV6+fQSnnCWl2Vr3Gxmh5NFWCkFCEiFZzTVoKsYkOJnVpoKz1b0cHAcCwzshkrPyAsccPDgJMvTY89Gz1WXOMiyj9EHPyndPdlxn+p2XpJHFmTwnw=="
+}
