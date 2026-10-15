@@ -1,5 +1,5 @@
 // v2026-05-22
-import React, { useState, useMemo, ReactNode, FormEvent, useEffect, useRef, DragEvent, ChangeEvent, MouseEvent } from 'react';
+import React, { useState, useMemo, ReactNode, FormEvent, useEffect, useRef, useCallback, DragEvent, ChangeEvent, MouseEvent } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import {
   Archive, Menu, X, Plus, SlidersHorizontal, MapPin, History,
@@ -1327,7 +1327,6 @@ export default function App() {
   const [selectedRoomFilter, setSelectedRoomFilter] = useState<((r: string) => boolean) | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(12);
-  const loaderRef = useRef<HTMLDivElement>(null);
   const [isCatawikiModalOpen, setIsCatawikiModalOpen] = useState(false);
   const [catawikiItem, setCatawikiItem] = useState<HeritageItem | null>(null);
   const [isPreparingCatawiki, setIsPreparingCatawiki] = useState(false);
@@ -1590,17 +1589,30 @@ export default function App() {
   useEffect(() => { setVisibleCount(12); }, [selectedCategory, selectedStatus, selectedRoomFilter, searchQuery, showFavoritesOnly]);
 
   // ── infinite scroll ──
-  useEffect(() => {
-    const el = loaderRef.current;
+  // Callback ref: l'observer si aggancia ogni volta che il box "Carico altri..." entra nel DOM
+  // (anche dopo reload, cambio vista o animazioni), non solo quando cambiano le dipendenze.
+  const filteredCountRef = useRef(0);
+  filteredCountRef.current = filteredItems.length;
+  const loaderElRef = useRef<HTMLDivElement | null>(null);
+  const loaderObserverRef = useRef<IntersectionObserver | null>(null);
+  const loaderRef = useCallback((el: HTMLDivElement | null) => {
+    loaderObserverRef.current?.disconnect();
+    loaderObserverRef.current = null;
+    loaderElRef.current = el;
     if (!el) return;
     const obs = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        setVisibleCount(v => Math.min(v + 12, filteredItems.length));
+        setVisibleCount(v => Math.min(v + 12, filteredCountRef.current));
       }
-    }, { threshold: 0.1 });
+    }, { rootMargin: '0px 0px 300px 0px' });
     obs.observe(el);
-    return () => obs.disconnect();
-  }, [filteredItems.length, view]);
+    loaderObserverRef.current = obs;
+  }, []);
+  // Se dopo aver aggiunto oggetti il loader è ancora visibile, ricontrolla e carica il blocco successivo
+  useEffect(() => {
+    const obs = loaderObserverRef.current, el = loaderElRef.current;
+    if (obs && el) { obs.unobserve(el); obs.observe(el); }
+  }, [visibleCount, filteredItems.length]);
 
   const handleBackToCatalog = (target: ViewType = 'catalog') => {
     window.history.pushState({ view: target }, '', window.location.pathname);
