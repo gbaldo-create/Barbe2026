@@ -24,14 +24,6 @@
     "visibility": "public"
   },
   {
-    "id": "mem_legacy_004",
-    "text": "Il babbo diventó piano piano un uomo di poche parole, ma ogni gesto parlava per lui. La casa di Barberino era il suo modo di tenerci tutte insieme. Continua a farlo, anche adesso.",
-    "author": "Emanuela",
-    "date": "2009-07-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/franco.jpg",
-    "visibility": "private"
-  },
-  {
     "id": "mem_legacy_005",
     "text": "Il sabato mattina si andava al mercato in piazza tutti insieme. Babbo con Leap comprava i coltelli di  Scarperia e il pecorino toscano, mamma sceglieva i giocattoli con me e l’acqua di rose per lei. Era il rito più bello della settimana.",
     "author": "Emanuela",
@@ -39,29 +31,6 @@
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/ricostruita%20(2).jpg",
     "visibility": "public",
     "pinned": true
-  },
-  {
-    "id": "mem_legacy_006",
-    "text": "Mi vedo ancora lì, nella cucina di casa, a pedalare intorno a quel tavolo gigantesco che sembrava non finire mai. Le ruote della mia piccola bici facevano scricchiolii sul pavimento mentre cercavo di stare dietro alle mie sorella, il fiato che mi mancava ma senza fermarmi. Accanto a noi il camino di pietra stava lì come quel grande lavabo dove vedevamo la Gina intenta a lavare le stoviglie del pranzo.",
-    "author": "Emanuela",
-    "date": "2026-01-01",
-    "visibility": "private"
-  },
-  {
-    "id": "mem_legacy_007",
-    "text": "Quando nacque Emma, la quarta nipote, il babbo la guardava come se fosse la cosa più preziosa del mondo. Senza dirlo, naturalmente.",
-    "author": "Aleria",
-    "date": "2009-08-13",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/emma.jpg",
-    "visibility": "private"
-  },
-  {
-    "id": "mem_legacy_008",
-    "text": "I pomeriggi nella tranquillità del giardino di casa dondonlandosi sull’amaca all’ombra dei pini…. momenti felici da conservare nel cuore",
-    "author": "Emanuela",
-    "date": "2014-07-01",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779564623485.jpg",
-    "visibility": "private"
   },
   {
     "id": "mem_legacy_009",
@@ -140,23 +109,6 @@
     "date": "1982-03-21",
     "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779398563849.jpg",
     "visibility": "public"
-  },
-  {
-    "id": "mem_1779481231305",
-    "text": "A Costa piaceva sedersi alla scrivania dello studio — quella che era stata del nonno, e del bisnonno, e prima ancora di chissà chi. Si sedeva lì come se ci avesse sempre avuto diritto, il primo nipote, con quella naturalezza tranquilla che hanno i bambini con le cose che sentono loro.",
-    "author": "Olivia",
-    "date": "2013-08-22",
-    "itemId": "mp4j0neptbski",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779481229758.jpg",
-    "visibility": "private"
-  },
-  {
-    "id": "mem_1779513254462",
-    "text": "Tra e pagine ingiallite riaffiora una generazione cresciuta nel rigore del tempo. Una nota di comportamento, nelle prime righe, restituisce all’improvviso mio padre bambino….",
-    "author": "Emanuela",
-    "date": "2026-04-29",
-    "imageUrl": "https://raw.githubusercontent.com/gbaldo-create/Barbe2026/main/public/images/memory_1779513252728.jpg",
-    "visibility": "private"
   },
   {
     "id": "mem_1779548199241",
