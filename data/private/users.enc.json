@@ -2,7 +2,7 @@
   "v": 1,
   "alg": "aes-256-gcm",
   "note": "Utenti e consumi AI, cifrati: leggibili solo dal server con USERS_KEY.",
-  "iv": "Zg024nytoSUfHovj",
-  "tag": "p5jxTvlitIGOTnGkRKvKbQ==",
-  "data": "iB4aAeMPim5M20T9708pfTEQhTdpLGkxY5u0TdQ2ficsuvlJMMqIOW2zspfNnzlYp+oUSVhyvISiBxHITDpAUGnDQqBat9xMqwrlVnGuolKbfTzxv5x1+v9PR2w6i8R9r5tUeXI2gNk/vxc78WIt4dgTcc/evk6EZ6FiOx3BniBNhnZZLmXU27AQiN760quhLeYVXog9aD5GlUlP/xPsS43vFMyPmdqP59Mne5CsvbbWynajhlcdURNT20nLiaBS1IHxWYAtJmFpI/+JVW6ur0oNut5xAmuL0NkKVkqkKP64VHJLaKBM9UFdaAVdyE+rCLZa2u2xIIbUTv4Ilpwp9CtAWeQ2dhV6+fQSnnCWl2Vr3Gxmh5NFWCkFCEiFZzTVoKsYkOJnVpoKz1b0cHAcCwzshkrPyAsccPDgJMvTY89Gz1WXOMiyj9EHPyndPdlxn+p2XpJHFmTwnw=="
+  "iv": "oEw4FgWPt39D2Q0z",
+  "tag": "v6v1R3hDKHDZW0C0tjqBDw==",
+  "data": "uOY2R5JbBgHack6WW8G4NYs5oRueCsWA/KOBvnzBGAABJp4p2ekRNB2ItZ2MPolXOt33UVCVyuom1yScXL7sXBH2/ozQwm0KNGVUTmr3iN3DSYowe1MuEo2Fjxwnu9hetM1ELosFbBdTCG8QXYeOu7Axt/N2de16mNoA8gAVR8XTnA6EXD9f991Q/X5FDKFTOSZFW4Mxte8ZIioXgyvg36WvXtx3oa7ipB3vRbfI2symanPuyGHyrkZ/bdVlIU1gzLujz6Yfbvo6vsXlKoVcD51/lOwe0po2/NYWNfiK2pvOWO3qxYxCIXWU8woDOvTMWLT28Rc5+tfZQJnL/boC971KfrS25yA4scPJNGJ/3ZXxZQZkkwo7FOMhLugHbZ4uNzZqsgVnlc6iZ0mHrU1bviMnuRq77OD8QumBxVO0PnrWhpGUMffcxki4izziZeNq8o4bwufWbqBLZPK8vhxV/dy/K8Ba1gLFj/JCHNyRwXTMnESZs6W0TUt2pzPhL8vk124="
 }
